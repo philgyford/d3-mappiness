@@ -1,0 +1,44 @@
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 1em 20px;
+}
+#loaded {
+  display: none;
+}
+#container {
+  margin: 1em 0 1.5em 0;
+}
+
+/* CHART */
+.axes {
+  color: #999;
+  font-size: 11px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #ccc;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: #999;
+}
+.line {
+  fill: none;
+  stroke-width: 0.2px;
+}
+	.line.happy {
+		stroke: #c00;
+	}
+	.line.relaxed {
+		stroke: #0c0;
+	}
+	.line.awake {
+		stroke: #00c;
+	}
+
