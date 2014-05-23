@@ -49,19 +49,14 @@ mappiness.chart = function module() {
   var // Total width and height for both charts:
       width = 960,
       height = 500,
+      margin = {top: 10, right: 10, bottom: 20, left: 25},
 
-      // top, right and left can be set using margin().
-      focusMargin = {top: 10, right: 10, bottom: 100, left: 25},
-      // Width and height of the chart area, not including axes:
-      focusWidth = width - focusMargin.left - focusMargin.right,
-      focusHeight = height - focusMargin.top - focusMargin.bottom,
-
-      // right, bottom and left can be set using margin().
-      contextMargin = {top: focusHeight + 40, right: focusMargin.right,
-                        bottom: 20, left: focusMargin.left},
-      // Width and height of the chart area, not including axes:
-      contextWidth = width - contextMargin.left - contextMargin.right,
-      contextHeight = height - contextMargin.top - contextMargin.bottom,
+      focusMargin,
+      focusWidth,
+      focusHeight,
+      contextMargin,
+      contextWidth,
+      contextHeight,
 
       // Elements that will be declared later:
       svg,
@@ -134,6 +129,8 @@ mappiness.chart = function module() {
 
 
   function createMain() {
+    setDimensions();
+
     // Create skeletal chart, with no data applied.
     focusG = svg.enter()
                   .append('svg')
@@ -164,14 +161,15 @@ mappiness.chart = function module() {
               .attr('width', focusWidth)
               .attr('height', focusHeight);
 
-    focusG.attr('transform', 'translate(' + focusMargin.left +','+ focusMargin.top + ')');
-    contextG.attr('transform', 'translate(' + contextMargin.left +','+ contextMargin.top + ')');
+    focusG.attr('transform',
+                'translate(' + focusMargin.left +','+ focusMargin.top + ')');
+    contextG.attr('transform',
+              'translate(' + contextMargin.left +','+ contextMargin.top + ')');
   };
 
 
   function updateScales(data) {
-    focusWidth = width - focusMargin.left - focusMargin.right;
-    focusHeight = height - focusMargin.top - focusMargin.bottom;
+    setDimensions();
 
     focusXScale.domain([
       d3.min(data, function(response){
@@ -181,11 +179,29 @@ mappiness.chart = function module() {
         return response.start_time;
       })
     ]).range([0, focusWidth]);
+
     contextXScale.domain(focusXScale.domain()).range([0, contextWidth]);
 
     focusYScale.domain([0, 1]).range([focusHeight, 0]);
 
     contextYScale.domain(focusYScale.domain()).range([contextHeight, 0]);
+  };
+
+
+  function setDimensions() {
+    focusMargin = {top: margin.top, right: margin.right,
+                      bottom: 100, left: margin.left};
+
+    // Width and height of main, focus chart area, not including axes.
+    focusWidth = width - focusMargin.left - focusMargin.right;
+    focusHeight = height - focusMargin.top - focusMargin.bottom;
+
+    contextMargin = {top: focusHeight + 40, right: focusMargin.right,
+                      bottom: margin.bottom, left: focusMargin.left};
+
+    // Width and height of small, context chart area, not including axes.
+    contextWidth = width - contextMargin.left - contextMargin.right;
+    contextHeight = height - contextMargin.top - contextMargin.bottom;
   };
 
 
@@ -321,14 +337,8 @@ mappiness.chart = function module() {
   };
 
   exports.margin = function(_) {
-    if (!arguments.length) {
-      return {top: focusMargin.top, right: focusMargin.right,
-              bottom: contextMargin.bottom, left: focusMargin.left}
-    };
-    focusMargin.top = _.top;
-    focusMargin.right = _.right;
-    contextMargin.bottom = _.bottom;
-    focusMargin.left = _.left;
+    if (!arguments.length) return margin;
+    margin = _;
     return this;
   };
 
