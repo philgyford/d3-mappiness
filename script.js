@@ -103,7 +103,7 @@ mappiness.chart = function module() {
         {
           type: 'relaxed',
           context_line: d3.svg.line().x(X).y(focusYRelaxed),
-          focus_line: d3.svg.line().x(X).y(contextYRelaxes)
+          focus_line: d3.svg.line().x(X).y(contextYRelaxed)
         },
         {
           type: 'happy',
@@ -313,7 +313,7 @@ mappiness.chart = function module() {
   function contextfocusYHappy(d) {
     return contextYScale(d.happy);
   };
-  function contextYRelaxes(d) {
+  function contextYRelaxed(d) {
     return contextYScale(d.relaxed);
   };
   function contextfocusYAwake(d) {
