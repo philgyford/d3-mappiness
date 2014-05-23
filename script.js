@@ -88,24 +88,7 @@ mappiness.chart = function module() {
                           .orient('left'),
       contextYAxis = d3.svg.axis()
                           .scale(contextYScale)
-                          .orient('left'),
-      lines = [
-        {
-          type: 'awake',
-          context_line: d3.svg.line().x(X).y(focusYAwake),
-          focus_line: d3.svg.line().x(X).y(contextYAwake)
-        },
-        {
-          type: 'relaxed',
-          context_line: d3.svg.line().x(X).y(focusYRelaxed),
-          focus_line: d3.svg.line().x(X).y(contextYRelaxed)
-        },
-        {
-          type: 'happy',
-          context_line: d3.svg.line().x(X).y(focusYHappy),
-          focus_line: d3.svg.line().x(X).y(contextfocusYHappy)
-        }
-      ];
+                          .orient('left');
 
   function exports(_selection) {
     _selection.each(function(data) {
@@ -121,7 +104,7 @@ mappiness.chart = function module() {
 
       renderAxes();
     
-      renderBody();
+      renderLines('focus');
 
       renderBrush();
     });
@@ -206,13 +189,13 @@ mappiness.chart = function module() {
 
 
   function renderAxes() {
-    renderXAxis();
-    renderYAxis();
+    renderFocusXAxis();
+    renderFocusYAxis();
     renderContextXAxis();
   };
 
 
-  function renderXAxis() {
+  function renderFocusXAxis() {
     focusAxesG.append('g')
             .attr('class', 'x axis');
 
@@ -222,12 +205,13 @@ mappiness.chart = function module() {
   };
 
 
-  function renderYAxis() {
+  function renderFocusYAxis() {
     focusAxesG.append('g')
             .attr('class', 'y axis');
     focusG.select('.y.axis')
             .call(focusYAxis);
   };
+
 
   function renderContextXAxis() {
     contextAxesG.append('g')
@@ -238,63 +222,76 @@ mappiness.chart = function module() {
             .call(context_xAxis);
   };
 
-  function renderBody() {
-    var linesG = focusG.selectAll('g.lines')
+
+  /**
+   * Draw each of the three lines, on either of the charts.
+   * `chart` is either 'focus' or 'context'.
+   */
+  function renderLines(chart) {
+    var linesG;
+
+    if (chart == 'context') {
+      linesG = contextG.selectAll('g.lines')
                           .data(function(d) { return [d]; },
                                 function(d) { return 'todo'; });
+    } else {
+      linesG = focusG.selectAll('g.lines')
+                        .data(function(d) { return [d]; },
+                              function(d) { return 'todo'; });
+    };
 
     linesG.enter().append('g')
                     .attr('class', 'lines');
 
     linesG.exit().remove();
 
-    renderLines(linesG);
-  };
-
-
-  function renderLines(linesG) {
-
-    // Each of lines has a type ('happy') and a line (a d3.svg.line object).
-    lines.forEach(function(ln) {
-        linesG.selectAll('path.line.'+ln.type)
-            .data(function(d) { return [d]; }, function(d) { return ln.type; })
+    ['awake', 'relaxed', 'happy'].forEach(function(type) {
+        linesG.selectAll('path.line.'+type)
+            .data(function(d) { return [d]; }, function(d) { return type; })
             .enter().append('path')
-              .attr('class', 'line '+ln.type);
+              .attr('class', 'line '+type);
 
-        linesG.selectAll('path.line.'+ln.type)
-            .data(function(d) { return [d]; }, function(d) { return ln.type; })
+        linesG.selectAll('path.line.'+type)
+            .data(function(d) { return [d]; }, function(d) { return type; })
             .transition()
-            .attr('d', function(d) { return ln.context_line(d); });
+            .attr('d', function(d) { return makeLine(chart, type)(d); });
       });
   };
 
+
+  /**
+   * Returns a line object using the corret Y accessor for the chart and the
+   * line type.
+   * `chart` is one of 'focus' or 'context'.
+   * `type` is one of 'awake', 'happy', or 'relaxed'.
+   */
+  function makeLine(chart, type) {
+    var ys = {
+      context: {
+        awake: contextYAwake,
+        happy: contextYHappy,
+        relaxed: contextYRelaxed
+      },
+      focus: {
+        awake: focusYAwake,
+        happy: focusYHappy,
+        relaxed: focusYRelaxed
+      }
+    };
+    return d3.svg.line().x(X).y(ys[chart][type]);
+  };
+
+  /**
+   * Most of the stuff for drawing the context/brush chart.
+   */
   function renderBrush() {
     brush = d3.svg.brush()
                         .x(contextXScale)
                         .on('brush', brushed);
                         
-    ////
-    var linesG = contextG.selectAll('g.lines')
-                          .data(function(d) { return [d]; },
-                                function(d) { return 'todo'; });
 
-    linesG.enter().append('g')
-                    .attr('class', 'lines');
 
-    linesG.exit().remove();
-
-    ////
-    lines.forEach(function(ln) {
-        linesG.selectAll('path.line.'+ln.type)
-            .data(function(d) { return [d]; }, function(d) { return ln.type; })
-            .enter().append('path')
-              .attr('class', 'line '+ln.type);
-
-        linesG.selectAll('path.line.'+ln.type)
-            .data(function(d) { return [d]; }, function(d) { return ln.type; })
-            .transition()
-            .attr('d', function(d) { return ln.focus_line(d); });
-      });
+    renderLines('context');
 
     ////
     contextG.append('g')
@@ -307,8 +304,9 @@ mappiness.chart = function module() {
 
   function brushed() {
     focusXScale.domain(brush.empty() ? contextXScale.domain() : brush.extent());
-    lines.forEach(function(ln) {
-      focusG.select('path.line.'+ln.type).attr('d', function(d) { return ln.context_line(d); });
+    ['awake', 'relaxed', 'happy'].forEach(function(type) {
+      focusG.select('path.line.'+type).attr('d', function(d) {
+                                        return makeLine('focus', type)(d); });
     });
     focusG.select(".x.axis").call(focusXAxis);
   };
@@ -326,7 +324,7 @@ mappiness.chart = function module() {
   function focusYAwake(d) {
     return focusYScale(d.awake);
   };
-  function contextfocusYHappy(d) {
+  function contextYHappy(d) {
     return contextYScale(d.happy);
   };
   function contextYRelaxed(d) {
