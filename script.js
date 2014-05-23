@@ -42,34 +42,49 @@ mappiness.dataManager = function module() {
 
 
 mappiness.chart = function module() {
-  var margin = {top: 10, right: 10, bottom: 20, left: 25},
-      width = 900,
-      height = 350,
+  // mini_* variables apply to the brush chart below the main one.
+  var margin = {top: 10, right: 10, bottom: 100, left: 25},
+      width = 960,
+      height = 500,
       inner_width = width - margin.left - margin.right,
       inner_height = height - margin.top - margin.bottom,
+      mini_margin = {top: height - margin.top - 60,
+                      right: 10, bottom: 20, left: 25},
+      mini_inner_height = height - mini_margin.top - mini_margin.bottom,
       svg,
       main_g,
       axes_g,
+      mini_g,
+      mini_axes_g,
+      brush,
       xValue = function(d) { return d[0]; },
       yValue = function(d) { return d[1]; },
       xScale = d3.time.scale(),
+      mini_xScale = d3.time.scale(),
       yScale = d3.scale.linear(),
+      mini_yScale = d3.scale.linear(),
       dateFormat = d3.time.format('%-d %b %Y'),
       xAxis = d3.svg.axis()
                   .scale(xScale)
                   .orient('bottom'),
                   //.tickFormat(dateFormat),
                   //.ticks(d3.time.years, 5),
+      mini_xAxis = d3.svg.axis()
+                    .scale(mini_xScale)
+                    .orient('bottom'),
       yAxis = d3.svg.axis()
                   .scale(yScale)
                   .orient('left'),
       lines = [
         {type: 'happy',
-         line: d3.svg.line().x(X).y(YHappy)},
+         line: d3.svg.line().x(X).y(YHappy),
+         mini_line: d3.svg.line().x(X).y(mini_YHappy)},
         {type: 'relaxed',
-         line: d3.svg.line().x(X).y(YRelaxed)},
+         line: d3.svg.line().x(X).y(YRelaxed),
+         mini_line: d3.svg.line().x(X).y(mini_YRelaxed)},
         {type: 'awake',
-         line: d3.svg.line().x(X).y(YRelaxed)}
+         line: d3.svg.line().x(X).y(YAwake),
+         mini_line: d3.svg.line().x(X).y(mini_YAwake)}
       ];
 
   function exports(_selection) {
@@ -87,6 +102,8 @@ mappiness.chart = function module() {
       renderAxes();
     
       renderBody();
+
+      renderBrush();
     });
   };
 
@@ -98,15 +115,23 @@ mappiness.chart = function module() {
                     .append('g')
                       .attr('class', 'main');
 
+    mini_g = svg.append('g')
+                      .attr('class', 'mini');
+
     axes_g = main_g.append("g")
+                      .attr("class", "axes");
+
+    mini_axes_g = mini_g.append("g")
                       .attr("class", "axes");
 
     // If g.main already exists, we need to explicitly select it:
     main_g = svg.select('g.main');
+    mini_g = svg.select('g.mini');
 
     // Update outer and inner dimensions.
     svg.transition().attr({ width: width, height: height });
     main_g.attr('transform', 'translate(' + margin.left +','+ margin.top + ')');
+    mini_g.attr('transform', 'translate(' + mini_margin.left +','+ mini_margin.top + ')');
   };
 
 
@@ -122,14 +147,18 @@ mappiness.chart = function module() {
         return response.start_time;
       })
     ]).range([0, inner_width]);
+    mini_xScale.domain(xScale.domain()).range(xScale.range());
 
     yScale.domain([0, 1]).range([inner_height, 0]);
+
+    mini_yScale.domain(yScale.domain()).range([mini_inner_height, 0]);
   };
 
 
   function renderAxes() {
     renderXAxis();
     renderYAxis();
+    renderMiniXAxis();
   };
 
 
@@ -150,6 +179,14 @@ mappiness.chart = function module() {
             .call(yAxis);
   };
 
+  function renderMiniXAxis() {
+    mini_axes_g.append('g')
+            .attr('class', 'x axis');
+
+    mini_g.select('.x.axis')
+            .attr('transform', 'translate(0,' + mini_yScale.range()[0] + ')')
+            .call(mini_xAxis);
+  };
 
   function renderBody() {
     var lines_g = main_g.selectAll('g.lines')
@@ -181,14 +218,56 @@ mappiness.chart = function module() {
       });
   };
 
+  function renderBrush() {
+    brush = d3.svg.brush()
+                        .x(mini_xScale)
+                        .on('brush', brushed);
+                        
+    ////
+    var lines_g = mini_g.selectAll('g.lines')
+                          .data(function(d) { return [d]; },
+                                function(d) { return 'todo'; });
+
+    lines_g.enter().append('g')
+                    .attr('class', 'lines');
+
+    lines_g.exit().remove();
+
+    ////
+    lines.forEach(function(ln) {
+        lines_g.selectAll('path.line.'+ln.type)
+            .data(function(d) { return [d]; }, function(d) { return ln.type; })
+            .enter().append('path')
+              .attr('class', 'line '+ln.type);
+
+        lines_g.selectAll('path.line.'+ln.type)
+            .data(function(d) { return [d]; }, function(d) { return ln.type; })
+            .transition()
+            .attr('d', function(d) { return ln.mini_line(d); });
+      });
+
+    ////
+    mini_g.append('g')
+      .attr('class', 'x brush')
+      .call(brush)
+    .selectAll('rect')
+      .attr('y', -6)
+      .attr('height', mini_inner_height + 7);
+  };
+
+  function brushed() {
+    xScale.domain(brush.empty() ? mini_xScale.domain() : brush.extent());
+    lines.forEach(function(ln) {
+      main_g.select('path.line.'+ln.type).attr('d', function(d) { return ln.line(d); });
+    });
+    main_g.select(".x.axis").call(xAxis);
+  };
+
   function X(d) {
     return xScale(d.start_time);
   };
 
   function YHappy(d) {
-    if (d.happy > 0.9) {
-    console.log(d);
-    }
     return yScale(d.happy);
   };
   function YRelaxed(d) {
@@ -196,6 +275,15 @@ mappiness.chart = function module() {
   };
   function YAwake(d) {
     return yScale(d.awake);
+  };
+  function mini_YHappy(d) {
+    return mini_yScale(d.happy);
+  };
+  function mini_YRelaxed(d) {
+    return mini_yScale(d.relaxed);
+  };
+  function mini_YAwake(d) {
+    return mini_yScale(d.awake);
   };
 
   exports.margin = function(_) {

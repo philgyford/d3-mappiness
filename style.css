@@ -33,12 +33,18 @@ body {
   stroke-width: 0.2px;
 }
 	.line.happy {
-		stroke: #c00;
+		stroke: #dc3a2d;
 	}
 	.line.relaxed {
-		stroke: #0c0;
+		stroke: #2e5aa9;
 	}
 	.line.awake {
-		stroke: #00c;
+		stroke: #518d48;
 	}
+
+.brush .extent {
+  stroke: #ccc;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
 
