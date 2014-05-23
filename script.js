@@ -49,7 +49,7 @@ mappiness.chart = function module() {
   var // Total width and height for both charts:
       width = 960,
       height = 500,
-      margin = {top: 10, right: 10, bottom: 20, left: 25},
+      margin = {top: 10, right: 10, bottom: 20, left: 30},
 
       focusMargin,
       focusWidth,
@@ -75,6 +75,7 @@ mappiness.chart = function module() {
       contextYScale = d3.scale.linear(),
 
       dateFormat = d3.time.format('%-d %b %Y'),
+      ratingFormat = function(d) { return d * 100; },
       focusXAxis = d3.svg.axis()
                         .scale(focusXScale)
                         .orient('bottom'),
@@ -85,7 +86,8 @@ mappiness.chart = function module() {
                         .orient('bottom'),
       focusYAxis = d3.svg.axis()
                           .scale(focusYScale)
-                          .orient('left'),
+                          .orient('left')
+                          .tickFormat(ratingFormat),
       contextYAxis = d3.svg.axis()
                           .scale(contextYScale)
                           .orient('left'),
