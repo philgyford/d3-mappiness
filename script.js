@@ -300,7 +300,7 @@ mappiness.chart = function module() {
     });
     currentLines = newLines;
 
-    d3.select('path.line.'+line_type).style('visibility', 'hidden');
+    d3.selectAll('path.line.'+line_type).style('visibility', 'hidden');
   };
 
 
@@ -313,7 +313,7 @@ mappiness.chart = function module() {
       currentLines.push(line_type);
     }; 
 
-    d3.select('path.line.'+line_type).style('visibility', 'visible');
+    d3.selectAll('path.line.'+line_type).style('visibility', 'visible');
   };
 
 
