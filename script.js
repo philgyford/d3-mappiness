@@ -48,7 +48,7 @@ mappiness.dataManager = function module() {
 mappiness.chart = function module() {
   var // Total width and height for both charts:
       width = 960,
-      height = 500,
+      height = 350,
       margin = {top: 10, right: 10, bottom: 20, left: 30},
 
       focusMargin,
