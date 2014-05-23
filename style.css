@@ -42,7 +42,7 @@ body {
 	.line.awake {
 		stroke: #518d48;
 	}
-.mini .line {
+.context .line {
   stroke-width: 0.2px;
 }
 
