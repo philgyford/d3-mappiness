@@ -31,6 +31,7 @@ body {
 .line {
   fill: none;
   stroke-width: 0.2px;
+  clip-path: url(#clip);
 }
 	.line.happy {
 		stroke: #dc3a2d;

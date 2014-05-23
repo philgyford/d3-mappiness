@@ -118,11 +118,11 @@ mappiness.chart = function module() {
     mini_g = svg.append('g')
                       .attr('class', 'mini');
 
-    axes_g = main_g.append("g")
-                      .attr("class", "axes");
+    axes_g = main_g.append('g')
+                      .attr('class', 'axes');
 
-    mini_axes_g = mini_g.append("g")
-                      .attr("class", "axes");
+    mini_axes_g = mini_g.append('g')
+                      .attr('class', 'axes');
 
     // If g.main already exists, we need to explicitly select it:
     main_g = svg.select('g.main');
@@ -130,6 +130,15 @@ mappiness.chart = function module() {
 
     // Update outer and inner dimensions.
     svg.transition().attr({ width: width, height: height });
+
+    // When we add `clip-path:url(#clip)` to the lines in the main chart,
+    // this stops them extending beyond the chart area.
+    main_g.append('clipPath')
+            .attr('id', 'clip')
+            .append('rect')
+              .attr('width', inner_width)
+              .attr('height', inner_height);
+
     main_g.attr('transform', 'translate(' + margin.left +','+ margin.top + ')');
     mini_g.attr('transform', 'translate(' + mini_margin.left +','+ mini_margin.top + ')');
   };
