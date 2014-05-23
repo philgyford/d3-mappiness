@@ -20,10 +20,15 @@ body {
   font-size: 11px;
 }
 .axis path,
-.axis line {
+.axis line,
+.line.grid {
   fill: none;
   stroke: #ccc;
   shape-rendering: crispEdges;
+  stroke-width: 1px;
+}
+.line.grid {
+  stroke: #f6f6f6;
 }
 .axis text {
   fill: #999;

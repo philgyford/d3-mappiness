@@ -80,7 +80,7 @@ mappiness.chart = function module() {
                         .orient('bottom'),
                         //.tickFormat(dateFormat),
                         //.ticks(d3.time.years, 5),
-      context_xAxis = d3.svg.axis()
+      contextXAxis = d3.svg.axis()
                         .scale(contextXScale)
                         .orient('bottom'),
       focusYAxis = d3.svg.axis()
@@ -94,6 +94,7 @@ mappiness.chart = function module() {
       allLines = ['happy', 'relaxed', 'awake'],
       // What's being displayed now.
       currentLines = allLines;
+
 
   function exports(_selection) {
     _selection.each(function(data) {
@@ -153,6 +154,7 @@ mappiness.chart = function module() {
                 'translate(' + focusMargin.left +','+ focusMargin.top + ')');
     contextG.attr('transform',
               'translate(' + contextMargin.left +','+ contextMargin.top + ')');
+
   };
 
 
@@ -197,6 +199,7 @@ mappiness.chart = function module() {
     renderFocusXAxis();
     renderFocusYAxis();
     renderContextXAxis();
+    renderFocusGrid();
   };
 
 
@@ -224,9 +227,25 @@ mappiness.chart = function module() {
 
     contextG.select('.x.axis')
             .attr('transform', 'translate(0,' + contextYScale.range()[0] + ')')
-            .call(context_xAxis);
+            .call(contextXAxis);
   };
 
+  /**
+   * Adds a horizontal line half way up the chart.
+   */
+  function renderFocusGrid() {
+    focusAxesG.selectAll('path.line.grid')
+                .data([[
+                        [focusXScale.domain()[0], 0.5],
+                        [focusXScale.domain()[1], 0.5]
+                      ]])
+                .enter().append('path')
+                  .attr('class', 'line grid')
+                  .attr('d', d3.svg.line()
+                                    .x(function(d){return focusXScale(d[0]); })
+                                    .y(function(d){return focusYScale(d[1]); })
+                                  );
+  };
 
   /**
    * Draw each of the three lines, on either of the charts.

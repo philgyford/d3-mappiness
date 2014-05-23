@@ -12,8 +12,8 @@ Load index.html in your browser.
 
 ## TO DO
 
-* 50% horizontal line.
 * Make chart as wide as browser window.
+* Something that says what dates are shown in focus area.
 * Hover lines like on http://bl.ocks.org/gniemetz/4618602
 * Rolling average. Configurable in UI?
 * Filters for:
