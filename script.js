@@ -41,64 +41,74 @@ mappiness.dataManager = function module() {
 };
 
 
+/**
+ * The top, main chart is referred to by `focus`.
+ * The bottom, brush chart is referred to by `context`.
+ */
 mappiness.chart = function module() {
   var // Total width and height for both charts:
       width = 960,
       height = 500,
 
-      focus_margin = {top: 10, right: 10, bottom: 100, left: 25},
-      focus_width = width - focus_margin.left - focus_margin.right,
-      focus_height = height - focus_margin.top - focus_margin.bottom,
+      // top, right and left can be set using margin().
+      focusMargin = {top: 10, right: 10, bottom: 100, left: 25},
+      // Width and height of the chart area, not including axes:
+      focusWidth = width - focusMargin.left - focusMargin.right,
+      focusHeight = height - focusMargin.top - focusMargin.bottom,
 
-      context_margin = {top: 430, right: 10, bottom: 20, left: 25},
-      context_height = height - context_margin.top - context_margin.bottom,
-      context_width = width - context_margin.left - context_margin.right,
+      // right, bottom and left can be set using margin().
+      contextMargin = {top: focusHeight + 40, right: focusMargin.right,
+                        bottom: 20, left: focusMargin.left},
+      // Width and height of the chart area, not including axes:
+      contextWidth = width - contextMargin.left - contextMargin.right,
+      contextHeight = height - contextMargin.top - contextMargin.bottom,
 
+      // Elements that will be declared later:
       svg,
-      focus_g,
-      focus_axes_g,
-      context_g,
-      context_axes_g,
+      focusG,
+      focusAxesG,
+      contextG,
+      contextAxesG,
       brush,
 
       xValue = function(d) { return d[0]; },
       yValue = function(d) { return d[1]; },
 
-      focus_xScale = d3.time.scale(),
-      context_xScale = d3.time.scale(),
-      focus_yScale = d3.scale.linear(),
-      context_yScale = d3.scale.linear(),
+      focusXScale = d3.time.scale(),
+      contextXScale = d3.time.scale(),
+      focusYScale = d3.scale.linear(),
+      contextYScale = d3.scale.linear(),
 
       dateFormat = d3.time.format('%-d %b %Y'),
-      focus_xAxis = d3.svg.axis()
-                        .scale(focus_xScale)
+      focusXAxis = d3.svg.axis()
+                        .scale(focusXScale)
                         .orient('bottom'),
                         //.tickFormat(dateFormat),
                         //.ticks(d3.time.years, 5),
       context_xAxis = d3.svg.axis()
-                        .scale(context_xScale)
+                        .scale(contextXScale)
                         .orient('bottom'),
-      focus_yAxis = d3.svg.axis()
-                          .scale(focus_yScale)
+      focusYAxis = d3.svg.axis()
+                          .scale(focusYScale)
                           .orient('left'),
-      context_yAxis = d3.svg.axis()
-                          .scale(context_yScale)
+      contextYAxis = d3.svg.axis()
+                          .scale(contextYScale)
                           .orient('left'),
       lines = [
         {
           type: 'awake',
-          context_line: d3.svg.line().x(X).y(YAwake),
-          focus_line: d3.svg.line().x(X).y(context_YAwake)
+          context_line: d3.svg.line().x(X).y(focusYAwake),
+          focus_line: d3.svg.line().x(X).y(contextfocusYAwake)
         },
         {
           type: 'relaxed',
-          context_line: d3.svg.line().x(X).y(YRelaxed),
-          focus_line: d3.svg.line().x(X).y(context_YRelaxed)
+          context_line: d3.svg.line().x(X).y(focusYRelaxed),
+          focus_line: d3.svg.line().x(X).y(contextYRelaxes)
         },
         {
           type: 'happy',
-          context_line: d3.svg.line().x(X).y(YHappy),
-          focus_line: d3.svg.line().x(X).y(context_YHappy)
+          context_line: d3.svg.line().x(X).y(focusYHappy),
+          focus_line: d3.svg.line().x(X).y(contextfocusYHappy)
         }
       ];
 
@@ -125,57 +135,57 @@ mappiness.chart = function module() {
 
   function createMain() {
     // Create skeletal chart, with no data applied.
-    focus_g = svg.enter()
+    focusG = svg.enter()
                   .append('svg')
                     .append('g')
                       .attr('class', 'focus');
 
-    context_g = svg.append('g')
+    contextG = svg.append('g')
                       .attr('class', 'context');
 
-    focus_axes_g = focus_g.append('g')
+    focusAxesG = focusG.append('g')
                       .attr('class', 'axes');
 
-    context_axes_g = context_g.append('g')
+    contextAxesG = contextG.append('g')
                       .attr('class', 'axes');
 
     // If g.focus already exists, we need to explicitly select it:
-    focus_g= svg.select('g.focus');
-    context_g= svg.select('g.context');
+    focusG= svg.select('g.focus');
+    contextG= svg.select('g.context');
 
     // Update outer and inner dimensions.
     svg.transition().attr({ width: width, height: height });
 
     // When we add `clip-path:url(#clip)` to the lines in the main chart,
     // this stops them extending beyond the chart area.
-    focus_g.append('clipPath')
+    focusG.append('clipPath')
             .attr('id', 'clip')
             .append('rect')
-              .attr('width', focus_width)
-              .attr('height', focus_height);
+              .attr('width', focusWidth)
+              .attr('height', focusHeight);
 
-    focus_g.attr('transform', 'translate(' + focus_margin.left +','+ focus_margin.top + ')');
-    context_g.attr('transform', 'translate(' + context_margin.left +','+ context_margin.top + ')');
+    focusG.attr('transform', 'translate(' + focusMargin.left +','+ focusMargin.top + ')');
+    contextG.attr('transform', 'translate(' + contextMargin.left +','+ contextMargin.top + ')');
   };
 
 
   function updateScales(data) {
-    focus_width = width - focus_margin.left - focus_margin.right;
-    focus_height = height - focus_margin.top - focus_margin.bottom;
+    focusWidth = width - focusMargin.left - focusMargin.right;
+    focusHeight = height - focusMargin.top - focusMargin.bottom;
 
-    focus_xScale.domain([
+    focusXScale.domain([
       d3.min(data, function(response){
         return response.start_time;
       }),
       d3.max(data, function(response){
         return response.start_time;
       })
-    ]).range([0, focus_width]);
-    context_xScale.domain(focus_xScale.domain()).range([0, context_width]);
+    ]).range([0, focusWidth]);
+    contextXScale.domain(focusXScale.domain()).range([0, contextWidth]);
 
-    focus_yScale.domain([0, 1]).range([focus_height, 0]);
+    focusYScale.domain([0, 1]).range([focusHeight, 0]);
 
-    context_yScale.domain(focus_yScale.domain()).range([context_height, 0]);
+    contextYScale.domain(focusYScale.domain()).range([contextHeight, 0]);
   };
 
 
@@ -187,55 +197,55 @@ mappiness.chart = function module() {
 
 
   function renderXAxis() {
-    focus_axes_g.append('g')
+    focusAxesG.append('g')
             .attr('class', 'x axis');
 
-    focus_g.select('.x.axis')
-            .attr('transform', 'translate(0,' + focus_yScale.range()[0] + ')')
-            .call(focus_xAxis);
+    focusG.select('.x.axis')
+            .attr('transform', 'translate(0,' + focusYScale.range()[0] + ')')
+            .call(focusXAxis);
   };
 
 
   function renderYAxis() {
-    focus_axes_g.append('g')
+    focusAxesG.append('g')
             .attr('class', 'y axis');
-    focus_g.select('.y.axis')
-            .call(focus_yAxis);
+    focusG.select('.y.axis')
+            .call(focusYAxis);
   };
 
   function renderContextXAxis() {
-    context_axes_g.append('g')
+    contextAxesG.append('g')
             .attr('class', 'x axis');
 
-    context_g.select('.x.axis')
-            .attr('transform', 'translate(0,' + context_yScale.range()[0] + ')')
+    contextG.select('.x.axis')
+            .attr('transform', 'translate(0,' + contextYScale.range()[0] + ')')
             .call(context_xAxis);
   };
 
   function renderBody() {
-    var lines_g = focus_g.selectAll('g.lines')
+    var linesG = focusG.selectAll('g.lines')
                           .data(function(d) { return [d]; },
                                 function(d) { return 'todo'; });
 
-    lines_g.enter().append('g')
+    linesG.enter().append('g')
                     .attr('class', 'lines');
 
-    lines_g.exit().remove();
+    linesG.exit().remove();
 
-    renderLines(lines_g);
+    renderLines(linesG);
   };
 
 
-  function renderLines(lines_g) {
+  function renderLines(linesG) {
 
     // Each of lines has a type ('happy') and a line (a d3.svg.line object).
     lines.forEach(function(ln) {
-        lines_g.selectAll('path.line.'+ln.type)
+        linesG.selectAll('path.line.'+ln.type)
             .data(function(d) { return [d]; }, function(d) { return ln.type; })
             .enter().append('path')
               .attr('class', 'line '+ln.type);
 
-        lines_g.selectAll('path.line.'+ln.type)
+        linesG.selectAll('path.line.'+ln.type)
             .data(function(d) { return [d]; }, function(d) { return ln.type; })
             .transition()
             .attr('d', function(d) { return ln.context_line(d); });
@@ -244,75 +254,81 @@ mappiness.chart = function module() {
 
   function renderBrush() {
     brush = d3.svg.brush()
-                        .x(context_xScale)
+                        .x(contextXScale)
                         .on('brush', brushed);
                         
     ////
-    var lines_g = context_g.selectAll('g.lines')
+    var linesG = contextG.selectAll('g.lines')
                           .data(function(d) { return [d]; },
                                 function(d) { return 'todo'; });
 
-    lines_g.enter().append('g')
+    linesG.enter().append('g')
                     .attr('class', 'lines');
 
-    lines_g.exit().remove();
+    linesG.exit().remove();
 
     ////
     lines.forEach(function(ln) {
-        lines_g.selectAll('path.line.'+ln.type)
+        linesG.selectAll('path.line.'+ln.type)
             .data(function(d) { return [d]; }, function(d) { return ln.type; })
             .enter().append('path')
               .attr('class', 'line '+ln.type);
 
-        lines_g.selectAll('path.line.'+ln.type)
+        linesG.selectAll('path.line.'+ln.type)
             .data(function(d) { return [d]; }, function(d) { return ln.type; })
             .transition()
             .attr('d', function(d) { return ln.focus_line(d); });
       });
 
     ////
-    context_g.append('g')
+    contextG.append('g')
       .attr('class', 'x brush')
       .call(brush)
     .selectAll('rect')
       .attr('y', -6)
-      .attr('height', context_height + 7);
+      .attr('height', contextHeight + 7);
   };
 
   function brushed() {
-    focus_xScale.domain(brush.empty() ? context_xScale.domain() : brush.extent());
+    focusXScale.domain(brush.empty() ? contextXScale.domain() : brush.extent());
     lines.forEach(function(ln) {
-      focus_g.select('path.line.'+ln.type).attr('d', function(d) { return ln.context_line(d); });
+      focusG.select('path.line.'+ln.type).attr('d', function(d) { return ln.context_line(d); });
     });
-    focus_g.select(".x.axis").call(focus_xAxis);
+    focusG.select(".x.axis").call(focusXAxis);
   };
 
   function X(d) {
-    return focus_xScale(d.start_time);
+    return focusXScale(d.start_time);
   };
 
-  function YHappy(d) {
-    return focus_yScale(d.happy);
+  function focusYHappy(d) {
+    return focusYScale(d.happy);
   };
-  function YRelaxed(d) {
-    return focus_yScale(d.relaxed);
+  function focusYRelaxed(d) {
+    return focusYScale(d.relaxed);
   };
-  function YAwake(d) {
-    return focus_yScale(d.awake);
+  function focusYAwake(d) {
+    return focusYScale(d.awake);
   };
-  function context_YHappy(d) {
-    return context_yScale(d.happy);
+  function contextfocusYHappy(d) {
+    return contextYScale(d.happy);
   };
-  function context_YRelaxed(d) {
-    return context_yScale(d.relaxed);
+  function contextYRelaxes(d) {
+    return contextYScale(d.relaxed);
   };
-  function context_YAwake(d) {
-    return context_yScale(d.awake);
+  function contextfocusYAwake(d) {
+    return contextYScale(d.awake);
   };
 
   exports.margin = function(_) {
-    if (!arguments.length) return focus_margin;
-    focus_margin = _;
+    if (!arguments.length) {
+      return {top: focusMargin.top, right: focusMargin.right,
+              bottom: contextMargin.bottom, left: focusMargin.left}
+    };
+    focusMargin.top = _.top;
+    focusMargin.right = _.right;
+    contextMargin.bottom = _.bottom;
+    focusMargin.left = _.left;
     return this;
   };
 
