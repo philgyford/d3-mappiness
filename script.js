@@ -281,6 +281,7 @@ mappiness.chart = function module() {
     return d3.svg.line().x(X).y(ys[chart][type]);
   };
 
+
   /**
    * Most of the stuff for drawing the context/brush chart.
    */
@@ -289,17 +290,14 @@ mappiness.chart = function module() {
                         .x(contextXScale)
                         .on('brush', brushed);
                         
-
-
     renderLines('context');
 
-    ////
     contextG.append('g')
       .attr('class', 'x brush')
       .call(brush)
     .selectAll('rect')
       .attr('y', -6)
-      .attr('height', contextHeight + 7);
+      .attr('height', contextHeight + 6);
   };
 
   function brushed() {
