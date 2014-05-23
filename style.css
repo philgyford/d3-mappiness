@@ -30,7 +30,7 @@ body {
 }
 .line {
   fill: none;
-  stroke-width: 0.2px;
+  stroke-width: 0.5px;
   clip-path: url(#clip);
 }
 	.line.happy {
@@ -42,6 +42,9 @@ body {
 	.line.awake {
 		stroke: #518d48;
 	}
+.mini .line {
+  stroke-width: 0.2px;
+}
 
 .brush .extent {
   stroke: #ccc;

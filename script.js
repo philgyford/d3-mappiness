@@ -42,49 +42,61 @@ mappiness.dataManager = function module() {
 
 
 mappiness.chart = function module() {
-  // mini_* variables apply to the brush chart below the main one.
-  var margin = {top: 10, right: 10, bottom: 100, left: 25},
+  var focus_margin = {top: 10, right: 10, bottom: 100, left: 25},
       width = 960,
       height = 500,
-      inner_width = width - margin.left - margin.right,
-      inner_height = height - margin.top - margin.bottom,
-      mini_margin = {top: height - margin.top - 60,
-                      right: 10, bottom: 20, left: 25},
+      focus_width = width - focus_margin.left - focus_margin.right,
+      focus_height = height - focus_margin.top - focus_margin.bottom,
+      mini_margin = {top: height - focus_margin.top - 60,
+                      right: focus_margin.top, bottom: 20, left: focus_margin.left},
       mini_inner_height = height - mini_margin.top - mini_margin.bottom,
+
       svg,
-      main_g,
-      axes_g,
-      mini_g,
-      mini_axes_g,
+      focus_g,
+      focus_axes_g,
+      context_g,
+      context_axes_g,
       brush,
+
       xValue = function(d) { return d[0]; },
       yValue = function(d) { return d[1]; },
-      xScale = d3.time.scale(),
-      mini_xScale = d3.time.scale(),
-      yScale = d3.scale.linear(),
-      mini_yScale = d3.scale.linear(),
+
+      focus_xScale = d3.time.scale(),
+      context_xScale = d3.time.scale(),
+      focus_yScale = d3.scale.linear(),
+      context_yScale = d3.scale.linear(),
+
       dateFormat = d3.time.format('%-d %b %Y'),
-      xAxis = d3.svg.axis()
-                  .scale(xScale)
-                  .orient('bottom'),
-                  //.tickFormat(dateFormat),
-                  //.ticks(d3.time.years, 5),
-      mini_xAxis = d3.svg.axis()
-                    .scale(mini_xScale)
-                    .orient('bottom'),
-      yAxis = d3.svg.axis()
-                  .scale(yScale)
-                  .orient('left'),
+      focus_xAxis = d3.svg.axis()
+                        .scale(focus_xScale)
+                        .orient('bottom'),
+                        //.tickFormat(dateFormat),
+                        //.ticks(d3.time.years, 5),
+      context_xAxis = d3.svg.axis()
+                        .scale(context_xScale)
+                        .orient('bottom'),
+      focus_yAxis = d3.svg.axis()
+                          .scale(focus_yScale)
+                          .orient('left'),
+      context_yAxis = d3.svg.axis()
+                          .scale(context_yScale)
+                          .orient('left'),
       lines = [
-        {type: 'happy',
-         line: d3.svg.line().x(X).y(YHappy),
-         mini_line: d3.svg.line().x(X).y(mini_YHappy)},
-        {type: 'relaxed',
-         line: d3.svg.line().x(X).y(YRelaxed),
-         mini_line: d3.svg.line().x(X).y(mini_YRelaxed)},
-        {type: 'awake',
-         line: d3.svg.line().x(X).y(YAwake),
-         mini_line: d3.svg.line().x(X).y(mini_YAwake)}
+        {
+          type: 'awake',
+          line: d3.svg.line().x(X).y(YAwake),
+          mini_line: d3.svg.line().x(X).y(mini_YAwake)
+        },
+        {
+          type: 'relaxed',
+          line: d3.svg.line().x(X).y(YRelaxed),
+          mini_line: d3.svg.line().x(X).y(mini_YRelaxed)
+        },
+        {
+          type: 'happy',
+          line: d3.svg.line().x(X).y(YHappy),
+          mini_line: d3.svg.line().x(X).y(mini_YHappy)
+        }
       ];
 
   function exports(_selection) {
@@ -110,57 +122,57 @@ mappiness.chart = function module() {
 
   function createMain() {
     // Create skeletal chart, with no data applied.
-    main_g = svg.enter()
+    focus_g = svg.enter()
                   .append('svg')
                     .append('g')
                       .attr('class', 'main');
 
-    mini_g = svg.append('g')
+    context_g = svg.append('g')
                       .attr('class', 'mini');
 
-    axes_g = main_g.append('g')
+    focus_axes_g = focus_g.append('g')
                       .attr('class', 'axes');
 
-    mini_axes_g = mini_g.append('g')
+    context_axes_g = context_g.append('g')
                       .attr('class', 'axes');
 
     // If g.main already exists, we need to explicitly select it:
-    main_g = svg.select('g.main');
-    mini_g = svg.select('g.mini');
+    focus_g= svg.select('g.main');
+    context_g= svg.select('g.mini');
 
     // Update outer and inner dimensions.
     svg.transition().attr({ width: width, height: height });
 
     // When we add `clip-path:url(#clip)` to the lines in the main chart,
     // this stops them extending beyond the chart area.
-    main_g.append('clipPath')
+    focus_g.append('clipPath')
             .attr('id', 'clip')
             .append('rect')
-              .attr('width', inner_width)
-              .attr('height', inner_height);
+              .attr('width', focus_width)
+              .attr('height', focus_height);
 
-    main_g.attr('transform', 'translate(' + margin.left +','+ margin.top + ')');
-    mini_g.attr('transform', 'translate(' + mini_margin.left +','+ mini_margin.top + ')');
+    focus_g.attr('transform', 'translate(' + focus_margin.left +','+ focus_margin.top + ')');
+    context_g.attr('transform', 'translate(' + mini_margin.left +','+ mini_margin.top + ')');
   };
 
 
   function updateScales(data) {
-    inner_width = width - margin.left - margin.right;
-    inner_height = height - margin.top - margin.bottom;
+    focus_width = width - focus_margin.left - focus_margin.right;
+    focus_height = height - focus_margin.top - focus_margin.bottom;
 
-    xScale.domain([
+    focus_xScale.domain([
       d3.min(data, function(response){
         return response.start_time;
       }),
       d3.max(data, function(response){
         return response.start_time;
       })
-    ]).range([0, inner_width]);
-    mini_xScale.domain(xScale.domain()).range(xScale.range());
+    ]).range([0, focus_width]);
+    context_xScale.domain(focus_xScale.domain()).range(focus_xScale.range());
 
-    yScale.domain([0, 1]).range([inner_height, 0]);
+    focus_yScale.domain([0, 1]).range([focus_height, 0]);
 
-    mini_yScale.domain(yScale.domain()).range([mini_inner_height, 0]);
+    context_yScale.domain(focus_yScale.domain()).range([mini_inner_height, 0]);
   };
 
 
@@ -172,33 +184,33 @@ mappiness.chart = function module() {
 
 
   function renderXAxis() {
-    axes_g.append('g')
+    focus_axes_g.append('g')
             .attr('class', 'x axis');
 
-    main_g.select('.x.axis')
-            .attr('transform', 'translate(0,' + yScale.range()[0] + ')')
-            .call(xAxis);
+    focus_g.select('.x.axis')
+            .attr('transform', 'translate(0,' + focus_yScale.range()[0] + ')')
+            .call(focus_xAxis);
   };
 
 
   function renderYAxis() {
-    axes_g.append('g')
+    focus_axes_g.append('g')
             .attr('class', 'y axis');
-    main_g.select('.y.axis')
-            .call(yAxis);
+    focus_g.select('.y.axis')
+            .call(focus_yAxis);
   };
 
   function renderMiniXAxis() {
-    mini_axes_g.append('g')
+    context_axes_g.append('g')
             .attr('class', 'x axis');
 
-    mini_g.select('.x.axis')
-            .attr('transform', 'translate(0,' + mini_yScale.range()[0] + ')')
-            .call(mini_xAxis);
+    context_g.select('.x.axis')
+            .attr('transform', 'translate(0,' + context_yScale.range()[0] + ')')
+            .call(context_xAxis);
   };
 
   function renderBody() {
-    var lines_g = main_g.selectAll('g.lines')
+    var lines_g = focus_g.selectAll('g.lines')
                           .data(function(d) { return [d]; },
                                 function(d) { return 'todo'; });
 
@@ -229,11 +241,11 @@ mappiness.chart = function module() {
 
   function renderBrush() {
     brush = d3.svg.brush()
-                        .x(mini_xScale)
+                        .x(context_xScale)
                         .on('brush', brushed);
                         
     ////
-    var lines_g = mini_g.selectAll('g.lines')
+    var lines_g = context_g.selectAll('g.lines')
                           .data(function(d) { return [d]; },
                                 function(d) { return 'todo'; });
 
@@ -256,7 +268,7 @@ mappiness.chart = function module() {
       });
 
     ////
-    mini_g.append('g')
+    context_g.append('g')
       .attr('class', 'x brush')
       .call(brush)
     .selectAll('rect')
@@ -265,39 +277,39 @@ mappiness.chart = function module() {
   };
 
   function brushed() {
-    xScale.domain(brush.empty() ? mini_xScale.domain() : brush.extent());
+    focus_xScale.domain(brush.empty() ? context_xScale.domain() : brush.extent());
     lines.forEach(function(ln) {
-      main_g.select('path.line.'+ln.type).attr('d', function(d) { return ln.line(d); });
+      focus_g.select('path.line.'+ln.type).attr('d', function(d) { return ln.line(d); });
     });
-    main_g.select(".x.axis").call(xAxis);
+    focus_g.select(".x.axis").call(focus_xAxis);
   };
 
   function X(d) {
-    return xScale(d.start_time);
+    return focus_xScale(d.start_time);
   };
 
   function YHappy(d) {
-    return yScale(d.happy);
+    return focus_yScale(d.happy);
   };
   function YRelaxed(d) {
-    return yScale(d.relaxed);
+    return focus_yScale(d.relaxed);
   };
   function YAwake(d) {
-    return yScale(d.awake);
+    return focus_yScale(d.awake);
   };
   function mini_YHappy(d) {
-    return mini_yScale(d.happy);
+    return context_yScale(d.happy);
   };
   function mini_YRelaxed(d) {
-    return mini_yScale(d.relaxed);
+    return context_yScale(d.relaxed);
   };
   function mini_YAwake(d) {
-    return mini_yScale(d.awake);
+    return context_yScale(d.awake);
   };
 
   exports.margin = function(_) {
-    if (!arguments.length) return margin;
-    margin = _;
+    if (!arguments.length) return focus_margin;
+    focus_margin = _;
     return this;
   };
 
