@@ -37,16 +37,17 @@ body {
   fill: none;
   stroke-width: 0.5px;
   clip-path: url(#clip);
+  stroke: #000;
 }
-	.line.happy {
-		stroke: #dc3a2d;
-	}
-	.line.relaxed {
-		stroke: #2e5aa9;
-	}
-	.line.awake {
-		stroke: #518d48;
-	}
+	/*.line.happy {*/
+		/*stroke: #dc3a2d;*/
+	/*}*/
+	/*.line.relaxed {*/
+		/*stroke: #2e5aa9;*/
+	/*}*/
+	/*.line.awake {*/
+		/*stroke: #518d48;*/
+	/*}*/
 .context .line {
   stroke-width: 0.2px;
 }

@@ -23,8 +23,47 @@ mappiness.dataManager = function module() {
     });
   };
 
-  exports.getCleanedData = function() {
-    return data;
+  exports.getCleanedData = function(constraints) {
+    if ( ! 'feeling' in constraints) {
+      // Set default.
+      constraints.feeling = 'happy';
+    };
+
+    var cleaned_data = getFeelingData(constraints.feeling);
+
+    return cleaned_data;
+  };
+
+
+  /**
+   * Returns a copy of data but with each object having these additional
+   * atributes:
+   *  `feeling` - whatever is passed in to this function.
+   *  `value` - the numeric value for that feeling.
+   *
+   * eg, if a data element is like:
+   *  {accuracy_m: 200, awake: 0.417671, ...}
+   * and we pass 'awake' into getFeelingData, each data element in the returned
+   * array will be more like:
+   *  {accuracy_m: 200, awake: 0.417671, feeling: 'awake', value: 0.417671, ...}
+   *  
+   * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
+   */
+  var getFeelingData = function(feeling) {
+    var feeling_data = [];
+
+    // Give this line a unique-enough ID.
+    var id = 'id' + Date.now();
+
+    data.forEach(function(d, n) {
+      // Don't like having to use jQuery here, but seems simplest/best way
+      // to clone an object?
+      feeling_data[n] = $.extend({}, d);
+      feeling_data[n]['feeling'] = feeling;
+      feeling_data[n]['value'] = d[feeling]; 
+      feeling_data[n]['id'] = id;
+    });
+    return feeling_data; 
   };
 
   // Do any tidying up of the data we need.
@@ -92,11 +131,11 @@ mappiness.chart = function module() {
                           .scale(contextYScale)
                           .orient('left'),
       
-      // The lines we can show.
-      allLines = ['happy', 'relaxed', 'awake'],
-      // What's being displayed now.
-      currentLines = allLines;
-
+      contextLine = d3.svg.line().x(X).y(contextY),
+      focusLine = d3.svg.line().x(X).y(focusY),
+      
+      color = d3.scale.ordinal()
+                      .range(['#dc3a2d', '#2e5aa9', '#518d48']);
 
   function exports(_selection) {
     _selection.each(function(data) {
@@ -105,6 +144,10 @@ mappiness.chart = function module() {
       svg = d3.select(this)
                 .selectAll('svg')
                   .data([data]);
+
+      // Give each line its own color, keyed by its ID.
+      // (The ID is stored in each point of the line.)
+      color.domain(data.map(function(d) { return d[0].id; } ));
 
       createMain();
 
@@ -138,8 +181,8 @@ mappiness.chart = function module() {
                       .attr('class', 'axes');
 
     // If g.focus already exists, we need to explicitly select it:
-    focusG= svg.select('g.focus');
-    contextG= svg.select('g.context');
+    focusG = svg.select('g.focus');
+    contextG = svg.select('g.context');
 
     // Update outer and inner dimensions.
     svg.transition().attr({ width: width, height: height });
@@ -163,12 +206,17 @@ mappiness.chart = function module() {
   function updateScales(data) {
     setDimensions();
 
+    // Get min and max of all the start times for all the lines.
     focusXScale.domain([
-      d3.min(data, function(response){
-        return response.start_time;
+      d3.min(data, function(line) {
+        return d3.min(line, function(response) {
+          return response.start_time;
+        })
       }),
-      d3.max(data, function(response){
-        return response.start_time;
+      d3.max(data, function(line) {
+        return d3.max(line, function(response) {
+          return response.start_time;
+        })
       })
     ]).range([0, focusWidth]);
 
@@ -254,57 +302,27 @@ mappiness.chart = function module() {
    * `chart` is either 'focus' or 'context'.
    */
   function renderLines(chart) {
-    var linesG;
 
+    // Each chart has its own element that we draw in, and its own line object.
     if (chart == 'context') {
-      linesG = contextG.selectAll('g.lines')
-                          .data(function(d) { return [d]; },
-                                function(d) { return 'todo'; });
+      var chartEl = contextG;
+      var chartLine = contextLine;
     } else {
-      linesG = focusG.selectAll('g.lines')
-                        .data(function(d) { return [d]; },
-                              function(d) { return 'todo'; });
+      var chartEl = focusG;
+      var chartLine = focusLine;
     };
 
-    linesG.enter().append('g')
-                    .attr('class', 'lines');
+    chartEl.selectAll('path.line.feeling')
+        .data(function(d) { return d; }, function(d) { return d[0].id; })
+        .enter().append('path')
+          .attr('class', 'line feeling')
+          .attr('id', function(d) { return d[0].id; })
+          .style('stroke', function(d) { return color(d[0].id); });
 
-    linesG.exit().remove();
-
-    currentLines.forEach(function(line_type) {
-        linesG.selectAll('path.line.'+line_type)
-            .data(function(d) { return [d]; }, function(d){ return line_type; })
-            .enter().append('path')
-              .attr('class', 'line '+line_type);
-
-        linesG.selectAll('path.line.'+line_type)
-            .data(function(d) { return [d]; }, function(d){ return line_type; })
-            .transition()
-            .attr('d', function(d) { return makeLine(chart, line_type)(d); });
-      });
-  };
-
-
-  /**
-   * Returns a line object using the corret Y accessor for the chart and the
-   * line type.
-   * `chart` is one of 'focus' or 'context'.
-   * `line_type` is one of 'awake', 'happy', or 'relaxed'.
-   */
-  function makeLine(chart, line_type) {
-    var ys = {
-      context: {
-        awake: contextYAwake,
-        happy: contextYHappy,
-        relaxed: contextYRelaxed
-      },
-      focus: {
-        awake: focusYAwake,
-        happy: focusYHappy,
-        relaxed: focusYRelaxed
-      }
-    };
-    return d3.svg.line().x(X).y(ys[chart][line_type]);
+    chartEl.selectAll('path.line.feeling')
+        .data(function(d) { return d; })
+        .transition()
+        .attr('d', function(d) { return chartLine(d); });
   };
 
 
@@ -312,30 +330,30 @@ mappiness.chart = function module() {
    * Hide a line on the chart.
    * `line_type` is one of 'happy', 'awake' or 'relaxed'.
    */
-  function hideLine(line_type) {
-    var newLines = [];
-    currentLines.forEach(function(lt) {
-      if (lt != line_type) {
-        newLines.push(lt);
-      };
-    });
-    currentLines = newLines;
+  //function hideLine(line_type) {
+    //var newLines = [];
+    //currentLines.forEach(function(lt) {
+      //if (lt != line_type) {
+        //newLines.push(lt);
+      //};
+    //});
+    //currentLines = newLines;
 
-    d3.selectAll('path.line.'+line_type).style('visibility', 'hidden');
-  };
+    //d3.selectAll('path.line.'+line_type).style('visibility', 'hidden');
+  //};
 
 
   /**
    * Hide a line on the chart.
    * `line_type` is one of 'happy', 'awake' or 'relaxed'.
    */
-  function displayLine(line_type) {
-    if ($.inArray(line_type, currentLines) == -1) {
-      currentLines.push(line_type);
-    }; 
+  //function displayLine(line_type) {
+    //if ($.inArray(line_type, currentLines) == -1) {
+      //currentLines.push(line_type);
+    //}; 
 
-    d3.selectAll('path.line.'+line_type).style('visibility', 'visible');
-  };
+    //d3.selectAll('path.line.'+line_type).style('visibility', 'visible');
+  //};
 
 
   /**
@@ -358,10 +376,8 @@ mappiness.chart = function module() {
 
   function brushed() {
     focusXScale.domain(brush.empty() ? contextXScale.domain() : brush.extent());
-    allLines.forEach(function(line_type) {
-      focusG.select('path.line.'+line_type).attr('d', function(d) {
-                                    return makeLine('focus', line_type)(d); });
-    });
+    focusG.selectAll('path.line.feeling')
+              .attr('d', function(d) { return focusLine(d); });
     focusG.select(".x.axis").call(focusXAxis);
   };
 
@@ -370,34 +386,22 @@ mappiness.chart = function module() {
     return focusXScale(d.start_time);
   };
 
-  function focusYHappy(d) {
-    return focusYScale(d.happy);
+  function focusY(d) {
+    return focusYScale(d.value);
   };
-  function focusYRelaxed(d) {
-    return focusYScale(d.relaxed);
-  };
-  function focusYAwake(d) {
-    return focusYScale(d.awake);
-  };
-  function contextYHappy(d) {
-    return contextYScale(d.happy);
-  };
-  function contextYRelaxed(d) {
-    return contextYScale(d.relaxed);
-  };
-  function contextYAwake(d) {
-    return contextYScale(d.awake);
+  function contextY(d) {
+    return contextYScale(d.value);
   };
 
-  exports.toggleLine = function(line_type) {
-    if ($.inArray(line_type, currentLines) >= 0) {
-      hideLine(line_type);
+  //exports.toggleLine = function(line_type) {
+    //if ($.inArray(line_type, currentLines) >= 0) {
+      //hideLine(line_type);
 
-    } else if ($.inArray(line_type, allLines) >= 0
-              && $.inArray(line_type, currentLines) == -1) {
-      displayLine(line_type);
-    };
-  };
+    //} else if ($.inArray(line_type, allLines) >= 0
+              //&& $.inArray(line_type, currentLines) == -1) {
+      //displayLine(line_type);
+    //};
+  //};
 
   exports.margin = function(_) {
     if (!arguments.length) return margin;
@@ -460,12 +464,13 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    data = dataManager.getCleanedData();
+    data = [dataManager.getCleanedData({feeling: 'happy'}),
+            dataManager.getCleanedData({feeling: 'awake'})];
 
     chart = mappiness.chart();
 
     var container = d3.select('#container')
-                      .datum(data)
+                      .data([data])
                       .call(chart);
   };
   
