@@ -23,22 +23,11 @@ mappiness.dataManager = function module() {
     });
   };
 
+  /**
+   * Returns the full set of data, with no filtering or additional fields.
+   */
   exports.getCleanedData = function() {
     return data;
-  };
-
-
-  exports.getFilteredData = function(constraints) {
-    if ( ! 'feeling' in constraints) {
-      // Set default.
-      constraints.feeling = 'happy';
-    };
-
-    var cleaned_data = feelingData(constraints.feeling);
-
-
-    return cleaned_data;
-  
   };
 
   /**
@@ -55,13 +44,15 @@ mappiness.dataManager = function module() {
    *  
    * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
    */
-  var feelingData = function(feeling) {
+  exports.getFeelingData = function(feeling) {
     var feeling_data = [];
 
     // Give this line a unique-enough ID.
     var id = 'id' + Date.now();
 
-    data.forEach(function(d, n) {
+    var original_data = exports.getCleanedData();
+
+    original_data.forEach(function(d, n) {
       // Don't like having to use jQuery here, but seems simplest/best way
       // to clone an object?
       feeling_data[n] = $.extend({}, d);
@@ -71,6 +62,29 @@ mappiness.dataManager = function module() {
     });
     return feeling_data; 
   };
+
+
+  /**
+   * The same as getFeelingData() but omitting any data points that don't
+   * match the supplied constraints.
+   *
+   * `constraints` should at least have a `feeling` attribute, being one of
+   * 'happy', 'relaxed' or 'awake'.
+   *
+   * Additional, optional attributes:
+   *
+   */
+  exports.getFilteredData = function(constraints) {
+    if ( ! 'feeling' in constraints) {
+      // Set default.
+      constraints.feeling = 'happy';
+    };
+
+    var feeling_data = exports.getFeelingData(constraints.feeling);
+
+    return feeling_data;
+  };
+
 
   // Do any tidying up of the data we need.
   var cleanData = function(d) {
