@@ -23,17 +23,23 @@ mappiness.dataManager = function module() {
     });
   };
 
-  exports.getCleanedData = function(constraints) {
+  exports.getCleanedData = function() {
+    return data;
+  };
+
+
+  exports.getFilteredData = function(constraints) {
     if ( ! 'feeling' in constraints) {
       // Set default.
       constraints.feeling = 'happy';
     };
 
-    var cleaned_data = getFeelingData(constraints.feeling);
+    var cleaned_data = feelingData(constraints.feeling);
+
 
     return cleaned_data;
+  
   };
-
 
   /**
    * Returns a copy of data but with each object having these additional
@@ -49,7 +55,7 @@ mappiness.dataManager = function module() {
    *  
    * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
    */
-  var getFeelingData = function(feeling) {
+  var feelingData = function(feeling) {
     var feeling_data = [];
 
     // Give this line a unique-enough ID.
@@ -135,7 +141,7 @@ mappiness.chart = function module() {
       focusLine = d3.svg.line().x(X).y(focusY),
       
       color = d3.scale.ordinal()
-                      .range(['#dc3a2d', '#2e5aa9', '#518d48']);
+                      .range(['#dc3a2d', '#2e5aa9', '#518d48', '#000', '#666']);
 
   function exports(_selection) {
     _selection.each(function(data) {
@@ -464,8 +470,8 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    data = [dataManager.getCleanedData({feeling: 'happy'}),
-            dataManager.getCleanedData({feeling: 'awake'})];
+    data = [dataManager.getFilteredData({feeling: 'happy'}),
+            dataManager.getFilteredData({feeling: 'awake'})];
 
     chart = mappiness.chart();
 
