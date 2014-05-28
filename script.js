@@ -70,7 +70,7 @@ mappiness.dataManager = function module() {
    * 'happy', 'relaxed' or 'awake'.
    *
    * Additional, optional attributes:
-   * 'in_out': One of 'in', 'out' or 'vehicle'.
+   * 'in_out': An array containing one or more of 'in', 'out' or 'vehicle'.
    *
    */
   exports.getFilteredData = function(constraints) {
@@ -83,13 +83,13 @@ mappiness.dataManager = function module() {
 
     if ('in_out' in constraints) {
       feeling_data = feeling_data.filter(function(d) {
-        return d.in_out == constraints.in_out; 
+        return constraints.in_out.indexOf(d.in_out) >= 0; 
       });
     };
 
     if ('home_work' in constraints) {
       feeling_data = feeling_data.filter(function(d) {
-        return d.home_work == constraints.home_work; 
+        return constraints.home_work.indexOf(d.home_work) >= 0; 
       });
     };
 
@@ -497,8 +497,8 @@ mappiness.controller = function module() {
     $('#loaded').fadeIn(500);
 
     data = [
-      dataManager.getFilteredData({feeling: 'happy', home_work: 'home'}),
-      dataManager.getFilteredData({feeling: 'happy', home_work: 'work'})
+      dataManager.getFilteredData({feeling: 'happy', home_work: ['home']}),
+      dataManager.getFilteredData({feeling: 'happy', home_work: ['work']})
       //,
             //dataManager.getFilteredData({feeling: 'awake'})
               ];
