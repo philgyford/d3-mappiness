@@ -50,9 +50,7 @@ mappiness.dataManager = function module() {
     // Give this line a unique-enough ID.
     var id = 'id' + Date.now();
 
-    var original_data = exports.getCleanedData();
-
-    original_data.forEach(function(d, n) {
+    exports.getCleanedData().forEach(function(d, n) {
       // Don't like having to use jQuery here, but seems simplest/best way
       // to clone an object?
       feeling_data[n] = $.extend({}, d);
@@ -72,6 +70,7 @@ mappiness.dataManager = function module() {
    * 'happy', 'relaxed' or 'awake'.
    *
    * Additional, optional attributes:
+   * 'in_out': One of 'in', 'out' or 'vehicle'.
    *
    */
   exports.getFilteredData = function(constraints) {
@@ -82,6 +81,19 @@ mappiness.dataManager = function module() {
 
     var feeling_data = exports.getFeelingData(constraints.feeling);
 
+    if ('in_out' in constraints) {
+      feeling_data = feeling_data.filter(function(d) {
+        return d.in_out == constraints.in_out; 
+      });
+    };
+
+    if ('home_work' in constraints) {
+      feeling_data = feeling_data.filter(function(d) {
+        return d.home_work == constraints.home_work; 
+      });
+    };
+
+    console.log(feeling_data[0]);
     return feeling_data;
   };
 
@@ -484,8 +496,12 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    data = [dataManager.getFilteredData({feeling: 'happy'}),
-            dataManager.getFilteredData({feeling: 'awake'})];
+    data = [
+      dataManager.getFilteredData({feeling: 'happy', home_work: 'home'}),
+      dataManager.getFilteredData({feeling: 'happy', home_work: 'work'})
+      //,
+            //dataManager.getFilteredData({feeling: 'awake'})
+              ];
 
     chart = mappiness.chart();
 
