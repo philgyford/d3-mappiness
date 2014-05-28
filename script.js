@@ -71,6 +71,7 @@ mappiness.dataManager = function module() {
    *
    * Additional, optional attributes:
    * 'in_out': An array containing one or more of 'in', 'out' or 'vehicle'.
+   * 'home_work': An array containing one or more of 'home', 'work' or 'other'.
    *
    */
   exports.getFilteredData = function(constraints) {
