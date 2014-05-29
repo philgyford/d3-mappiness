@@ -12,15 +12,13 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Make chart as wide as browser window.
 * Something that says what dates are shown in focus area.
 * Hover lines like on http://bl.ocks.org/gniemetz/4618602
 * Rolling average. Configurable in UI?
+* Points rather than dots? Gaps when there's no data?
 * Filters for:
-	* Activity
-	* People
-	* Location (in/out/vehicle _ home/work/other)
 	* Map area?
 * Compare two sets of lines, with independent filters.
+* Resize width of chart on window resize?
 * Demo site with dummy data.
 

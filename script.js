@@ -78,6 +78,10 @@ mappiness.dataManager = function module() {
    * 'with_children', 'with_clients', 'with_friends', 'with_others',
      'with_partner', 'with_peers', 'with_relatives' can be 1 or 0.
    *
+   * 'do_work', 'do_meeting', 'do_travel', 'do_cook', 'do_chores', 'do_admin', 'do_shop', 'do_wait', 'do_childcare', 'do_pet', 'do_care', 'do_rest', 'do_sick', 'do_pray', 'do_wash', 'do_love', 'do_chat', 'do_eat', 'do_caffeine', 'do_alcohol', 'do_smoke', 'do_msg', 'do_net', 'do_tv', 'do_music', 'do_speech', 'do_read', 'do_theatre', 'do_museum', 'do_match', 'do_walk', 'do_sport', 'do_gardening', 'do_birdwatch', 'do_hunt', 'do_compgame', 'do_games', 'do_bet', 'do_art', 'do_sing', 'do_other' can be 1 or 0.
+   *
+   * 'notes' can be a string which will be RegExp'd against the point's notes
+   * field, ignoring case.
    */
   exports.getFilteredData = function(constraints) {
     if ( ! 'feeling' in constraints) {
@@ -123,7 +127,16 @@ mappiness.dataManager = function module() {
        };
     });
 
-    console.log(feeling_data[0]);
+    if ('notes' in constraints) {
+      feeling_data = feeling_data.filter(function(d) {
+        if (d.notes == null) {
+          return false;
+        } else {
+          return d.notes.match(new RegExp(constraints.notes, 'i')) !== null;
+        };
+      });
+    };
+
     return feeling_data;
   };
 
@@ -502,17 +515,37 @@ mappiness.chart = function module() {
 };
 
 
+/**
+ * For handling all the dynamic forms etc.
+ */
+mappiness.ui = function module() {
+  var exports = {};
+
+  exports.init = function() {
+  };
+
+  return exports;
+};
+
+
+/**
+ * The main place where we start things and draw the chart from etc.
+ * Call mappiness.controller().init(); to have everything happen.
+ */
 mappiness.controller = function module() {
   var exports = {},
       data,
       chart,
-      dataManager = mappiness.dataManager();
+      dataManager = mappiness.dataManager(),
+      ui = mappiness.ui();
 
   /**
    * Call this to kick things off.
    */
   exports.init = function() {
     
+    ui.init();
+
     dataManager.loadJSON('mappiness.json');
 
     dataManager.on('dataReady', function() {
@@ -527,13 +560,13 @@ mappiness.controller = function module() {
     $('#loaded').fadeIn(500);
 
     data = [
-      dataManager.getFilteredData({feeling: 'happy', do_music: 1}),
-      dataManager.getFilteredData({feeling: 'happy', do_music: 0})
+      dataManager.getFilteredData({feeling: 'happy'}),
+      dataManager.getFilteredData({feeling: 'happy', notes: 'pepys'})
       //,
             //dataManager.getFilteredData({feeling: 'awake'})
               ];
 
-    chart = mappiness.chart();
+    chart = mappiness.chart().width( $('#container').width() );
 
     var container = d3.select('#container')
                       .data([data])
