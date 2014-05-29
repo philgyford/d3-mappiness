@@ -108,6 +108,20 @@ mappiness.dataManager = function module() {
        };
     });
 
+    ['do_work', 'do_meeting', 'do_travel', 'do_cook', 'do_chores', 'do_admin', 'do_shop', 'do_wait', 'do_childcare', 'do_pet', 'do_care', 'do_rest', 'do_sick', 'do_pray', 'do_wash', 'do_love', 'do_chat', 'do_eat', 'do_caffeine', 'do_alcohol', 'do_smoke', 'do_msg', 'do_net', 'do_tv', 'do_music', 'do_speech', 'do_read', 'do_theatre', 'do_museum', 'do_match', 'do_walk', 'do_sport', 'do_gardening', 'do_birdwatch', 'do_hunt', 'do_compgame', 'do_games', 'do_bet', 'do_art', 'do_sing', 'do_other'].forEach(function(activity) {
+       if (activity in constraints) {
+          feeling_data = feeling_data.filter(function(d) {
+            if (activity == 'do_other') {
+              // Special case: The data has do_other and do_other2 as possible
+              // fields, but in our UI we conflate them into one 'do_other'
+              // field.
+              return d[activity] == constraints[activity] || d['do_other2'] == constraints[activity]; 
+            } else {
+              return d[activity] == constraints[activity]; 
+            };
+          });
+       };
+    });
 
     console.log(feeling_data[0]);
     return feeling_data;
@@ -513,8 +527,8 @@ mappiness.controller = function module() {
     $('#loaded').fadeIn(500);
 
     data = [
-      dataManager.getFilteredData({feeling: 'happy'}),
-      dataManager.getFilteredData({feeling: 'happy', with_partner: 1})
+      dataManager.getFilteredData({feeling: 'happy', do_music: 1}),
+      dataManager.getFilteredData({feeling: 'happy', do_music: 0})
       //,
             //dataManager.getFilteredData({feeling: 'awake'})
               ];
