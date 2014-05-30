@@ -23,6 +23,7 @@ mappiness.dataManager = function module() {
     });
   };
 
+  
   /**
    * `constraints` is null, or an object with one or more of these keys:
    * 'feeling': One of 'happy', 'relaxed' or 'awake'.
@@ -30,11 +31,12 @@ mappiness.dataManager = function module() {
    */
   exports.getCleanedData = function(constraints) {
     if (constraints == null) {
-      return data;
+      return {values: data};
     } else {
-      return getFilteredData(constraints);
+      return {values: getFilteredData(constraints)};
     };
   };
+
 
   /**
    * Returns a copy of data but with each object having these additional
@@ -56,7 +58,7 @@ mappiness.dataManager = function module() {
     // Give this line a unique-enough ID.
     var id = 'id' + Date.now();
 
-    exports.getCleanedData().forEach(function(d, n) {
+    exports.getCleanedData().values.forEach(function(d, n) {
       // Don't like having to use jQuery here, but seems simplest/best way
       // to clone an object?
       feeling_data[n] = $.extend({}, d);
@@ -143,7 +145,6 @@ mappiness.dataManager = function module() {
       });
     };
 
-
     return feeling_data;
   };
 
@@ -229,7 +230,7 @@ mappiness.chart = function module() {
 
       // Give each line its own color, keyed by its ID.
       // (The ID is stored in each point of the line.)
-      colorScale.domain(data.map(function(d) { return d[0].id; } ));
+      colorScale.domain(data.map(function(d) { return d.values[0].id; } ));
 
       createMain();
 
@@ -291,12 +292,12 @@ mappiness.chart = function module() {
     // Get min and max of all the start times for all the lines.
     focusXScale.domain([
       d3.min(data, function(line) {
-        return d3.min(line, function(response) {
+        return d3.min(line.values, function(response) {
           return response.start_time;
         })
       }),
       d3.max(data, function(line) {
-        return d3.max(line, function(response) {
+        return d3.max(line.values, function(response) {
           return response.start_time;
         })
       })
@@ -395,16 +396,16 @@ mappiness.chart = function module() {
     };
 
     chartEl.selectAll('path.line.feeling')
-        .data(function(d) { return d; }, function(d) { return d[0].id; })
+        .data(function(d) { return d; }, function(d) { return d.values[0].id; })
         .enter().append('path')
           .attr('class', 'line feeling')
-          .attr('id', function(d) { return d[0].id; })
-          .style('stroke', function(d) { return colorScale(d[0].id); });
+          .attr('id', function(d) { return d.values[0].id; })
+          .style('stroke', function(d) { return colorScale(d.values[0].id); });
 
     chartEl.selectAll('path.line.feeling')
         .data(function(d) { return d; })
         .transition()
-        .attr('d', function(d) { return chartLine(d); });
+        .attr('d', function(d) { return chartLine(d.values); });
   };
 
 
@@ -593,7 +594,7 @@ mappiness.ui = function module() {
   exports.list_lines = function(lines_data) {
     lines_data.forEach(function(line) {
       // All the info we need is contained within each point on the line.
-      var point = line[0];
+      var point = line.values[0];
       if ($('#key #key-'+point.id).length == 0) {
         // Add this line's data.
         $('#key').append(
