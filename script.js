@@ -5,7 +5,7 @@ mappiness.dataManager = function module() {
   var exports = {},
       dispatch = d3.dispatch('dataReady', 'dataLoading'),
       data,
-      constraint_descriptions = {
+      constraints_descriptions = {
         in_out: {in: 'Indoors',
                   out: 'Outdoors',
                   vehicle: 'In a vehicle'},
@@ -159,21 +159,21 @@ mappiness.dataManager = function module() {
     if ('in_out' in constraints) {
       new_constraints.in_out = {
             value: constraints.in_out,
-            description: constraint_descriptions.in_out[ constraints.in_out ]};
+            description: constraints_descriptions.in_out[ constraints.in_out ]};
     };
     if ('home_work' in constraints) {
       new_constraints.home_work = {
             value: constraints.home_work,
-            description: constraint_descriptions.home_work[
+            description: constraints_descriptions.home_work[
                                             new_constraints.home_work.value ]};
     };
     
     // Get the descriptions for any People constraints.
     var people = {};
-    d3.keys(constraint_descriptions.people).forEach(function(k) {
+    d3.keys(constraints_descriptions.people).forEach(function(k) {
       if (k in constraints) {
         people[k] = {value: constraints[k],
-                     description: constraint_descriptions.people[k]};
+                     description: constraints_descriptions.people[k]};
       };
     });
     if (d3.keys(people).length > 0) {
@@ -182,10 +182,10 @@ mappiness.dataManager = function module() {
   
     // Get the descriptions for any Activities constraints.
     var activities = {};
-    d3.keys(constraint_descriptions.activities).forEach(function(k) {
+    d3.keys(constraints_descriptions.activities).forEach(function(k) {
       if (k in constraints) {
         activities[k] = {value: constraints[k],
-                         description: constraint_descriptions.activities[k]};
+                         description: constraints_descriptions.activities[k]};
       };
     });
     if (d3.keys(activities).length > 0) {
@@ -205,14 +205,13 @@ mappiness.dataManager = function module() {
    *
    * Additional, optional attributes:
    *
-   * 'in_out': An array containing one or more of 'in', 'out' or 'vehicle'.
+   * 'in_out': A string, one of 'in', 'out' or 'vehicle'.
    *
-   * 'home_work': An array containing one or more of 'home', 'work' or 'other'.
+   * 'home_work': A string one of 'home', 'work' or 'other'.
    *
-   * 'with_children', 'with_clients', 'with_friends', 'with_others',
-     'with_partner', 'with_peers', 'with_relatives' can be 1 or 0.
+   * Any of the keys from constraints_descriptions.people, set to either 1 or 0.
    *
-   * 'do_work', 'do_meeting', 'do_travel', 'do_cook', 'do_chores', 'do_admin', 'do_shop', 'do_wait', 'do_childcare', 'do_pet', 'do_care', 'do_rest', 'do_sick', 'do_pray', 'do_wash', 'do_love', 'do_chat', 'do_eat', 'do_caffeine', 'do_alcohol', 'do_smoke', 'do_msg', 'do_net', 'do_tv', 'do_music', 'do_speech', 'do_read', 'do_theatre', 'do_museum', 'do_match', 'do_walk', 'do_sport', 'do_gardening', 'do_birdwatch', 'do_hunt', 'do_compgame', 'do_games', 'do_bet', 'do_art', 'do_sing', 'do_other' can be 1 or 0.
+   * Any of the keys from constraints_descriptions.activities, set to 1 or 0.
    *
    * 'notes' can be a string which will be RegExp'd against the point's notes
    * field, ignoring case.
@@ -233,8 +232,7 @@ mappiness.dataManager = function module() {
       });
     };
 
-    ['with_children', 'with_clients', 'with_friends', 'with_others',
-     'with_partner', 'with_peers', 'with_relatives'].forEach(function(people) {
+    d3.keys(constraints_descriptions.people).forEach(function(people) {
        if (people in constraints) {
           feeling_data = feeling_data.filter(function(d) {
             return d[people] == constraints[people]; 
@@ -242,7 +240,7 @@ mappiness.dataManager = function module() {
        };
     });
 
-    ['do_work', 'do_meeting', 'do_travel', 'do_cook', 'do_chores', 'do_admin', 'do_shop', 'do_wait', 'do_childcare', 'do_pet', 'do_care', 'do_rest', 'do_sick', 'do_pray', 'do_wash', 'do_love', 'do_chat', 'do_eat', 'do_caffeine', 'do_alcohol', 'do_smoke', 'do_msg', 'do_net', 'do_tv', 'do_music', 'do_speech', 'do_read', 'do_theatre', 'do_museum', 'do_match', 'do_walk', 'do_sport', 'do_gardening', 'do_birdwatch', 'do_hunt', 'do_compgame', 'do_games', 'do_bet', 'do_art', 'do_sing', 'do_other'].forEach(function(activity) {
+    d3.keys(constraints_descriptions.activities).forEach(function(activity) {
        if (activity in constraints) {
           feeling_data = feeling_data.filter(function(d) {
             if (activity == 'do_other') {
