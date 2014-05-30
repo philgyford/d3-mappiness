@@ -12,13 +12,15 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Something that says what dates are shown in focus area.
+* Something that shows what dates are shown in focus area.
 * Hover lines like on http://bl.ocks.org/gniemetz/4618602
 * Rolling average. Configurable in UI?
 * Points rather than dots? Gaps when there's no data?
-* Filters for:
-	* Map area?
-* Compare two sets of lines, with independent filters.
+* Filters:
+	* Copy line.
+	* Delete line.
+	* Form for changing a line's filters.
+	* Add map area filter?
 * Resize width of chart on window resize?
 * Demo site with dummy data.
 
