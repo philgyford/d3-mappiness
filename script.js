@@ -4,7 +4,65 @@ var mappiness = {};
 mappiness.dataManager = function module() {
   var exports = {},
       dispatch = d3.dispatch('dataReady', 'dataLoading'),
-      data;
+      data,
+      constraint_descriptions = {
+        in_out: {in: 'Indoors',
+                  out: 'Outdoors',
+                  vehicle: 'In a vehicle'},
+        home_work: {home: 'At home',
+                    work: 'At work',
+                    other: 'Elsewhere'},
+        people: {with_partner: "Spouse, partner, girl/boyfriend",
+                with_children: "Children",
+                with_relatives: "Other family members",
+                with_peers: "Colleagues, classmates",
+                with_clients: "Clients, customers",
+                with_friends: "Friends",
+                with_others: "Other people you know"},
+        activities: {do_work: "Working, studying",
+                    do_meet: "In a meeting, seminar, class",
+                    do_travel: "Travelling, commuting",
+                    do_cook: "Cooking, preparing food",
+                    do_chores: "Housework, chores, DIY",
+                    do_admin: "Admin, finances, organising",
+                    do_shop: "Shopping, errands",
+                    do_wait: "Waiting, queueing",
+                    do_child: "Childcare, playing with children",
+                    do_pet: "Pet care, playing with pets",
+                    do_care: "Care or help for adults",
+                    do_rest: "Sleeping, resting, relaxing",
+                    do_sick: "Sick in bed",
+                    do_pray: "Meditating, religious activities",
+                    do_wash: "Washing, dressing, grooming",
+                    do_love: "Intimacy, making love",
+                    do_chat: "Talking, chatting, socialising",
+                    do_eat: "Eating, snacking",
+                    do_caffeine: "Drinking tea/coffee",
+                    do_booze: "Drinking alcohol",
+                    do_smoke: "Smoking",
+                    do_msg: "Texting, email, social media",
+                    do_net: "Browsing the Internet",
+                    do_tv: "Watching TV, film",
+                    do_music: "Listening to music",
+                    do_speech: "Listening to speech/podcast",
+                    do_read: "Reading",
+                    do_theatre: "Theatre, dance, concert",
+                    do_museum: "Exhibition, museum, library",
+                    do_match: "Match, sporting event",
+                    do_walk: "Walking, hiking",
+                    do_sport: "Sports, running, exercise",
+                    do_gardening: "Gardening, allotment",
+                    do_birdwatch: "Birdwatching, nature watching",
+                    do_hunt: "Hunting, fishing",
+                    do_compgame: "Computer games, iPhone games",
+                    do_game: "Other games, puzzles",
+                    do_bet: "Gambling, betting",
+                    do_art: "Hobbies, arts, crafts",
+                    do_sing: "Singing, performing",
+                    do_other: "Something else",
+                    do_other2: "Something else"
+        }
+      };
 
   exports.loadJSON = function(filepath) {
     var load = d3.json(filepath); 
@@ -30,43 +88,72 @@ mappiness.dataManager = function module() {
    * [And/or any of the keys accepted by getFilteredData().]
    */
   exports.getCleanedData = function(constraints) {
-    if (constraints == null) {
-      return {values: data};
-    } else {
-      return {values: getFilteredData(constraints)};
+    constraints = tidyConstraints(constraints);
+    values = getFilteredData(constraints);
+
+    return {
+      id: values[0].id,
+      constraints: constraints,
+      values: values
     };
   };
 
 
+  var tidyConstraints = function(constraints) {
+    if (constraints == null) {
+      constraints = {};
+    }
+    // Set default.
+    if ( ! 'feeling' in constraints) {
+      constraints.feeling = 'happy';
+    };
+
+    constraints.descriptions = getConstraintsDescriptions(constraints);
+
+    return constraints;
+  };
+
+
   /**
-   * Returns a copy of data but with each object having these additional
-   * atributes:
-   *  `feeling` - whatever is passed in to this function.
-   *  `value` - the numeric value for that feeling.
-   *
-   * eg, if a data element is like:
-   *  {accuracy_m: 200, awake: 0.417671, ...}
-   * and we pass 'awake' into getFeelingData, each data element in the returned
-   * array will be more like:
-   *  {accuracy_m: 200, awake: 0.417671, feeling: 'awake', value: 0.417671, ...}
-   *  
-   * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
+   * Returns an object containing the textual descriptions of all the
+   * constraints supplied.
    */
-  var getFeelingData = function(feeling) {
-    var feeling_data = [];
+  var getConstraintsDescriptions = function(constraints) {
+    var descriptions = {
+      feeling: '',
+      in_out: '',
+      home_work: '', 
+      people: [],
+      activities: []
+    };
 
-    // Give this line a unique-enough ID.
-    var id = 'id' + Date.now();
+    // Capitalize first letter. Thanks JavaScript.
+    descriptions.feeling = constraints.feeling.charAt(0).toUpperCase()
+                            + constraints.feeling.slice(1);
 
-    exports.getCleanedData().values.forEach(function(d, n) {
-      // Don't like having to use jQuery here, but seems simplest/best way
-      // to clone an object?
-      feeling_data[n] = $.extend({}, d);
-      feeling_data[n]['feeling'] = feeling;
-      feeling_data[n]['value'] = d[feeling]; 
-      feeling_data[n]['id'] = id;
+    if ('in_out' in constraints) {
+      descriptions.in_out = constraint_descriptions.in_out[ constraints.in_out ];
+    };
+    if ('home_work' in constraints) {
+      descriptions.home_work = constraint_descriptions.home_work[
+                                                      constraints.home_work ];
+    };
+    
+    // Get the descriptions for any People and Activities constraints.
+
+    Object.keys(constraint_descriptions.people).forEach(function(k) {
+      if (k in constraints) {
+        descriptions.people.push( constraint_descriptions.people[k] );
+      };
     });
-    return feeling_data; 
+  
+    Object.keys(constraint_descriptions.activities).forEach(function(k) {
+      if (k in constraints) {
+        descriptions.activities.push( constraint_descriptions.activities[k] );
+      };
+    });
+
+    return descriptions;
   };
 
 
@@ -92,10 +179,6 @@ mappiness.dataManager = function module() {
    * field, ignoring case.
    */
   var getFilteredData = function(constraints) {
-    if ( ! 'feeling' in constraints) {
-      // Set default.
-      constraints.feeling = 'happy';
-    };
 
     var feeling_data = getFeelingData(constraints.feeling);
 
@@ -146,6 +229,39 @@ mappiness.dataManager = function module() {
     };
 
     return feeling_data;
+  };
+
+
+  /**
+   * Returns a copy of data but with each object having these additional
+   * atributes:
+   *  `feeling` - whatever is passed in to this function.
+   *  `value` - the numeric value for that feeling.
+   *
+   * eg, if a data element is like:
+   *  {accuracy_m: 200, awake: 0.417671, ...}
+   * and we pass 'awake' into getFeelingData, each data element in the returned
+   * array will be more like:
+   *  {accuracy_m: 200, awake: 0.417671, feeling: 'awake', value: 0.417671, ...}
+   *  
+   * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
+   */
+  var getFeelingData = function(feeling) {
+    var feeling_data = [];
+
+    // Give this line a unique-enough ID.
+    var id = 'id' + Date.now();
+
+    data.forEach(function(d, n) {
+      // Don't like having to use jQuery here, but seems simplest/best way
+      // to clone an object?
+      feeling_data[n] = $.extend({}, d);
+      feeling_data[n]['feeling'] = feeling;
+      feeling_data[n]['value'] = d[feeling]; 
+      feeling_data[n]['id'] = id;
+    });
+
+    return feeling_data; 
   };
 
 
@@ -533,82 +649,61 @@ mappiness.chart = function module() {
 mappiness.ui = function module() {
   var exports = {},
       // Will be a d3 scale once set by setColorScale().
-      colorScale,
-      descriptions = {
-        people: {with_partner: "Spouse, partner, girl/boyfriend",
-                with_children: "Children",
-                with_relatives: "Other family members",
-                with_peers: "Colleagues, classmates",
-                with_clients: "Clients, customers",
-                with_friends: "Friends",
-                with_others: "Other people you know"},
-        activities: {do_work: "Working, studying",
-                    do_meet: "In a meeting, seminar, class",
-                    do_travel: "Travelling, commuting",
-                    do_cook: "Cooking, preparing food",
-                    do_chores: "Housework, chores, DIY",
-                    do_admin: "Admin, finances, organising",
-                    do_shop: "Shopping, errands",
-                    do_wait: "Waiting, queueing",
-                    do_child: "Childcare, playing with children",
-                    do_pet: "Pet care, playing with pets",
-                    do_care: "Care or help for adults",
-                    do_rest: "Sleeping, resting, relaxing",
-                    do_sick: "Sick in bed",
-                    do_pray: "Meditating, religious activities",
-                    do_wash: "Washing, dressing, grooming",
-                    do_love: "Intimacy, making love",
-                    do_chat: "Talking, chatting, socialising",
-                    do_eat: "Eating, snacking",
-                    do_caffeine: "Drinking tea/coffee",
-                    do_booze: "Drinking alcohol",
-                    do_smoke: "Smoking",
-                    do_msg: "Texting, email, social media",
-                    do_net: "Browsing the Internet",
-                    do_tv: "Watching TV, film",
-                    do_music: "Listening to music",
-                    do_speech: "Listening to speech/podcast",
-                    do_read: "Reading",
-                    do_theatre: "Theatre, dance, concert",
-                    do_museum: "Exhibition, museum, library",
-                    do_match: "Match, sporting event",
-                    do_walk: "Walking, hiking",
-                    do_sport: "Sports, running, exercise",
-                    do_gardening: "Gardening, allotment",
-                    do_birdwatch: "Birdwatching, nature watching",
-                    do_hunt: "Hunting, fishing",
-                    do_compgame: "Computer games, iPhone games",
-                    do_game: "Other games, puzzles",
-                    do_bet: "Gambling, betting",
-                    do_art: "Hobbies, arts, crafts",
-                    do_sing: "Singing, performing",
-                    do_other: "Something else",
-                    do_other2: "Something else"},
-      };
+      colorScale;
 
   exports.init = function() {
   };
 
   //d3.rebind(exports, dispatch, "on");
 
-  exports.list_lines = function(lines_data) {
-    lines_data.forEach(function(line) {
-      // All the info we need is contained within each point on the line.
-      var point = line.values[0];
-      if ($('#key #key-'+point.id).length == 0) {
-        // Add this line's data.
+  exports.list_lines = function(lines) {
+    lines.forEach(function(line) {
+      if ($('#key #key-'+line.id).length == 0) {
+        // This line isn't listed, so make its empty HTML.
         $('#key').append(
-          $('<div/>').attr('id', 'key-'+point.id)
+          $('<div/>').attr('id', 'key-'+line.id)
                      .addClass('key-line')
-                     .html('<h2></h2><ul><li class="in_out"></li><li class="home_work"></li><li class="people"></li><li class="activities"></li></ul>')
+                     .html('<h2></h2><ul class="descriptions"></ul>')
         );
       };
 
-      $('#key-'+point.id).css('border-top-color', colorScale(point.id));
-      $('#key-'+point.id+' h2').text(point.feeling);
-      //$('#key-'+point.id+' .people').
+      var cssid = '#key-'+line.id;
+      var descs = line.constraints.descriptions;
 
+      $(cssid).css('border-top-color', colorScale(line.id));
+
+      $('h2', cssid).text(descs.feeling);
+
+      if (descs.in_out) {
+        $('.descriptions', cssid).append(
+          $('<li/>').addClass('in-out').text(descs.in_out)
+        );
+      };
+      if (descs.home_work) {
+        $('.descriptions', cssid).append(
+          $('<li/>').addClass('home-work').text(descs.home_work)
+        );
+      };
+
+      if (descs.people.length > 0) {
+        var $ul = $('<ul/>');
+        descs.people.forEach(function(d) {
+          $ul.append($('<li/>').text(d));
+        });
+        $('.descriptions', cssid).append(
+          $('<li/>').addClass('people').append($ul)
+        );
+      };
     
+      if (descs.activities.length > 0) {
+        var $ul = $('<ul/>');
+        descs.activities.forEach(function(d) {
+          $ul.append($('<li/>').text(d));
+        });
+        $('.descriptions', cssid).append(
+          $('<li/>').addClass('activities').append($ul)
+        );
+      };
     
     });
   
@@ -663,8 +758,8 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    lines_data.push(dataManager.getCleanedData({feeling: 'happy'}));
-    lines_data.push(dataManager.getCleanedData({feeling: 'awake'}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 1}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
 
     chart = mappiness.chart().width( $('#chart').width() );
 
