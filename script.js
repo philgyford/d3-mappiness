@@ -24,10 +24,16 @@ mappiness.dataManager = function module() {
   };
 
   /**
-   * Returns the full set of data, with no filtering or additional fields.
+   * `constraints` is null, or an object with one or more of these keys:
+   * 'feeling': One of 'happy', 'relaxed' or 'awake'.
+   * [And/or any of the keys accepted by getFilteredData().]
    */
-  exports.getCleanedData = function() {
-    return data;
+  exports.getCleanedData = function(constraints) {
+    if (constraints == null) {
+      return data;
+    } else {
+      return getFilteredData(constraints);
+    };
   };
 
   /**
@@ -44,7 +50,7 @@ mappiness.dataManager = function module() {
    *  
    * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
    */
-  exports.getFeelingData = function(feeling) {
+  var getFeelingData = function(feeling) {
     var feeling_data = [];
 
     // Give this line a unique-enough ID.
@@ -83,13 +89,13 @@ mappiness.dataManager = function module() {
    * 'notes' can be a string which will be RegExp'd against the point's notes
    * field, ignoring case.
    */
-  exports.getFilteredData = function(constraints) {
+  var getFilteredData = function(constraints) {
     if ( ! 'feeling' in constraints) {
       // Set default.
       constraints.feeling = 'happy';
     };
 
-    var feeling_data = exports.getFeelingData(constraints.feeling);
+    var feeling_data = getFeelingData(constraints.feeling);
 
     if ('in_out' in constraints) {
       feeling_data = feeling_data.filter(function(d) {
@@ -656,8 +662,8 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    lines_data.push(dataManager.getFilteredData({feeling: 'happy'}));
-    lines_data.push(dataManager.getFilteredData({feeling: 'awake'}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'happy'}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'awake'}));
 
     chart = mappiness.chart().width( $('#chart').width() );
 
