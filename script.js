@@ -89,16 +89,20 @@ mappiness.dataManager = function module() {
    */
   exports.getCleanedData = function(constraints) {
     constraints = tidyConstraints(constraints);
-    values = getFilteredData(constraints);
+    var values = getFilteredData(constraints)
 
     return {
       id: values[0].id,
-      constraints: constraints,
+      constraints: getInflatedConstraints(constraints),
       values: values
     };
   };
 
 
+  /**
+   * Ensures the submitted constraints are the correct format and have any
+   * required fields.
+   */
   var tidyConstraints = function(constraints) {
     if (constraints == null) {
       constraints = {};
@@ -108,8 +112,6 @@ mappiness.dataManager = function module() {
       constraints.feeling = 'happy';
     };
 
-    constraints.descriptions = getConstraintsDescriptions(constraints);
-
     return constraints;
   };
 
@@ -117,43 +119,80 @@ mappiness.dataManager = function module() {
   /**
    * Returns an object containing the textual descriptions of all the
    * constraints supplied.
+   *
+   * If constraints is like:
+   * {
+   *  feeling: 'happy',
+   *  in_out: 'in',
+   *  home_work: 'work',
+   *  do_work: 1,
+   *  do_music: 0,
+   *  with_peers: 1
+   * }
+   *
+   * then the returned object will be like:
+   * {
+   *  feeling: {value: 'happy', description: 'Happy'},
+   *  in_out: {value: 'in', description: 'Indoors'},
+   *  home_work: {value: 'work', description: 'At work'},
+   *  people: {
+   *            with_peers: {value: 1, description: 'Colleagues, classmates'}
+   *  },
+   *  activities: {
+   *                do_work: {value: 1, description: 'Working, studying'},
+   *                do_music: {value: 0, description: 'Listening to music'}
+   *              }
+   * }
    */
-  var getConstraintsDescriptions = function(constraints) {
-    var descriptions = {
-      feeling: '',
-      in_out: '',
-      home_work: '', 
-      people: [],
-      activities: []
-    };
+  var getInflatedConstraints = function(constraints) {
+    // What we'll be returning.
+    var new_constraints = {};
 
-    // Capitalize first letter. Thanks JavaScript.
-    descriptions.feeling = constraints.feeling.charAt(0).toUpperCase()
-                            + constraints.feeling.slice(1);
+    if ('feeling' in constraints) {
+      // Capitalize first letter. Thanks JavaScript.
+      new_constraints.feeling = {
+                      value: constraints.feeling,
+                      description: constraints.feeling.charAt(0).toUpperCase()
+                                      + constraints.feeling.slice(1)};
+    };
 
     if ('in_out' in constraints) {
-      descriptions.in_out = constraint_descriptions.in_out[ constraints.in_out ];
+      new_constraints.in_out = {
+            value: constraints.in_out,
+            description: constraint_descriptions.in_out[ constraints.in_out ]};
     };
     if ('home_work' in constraints) {
-      descriptions.home_work = constraint_descriptions.home_work[
-                                                      constraints.home_work ];
+      new_constraints.home_work = {
+            value: constraints.home_work,
+            description: constraint_descriptions.home_work[
+                                            new_constraints.home_work.value ]};
     };
     
-    // Get the descriptions for any People and Activities constraints.
-
-    Object.keys(constraint_descriptions.people).forEach(function(k) {
+    // Get the descriptions for any People constraints.
+    var people = {};
+    d3.keys(constraint_descriptions.people).forEach(function(k) {
       if (k in constraints) {
-        descriptions.people.push( constraint_descriptions.people[k] );
+        people[k] = {value: constraints[k],
+                     description: constraint_descriptions.people[k]};
       };
     });
+    if (d3.keys(people).length > 0) {
+      new_constraints.people = people; 
+    };
   
-    Object.keys(constraint_descriptions.activities).forEach(function(k) {
+    // Get the descriptions for any Activities constraints.
+    var activities = {};
+    d3.keys(constraint_descriptions.activities).forEach(function(k) {
       if (k in constraints) {
-        descriptions.activities.push( constraint_descriptions.activities[k] );
+        activities[k] = {value: constraints[k],
+                         description: constraint_descriptions.activities[k]};
       };
     });
+    if (d3.keys(activities).length > 0) {
+      new_constraints.activities = activities;
+    };
 
-    return descriptions;
+    return new_constraints;
   };
 
 
@@ -668,43 +707,46 @@ mappiness.ui = function module() {
       };
 
       var cssid = '#key-'+line.id;
-      var descs = line.constraints.descriptions;
+      var cons = line.constraints;
 
       $(cssid).css('border-top-color', colorScale(line.id));
 
-      $('h2', cssid).text(descs.feeling);
+      $('h2', cssid).text(cons.feeling.description);
 
-      if (descs.in_out) {
+      if ('in_out' in cons && cons.in_out) {
         $('.descriptions', cssid).append(
-          $('<li/>').addClass('in-out').text(descs.in_out)
+          $('<li/>').addClass('in-out').text(cons.in_out.description)
         );
       };
-      if (descs.home_work) {
+      if ('home_work' in cons && cons.home_work) {
         $('.descriptions', cssid).append(
-          $('<li/>').addClass('home-work').text(descs.home_work)
+          $('<li/>').addClass('home-work').text(cons.home_work.description)
         );
       };
 
-      if (descs.people.length > 0) {
+      if (d3.keys(cons.people).length > 0) {
         var $ul = $('<ul/>');
-        descs.people.forEach(function(d) {
-          $ul.append($('<li/>').text(d));
-        });
+        for (c in cons.people) {
+          $ul.append(
+            $('<li/>').html('<span>' + cons.people[c].value + '</span><span>' + cons.people[c].description + '</span>')
+          );
+        };
         $('.descriptions', cssid).append(
           $('<li/>').addClass('people').append($ul)
         );
       };
     
-      if (descs.activities.length > 0) {
+      if (d3.keys(cons.activities).length > 0) {
         var $ul = $('<ul/>');
-        descs.activities.forEach(function(d) {
-          $ul.append($('<li/>').text(d));
-        });
+        for (c in cons.activities) {
+          $ul.append(
+            $('<li/>').html('<span>' + cons.activities[c].value + '</span><span>' + cons.activities[c].description + '</span>')
+          );
+        };
         $('.descriptions', cssid).append(
           $('<li/>').addClass('activities').append($ul)
         );
       };
-    
     });
   
   };
@@ -758,7 +800,7 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 1}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 0}));
     lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
 
     chart = mappiness.chart().width( $('#chart').width() );
