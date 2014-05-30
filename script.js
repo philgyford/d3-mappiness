@@ -460,7 +460,7 @@ mappiness.chart = function module() {
   function brushed() {
     focusXScale.domain(brush.empty() ? contextXScale.domain() : brush.extent());
     focusG.selectAll('path.line.feeling')
-              .attr('d', function(d) { return focusLine(d); });
+              .attr('d', function(d) { return focusLine(d.values); });
     focusG.select(".x.axis").call(focusXAxis);
   };
 
