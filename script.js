@@ -137,6 +137,7 @@ mappiness.dataManager = function module() {
       });
     };
 
+
     return feeling_data;
   };
 
@@ -209,7 +210,7 @@ mappiness.chart = function module() {
       contextLine = d3.svg.line().x(X).y(contextY),
       focusLine = d3.svg.line().x(X).y(focusY),
       
-      color = d3.scale.ordinal()
+      colorScale = d3.scale.ordinal()
                       .range(['#dc3a2d', '#2e5aa9', '#518d48', '#000', '#666']);
 
   function exports(_selection) {
@@ -222,7 +223,7 @@ mappiness.chart = function module() {
 
       // Give each line its own color, keyed by its ID.
       // (The ID is stored in each point of the line.)
-      color.domain(data.map(function(d) { return d[0].id; } ));
+      colorScale.domain(data.map(function(d) { return d[0].id; } ));
 
       createMain();
 
@@ -392,7 +393,7 @@ mappiness.chart = function module() {
         .enter().append('path')
           .attr('class', 'line feeling')
           .attr('id', function(d) { return d[0].id; })
-          .style('stroke', function(d) { return color(d[0].id); });
+          .style('stroke', function(d) { return colorScale(d[0].id); });
 
     chartEl.selectAll('path.line.feeling')
         .data(function(d) { return d; })
@@ -508,6 +509,10 @@ mappiness.chart = function module() {
     return chart;
   };
 
+  exports.getColorScale = function() {
+    return colorScale; 
+  };
+
   //d3.rebind(exports, dispatch, "on");
 
   return exports;
@@ -519,9 +524,91 @@ mappiness.chart = function module() {
  * For handling all the dynamic forms etc.
  */
 mappiness.ui = function module() {
-  var exports = {};
+  var exports = {},
+      // Will be a d3 scale once set by setColorScale().
+      colorScale,
+      descriptions = {
+        people: {with_partner: "Spouse, partner, girl/boyfriend",
+                with_children: "Children",
+                with_relatives: "Other family members",
+                with_peers: "Colleagues, classmates",
+                with_clients: "Clients, customers",
+                with_friends: "Friends",
+                with_others: "Other people you know"},
+        activities: {do_work: "Working, studying",
+                    do_meet: "In a meeting, seminar, class",
+                    do_travel: "Travelling, commuting",
+                    do_cook: "Cooking, preparing food",
+                    do_chores: "Housework, chores, DIY",
+                    do_admin: "Admin, finances, organising",
+                    do_shop: "Shopping, errands",
+                    do_wait: "Waiting, queueing",
+                    do_child: "Childcare, playing with children",
+                    do_pet: "Pet care, playing with pets",
+                    do_care: "Care or help for adults",
+                    do_rest: "Sleeping, resting, relaxing",
+                    do_sick: "Sick in bed",
+                    do_pray: "Meditating, religious activities",
+                    do_wash: "Washing, dressing, grooming",
+                    do_love: "Intimacy, making love",
+                    do_chat: "Talking, chatting, socialising",
+                    do_eat: "Eating, snacking",
+                    do_caffeine: "Drinking tea/coffee",
+                    do_booze: "Drinking alcohol",
+                    do_smoke: "Smoking",
+                    do_msg: "Texting, email, social media",
+                    do_net: "Browsing the Internet",
+                    do_tv: "Watching TV, film",
+                    do_music: "Listening to music",
+                    do_speech: "Listening to speech/podcast",
+                    do_read: "Reading",
+                    do_theatre: "Theatre, dance, concert",
+                    do_museum: "Exhibition, museum, library",
+                    do_match: "Match, sporting event",
+                    do_walk: "Walking, hiking",
+                    do_sport: "Sports, running, exercise",
+                    do_gardening: "Gardening, allotment",
+                    do_birdwatch: "Birdwatching, nature watching",
+                    do_hunt: "Hunting, fishing",
+                    do_compgame: "Computer games, iPhone games",
+                    do_game: "Other games, puzzles",
+                    do_bet: "Gambling, betting",
+                    do_art: "Hobbies, arts, crafts",
+                    do_sing: "Singing, performing",
+                    do_other: "Something else",
+                    do_other2: "Something else"},
+      };
 
   exports.init = function() {
+  };
+
+  //d3.rebind(exports, dispatch, "on");
+
+  exports.list_lines = function(lines_data) {
+    lines_data.forEach(function(line) {
+      // All the info we need is contained within each point on the line.
+      var point = line[0];
+      if ($('#key #key-'+point.id).length == 0) {
+        // Add this line's data.
+        $('#key').append(
+          $('<div/>').attr('id', 'key-'+point.id)
+                     .addClass('key-line')
+                     .html('<h2></h2><ul><li class="in_out"></li><li class="home_work"></li><li class="people"></li><li class="activities"></li></ul>')
+        );
+      };
+
+      $('#key-'+point.id).css('border-top-color', colorScale(point.id));
+      $('#key-'+point.id+' h2').text(point.feeling);
+      //$('#key-'+point.id+' .people').
+
+    
+    
+    });
+  
+  };
+
+  exports.setColorScale = function(scale) {
+    colorScale = scale;
   };
 
   return exports;
@@ -536,6 +623,9 @@ mappiness.controller = function module() {
   var exports = {},
       data,
       chart,
+      // Each element will correspond to one line on the chart, containing
+      // all its data.
+      lines_data = [],
       dataManager = mappiness.dataManager(),
       ui = mappiness.ui();
 
@@ -550,8 +640,15 @@ mappiness.controller = function module() {
 
     dataManager.on('dataReady', function() {
       draw_chart(); 
-      prepare_form();
     });
+  };
+
+  exports.getLinesData = function(n) {
+    if (n == null) {
+      return lines_data; 
+    } else {
+      return lines_data[n];
+    };
   };
 
 
@@ -559,31 +656,32 @@ mappiness.controller = function module() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
-    data = [
-      dataManager.getFilteredData({feeling: 'happy'}),
-      dataManager.getFilteredData({feeling: 'happy', notes: 'pepys'})
-      //,
-            //dataManager.getFilteredData({feeling: 'awake'})
-              ];
+    lines_data.push(dataManager.getFilteredData({feeling: 'happy'}));
+    lines_data.push(dataManager.getFilteredData({feeling: 'awake'}));
 
-    chart = mappiness.chart().width( $('#container').width() );
+    chart = mappiness.chart().width( $('#chart').width() );
 
-    var container = d3.select('#container')
-                      .data([data])
+    var container = d3.select('#chart')
+                      .data([lines_data])
                       .call(chart);
+
+    ui.setColorScale(chart.getColorScale());
+    ui.list_lines(lines_data);
   };
-  
-  function prepare_form() {
-    $('.check-line').change(function() {
-      chart.toggleLine($(this).val());
-    });
-  };
+
+  //function prepare_form() {
+    //$('.check-line').change(function() {
+      //chart.toggleLine($(this).val());
+    //});
+  //};
 
 
   return exports;
 };
 
 
-mappiness.controller().init();
+var controller = mappiness.controller();
+
+controller.init();
 
 
