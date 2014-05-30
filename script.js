@@ -127,7 +127,8 @@ mappiness.dataManager = function module() {
    *  home_work: 'work',
    *  do_work: 1,
    *  do_music: 0,
-   *  with_peers: 1
+   *  with_peers: 1,
+   *  notes: "Test"
    * }
    *
    * then the returned object will be like:
@@ -141,7 +142,8 @@ mappiness.dataManager = function module() {
    *  activities: {
    *                do_work: {value: 1, description: 'Working, studying'},
    *                do_music: {value: 0, description: 'Listening to music'}
-   *              }
+   *              },
+   *  notes: {value: 'Test', description: 'Test'}
    * }
    */
   var getInflatedConstraints = function(constraints) {
@@ -190,6 +192,12 @@ mappiness.dataManager = function module() {
     });
     if (d3.keys(activities).length > 0) {
       new_constraints.activities = activities;
+    };
+
+    // Add notes.
+    if ('notes' in constraints) {
+      new_constraints.notes = {value: constraints.notes,
+                               description: constraints.notes};
     };
 
     return new_constraints;
@@ -726,7 +734,8 @@ mappiness.ui = function module() {
         var $ul = $('<ul/>');
         for (c in cons.people) {
           $ul.append(
-            $('<li/>').html('<span>' + cons.people[c].value + '</span><span>' + cons.people[c].description + '</span>')
+            $('<li/>').html('<span>' + cons.people[c].value + '</span>'
+                          + '<span>' + cons.people[c].description + '</span>')
           );
         };
         $('.descriptions', cssid).append(
@@ -738,12 +747,20 @@ mappiness.ui = function module() {
         var $ul = $('<ul/>');
         for (c in cons.activities) {
           $ul.append(
-            $('<li/>').html('<span>' + cons.activities[c].value + '</span><span>' + cons.activities[c].description + '</span>')
+            $('<li/>').html('<span>' + cons.activities[c].value + '</span>'
+                        + '<span>' + cons.activities[c].description + '</span>')
           );
         };
         $('.descriptions', cssid).append(
           $('<li/>').addClass('activities').append($ul)
         );
+      };
+
+      if ('notes' in cons && cons.notes) {
+        $('.descriptions', cssid).append(
+          $('<li/>').addClass('notes').text('Notes: "'+cons.notes.description
+                                                                          +'"')
+        ); 
       };
     });
   
@@ -800,6 +817,7 @@ mappiness.controller = function module() {
 
     lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 0}));
     lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
 
     chart = mappiness.chart().width( $('#chart').width() );
 
