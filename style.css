@@ -19,14 +19,14 @@ body {
 
 /* CHART */
 .axes {
-  color: #999;
+  color: #aaa;
   font-size: 11px;
 }
 .axis path,
 .axis line,
 .line.grid {
   fill: none;
-  stroke: #ccc;
+  stroke: #eee;
   shape-rendering: crispEdges;
   stroke-width: 1px;
 }
@@ -47,8 +47,8 @@ body {
 }
 
 .brush .extent {
-  stroke: #ccc;
-  fill-opacity: .125;
+  stroke: #ddd;
+  fill-opacity: .01;
   shape-rendering: crispEdges;
 }
 
