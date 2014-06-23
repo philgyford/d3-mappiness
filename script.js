@@ -701,6 +701,9 @@ mappiness.ui = function module() {
 
   //d3.rebind(exports, dispatch, "on");
 
+  /**
+   * Displays the summaries/key for all the lines.
+   */
   exports.list_lines = function(lines) {
     lines.forEach(function(line) {
       if ($('#key #key-'+line.id).length == 0) {
@@ -708,59 +711,57 @@ mappiness.ui = function module() {
         $('#key').append(
           $('<div/>').attr('id', 'key-'+line.id)
                      .addClass('key-line')
-                     .html('<h2></h2><ul class="descriptions"></ul>')
+                     .html('<h2></h2><dl class="key-descriptions"></dl>')
         );
       };
 
       var cssid = '#key-'+line.id;
       var cons = line.constraints;
 
+      var add_to_key = function(el, html, classes) {
+        if (typeof classes == undefined) {
+          classes = '';
+        };
+        $('.key-descriptions', cssid).append(
+          $('<'+el+'/>').html(html).addClass(classes)
+        );
+      };
+
       $(cssid).css('border-top-color', colorScale(line.id));
 
       $('h2', cssid).text(cons.feeling.description);
 
+      if (('in_out' in cons && cons.in_out)
+          || 
+          ('home_work' in cons && cons.home_work)) {
+          add_to_key('dt', 'Place');
+      };
       if ('in_out' in cons && cons.in_out) {
-        $('.descriptions', cssid).append(
-          $('<li/>').addClass('in-out').text(cons.in_out.description)
-        );
+        add_to_key('dd', cons.in_out.description, 'in-out');
       };
       if ('home_work' in cons && cons.home_work) {
-        $('.descriptions', cssid).append(
-          $('<li/>').addClass('home-work').text(cons.home_work.description)
-        );
+        add_to_key('dd', cons.home_work.description, 'in-out');
       };
 
       if (d3.keys(cons.people).length > 0) {
-        var $ul = $('<ul/>');
+        add_to_key('dt', 'People');
         for (c in cons.people) {
-          $ul.append(
-            $('<li/>').html('<span>' + cons.people[c].value + '</span>'
-                          + '<span>' + cons.people[c].description + '</span>')
-          );
+          add_to_key('dd', '<span>' + cons.people[c].description + '</span>'
+                          + '<span>' + cons.people[c].value + '</span>');
         };
-        $('.descriptions', cssid).append(
-          $('<li/>').addClass('people').append($ul)
-        );
       };
     
       if (d3.keys(cons.activities).length > 0) {
-        var $ul = $('<ul/>');
+        add_to_key('dt', 'Activities');
         for (c in cons.activities) {
-          $ul.append(
-            $('<li/>').html('<span>' + cons.activities[c].value + '</span>'
-                        + '<span>' + cons.activities[c].description + '</span>')
-          );
+          add_to_key('dd', '<span>' + cons.activities[c].description + '</span>'
+                          + '<span>' + cons.activities[c].value + '</span>');
         };
-        $('.descriptions', cssid).append(
-          $('<li/>').addClass('activities').append($ul)
-        );
       };
 
       if ('notes' in cons && cons.notes) {
-        $('.descriptions', cssid).append(
-          $('<li/>').addClass('notes').text('Notes: "'+cons.notes.description
-                                                                          +'"')
-        ); 
+        add_to_key('dt', 'Notes');
+        add_to_key('dd', 'Notes: "'+cons.notes.description +'"', 'notes'); 
       };
     });
   

@@ -23,4 +23,5 @@ Load index.html in your browser.
 	* Add map area filter?
 * Resize width of chart on window resize?
 * Demo site with dummy data.
+* Permalinks?
 
