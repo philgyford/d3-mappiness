@@ -295,7 +295,7 @@ mappiness.dataManager = function module() {
     var feeling_data = [];
 
     // Give this line a unique-enough ID.
-    var id = 'id' + Date.now();
+    var id = Date.now();
 
     data.forEach(function(d, n) {
       // Don't like having to use jQuery here, but seems simplest/best way
@@ -560,7 +560,7 @@ mappiness.chart = function module() {
         .data(function(d) { return d; }, function(d) { return d.values[0].id; })
         .enter().append('path')
           .attr('class', 'line feeling')
-          .attr('id', function(d) { return d.values[0].id; })
+          .attr('id', function(d) { return lineCSSID(d.values[0].id, chart); })
           .style('stroke', function(d) { return colorScale(d.values[0].id); });
 
     chartEl.selectAll('path.line.feeling')
@@ -571,42 +571,20 @@ mappiness.chart = function module() {
 
 
   /**
-   * Hide a line on the chart.
-   * `line_type` is one of 'happy', 'awake' or 'relaxed'.
+   * Return the string used for a line's CSS ID.
+   * id is the numeric ID of the line.
+   * chart is 'context' or 'focus'.
    */
-  //function hideLine(line_type) {
-    //var newLines = [];
-    //currentLines.forEach(function(lt) {
-      //if (lt != line_type) {
-        //newLines.push(lt);
-      //};
-    //});
-    //currentLines = newLines;
-
-    //d3.selectAll('path.line.'+line_type).style('visibility', 'hidden');
-  //};
-
-
-  /**
-   * Hide a line on the chart.
-   * `line_type` is one of 'happy', 'awake' or 'relaxed'.
-   */
-  //function displayLine(line_type) {
-    //if ($.inArray(line_type, currentLines) == -1) {
-      //currentLines.push(line_type);
-    //}; 
-
-    //d3.selectAll('path.line.'+line_type).style('visibility', 'visible');
-  //};
-
+  function lineCSSID(id, chart) {
+    return chart + '-' + id; 
+  };
 
   /**
    * Most of the stuff for drawing the context/brush chart.
    */
   function renderBrush() {
-    brush = d3.svg.brush()
-                        .x(contextXScale)
-                        .on('brush', brushed);
+    brush = d3.svg.brush().x(contextXScale)
+                          .on('brush', brushed);
                         
     renderLines('context');
 
@@ -637,15 +615,22 @@ mappiness.chart = function module() {
     return contextYScale(d.value);
   };
 
-  //exports.toggleLine = function(line_type) {
-    //if ($.inArray(line_type, currentLines) >= 0) {
-      //hideLine(line_type);
+  /**
+   * Make a line visible/invisible (in both context and focus charts).
+   * line_id is the numeric ID of the line.
+   */
+  exports.toggleLine = function(line_id) {
+    // Do it for each chart:
+    ['context', 'focus'].forEach(function(chart) {
+      var selector = 'path#' + lineCSSID(line_id, chart);
 
-    //} else if ($.inArray(line_type, allLines) >= 0
-              //&& $.inArray(line_type, currentLines) == -1) {
-      //displayLine(line_type);
-    //};
-  //};
+      if (d3.select(selector).style('opacity') == 0) {
+        d3.select(selector).transition().style('opacity', 1);
+      } else {
+        d3.select(selector).transition().style('opacity', 0);
+      };
+    });
+  };
 
   exports.margin = function(_) {
     if (!arguments.length) return margin;
@@ -711,14 +696,19 @@ mappiness.ui = function module() {
         $('#key').append(
           $('<div/>').attr('id', 'key-'+line.id)
                      .addClass('key-line')
-                     .html('<h2></h2><dl class="key-descriptions"></dl>')
+                     .html('<h2></h2><label class="key-switch"></label>' + 
+                           '<dl class="key-descriptions"></dl>')
         );
       };
 
       var cssid = '#key-'+line.id;
       var cons = line.constraints;
 
-      var add_to_key = function(el, html, classes) {
+      // Add an element to the current key.
+      // el is like 'dt' or 'li'.
+      // html is the HTML to put inside the element.
+      // classes is a string of class names to give the element.
+      var addToKey = function(el, html, classes) {
         if (typeof classes == undefined) {
           classes = '';
         };
@@ -731,37 +721,43 @@ mappiness.ui = function module() {
 
       $('h2', cssid).text(cons.feeling.description);
 
+      $('.key-switch', cssid).text('Show line').prepend(
+        $('<input/>').addClass('key-switch-control')
+                     .attr({type: 'checkbox', checked: 'checked'})
+                     .data('line-id', line.id)
+      );
+
       if (('in_out' in cons && cons.in_out)
           || 
           ('home_work' in cons && cons.home_work)) {
-          add_to_key('dt', 'Place');
+          addToKey('dt', 'Place');
       };
       if ('in_out' in cons && cons.in_out) {
-        add_to_key('dd', cons.in_out.description, 'in-out');
+        addToKey('dd', cons.in_out.description, 'in-out');
       };
       if ('home_work' in cons && cons.home_work) {
-        add_to_key('dd', cons.home_work.description, 'in-out');
+        addToKey('dd', cons.home_work.description, 'in-out');
       };
 
       if (d3.keys(cons.people).length > 0) {
-        add_to_key('dt', 'People');
+        addToKey('dt', 'People');
         for (c in cons.people) {
-          add_to_key('dd', '<span>' + cons.people[c].description + '</span>'
-                          + '<span>' + cons.people[c].value + '</span>');
+          addToKey('dd', '<span>' + cons.people[c].description + '</span>'
+                        + '<span>' + cons.people[c].value + '</span>');
         };
       };
     
       if (d3.keys(cons.activities).length > 0) {
-        add_to_key('dt', 'Activities');
+        addToKey('dt', 'Activities');
         for (c in cons.activities) {
-          add_to_key('dd', '<span>' + cons.activities[c].description + '</span>'
-                          + '<span>' + cons.activities[c].value + '</span>');
+          addToKey('dd', '<span>' + cons.activities[c].description + '</span>'
+                        + '<span>' + cons.activities[c].value + '</span>');
         };
       };
 
       if ('notes' in cons && cons.notes) {
-        add_to_key('dt', 'Notes');
-        add_to_key('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
+        addToKey('dt', 'Notes');
+        addToKey('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
       };
     });
   
@@ -796,6 +792,8 @@ mappiness.controller = function module() {
     
     ui.init();
 
+    init_listeners();
+
     dataManager.loadJSON('mappiness.json');
 
     dataManager.on('dataReady', function() {
@@ -810,7 +808,6 @@ mappiness.controller = function module() {
       return lines_data[n];
     };
   };
-
 
   function draw_chart() {
     $('#wait').hide();
@@ -835,6 +832,13 @@ mappiness.controller = function module() {
       //chart.toggleLine($(this).val());
     //});
   //};
+  
+  function init_listeners() {
+    $('#key').on('click', '.key-switch-control', function(ev) {
+      chart.toggleLine($(this).data('line-id'));
+    });
+  };
+
 
 
   return exports;
