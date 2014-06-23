@@ -761,7 +761,7 @@ mappiness.ui = function module() {
 
       if ('notes' in cons && cons.notes) {
         add_to_key('dt', 'Notes');
-        add_to_key('dd', 'Notes: "'+cons.notes.description +'"', 'notes'); 
+        add_to_key('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
       };
     });
   

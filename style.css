@@ -52,10 +52,14 @@ body {
   shape-rendering: crispEdges;
 }
 
+/* KEY */
 .key-line {
   float: left;
 	border-top-width: 2px;
   border-top-style: solid;
   margin: 0 15px;
   min-width: 200px;
+}
+.key-descriptions dt {
+  font-weight: bold;
 }
