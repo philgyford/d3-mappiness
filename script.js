@@ -691,76 +691,77 @@ mappiness.ui = function module() {
    */
   exports.list_lines = function(lines) {
     lines.forEach(function(line) {
-      if ($('#key #key-'+line.id).length == 0) {
-        // This line isn't listed, so make its empty HTML.
-        $('#key').append(
-          $('<div/>').attr('id', 'key-'+line.id)
-                     .addClass('key-line')
-                     .html('<h2></h2><label class="key-switch"></label>' + 
-                           '<dl class="key-descriptions"></dl>')
-        );
-      };
-
-      var cssid = '#key-'+line.id;
-      var cons = line.constraints;
-
-      // Add an element to the current key.
-      // el is like 'dt' or 'li'.
-      // html is the HTML to put inside the element.
-      // classes is a string of class names to give the element.
-      var addToKey = function(el, html, classes) {
-        if (typeof classes == undefined) {
-          classes = '';
-        };
-        $('.key-descriptions', cssid).append(
-          $('<'+el+'/>').html(html).addClass(classes)
-        );
-      };
-
-      $(cssid).css('border-top-color', colorScale(line.id));
-
-      $('h2', cssid).text(cons.feeling.description);
-
-      $('.key-switch', cssid).text('Show line').prepend(
-        $('<input/>').addClass('key-switch-control')
-                     .attr({type: 'checkbox', checked: 'checked'})
-                     .data('line-id', line.id)
-      );
-
-      if (('in_out' in cons && cons.in_out)
-          || 
-          ('home_work' in cons && cons.home_work)) {
-          addToKey('dt', 'Place');
-      };
-      if ('in_out' in cons && cons.in_out) {
-        addToKey('dd', cons.in_out.description, 'in-out');
-      };
-      if ('home_work' in cons && cons.home_work) {
-        addToKey('dd', cons.home_work.description, 'in-out');
-      };
-
-      if (d3.keys(cons.people).length > 0) {
-        addToKey('dt', 'People');
-        for (c in cons.people) {
-          addToKey('dd', '<span>' + cons.people[c].description + '</span>'
-                        + '<span>' + cons.people[c].value + '</span>');
-        };
-      };
-    
-      if (d3.keys(cons.activities).length > 0) {
-        addToKey('dt', 'Activities');
-        for (c in cons.activities) {
-          addToKey('dd', '<span>' + cons.activities[c].description + '</span>'
-                        + '<span>' + cons.activities[c].value + '</span>');
-        };
-      };
-
-      if ('notes' in cons && cons.notes) {
-        addToKey('dt', 'Notes');
-        addToKey('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
-      };
+      renderLineKey(line);
     });
+  };
+
+
+  function renderLineKey(line) {
+    if ($('#key #key-'+line.id).length == 0) {
+      // This line isn't listed, so make its empty HTML.
+      $('#key').append(
+        $('<div/>').attr('id', 'key-'+line.id)
+                   .addClass('key-line')
+                   .html('<h2></h2>'
+                         + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
+                         + '<dl class="key-descriptions"></dl>')
+      );
+    };
+
+    var cssid = '#key-'+line.id;
+    var cons = line.constraints;
+
+    // Add an element to the current key.
+    // el is like 'dt' or 'li'.
+    // html is the HTML to put inside the element.
+    // classes is a string of class names to give the element.
+    var addToKey = function(el, html, classes) {
+      if (typeof classes == undefined) {
+        classes = '';
+      };
+      $('.key-descriptions', cssid).append(
+        $('<'+el+'/>').html(html).addClass(classes)
+      );
+    };
+
+    $(cssid).css('border-top-color', colorScale(line.id));
+
+    $('h2', cssid).text(cons.feeling.description);
+
+    $('.key-switch-control', cssid).data('line-id', line.id);
+
+    if (('in_out' in cons && cons.in_out)
+        || 
+        ('home_work' in cons && cons.home_work)) {
+        addToKey('dt', 'Place');
+    };
+    if ('in_out' in cons && cons.in_out) {
+      addToKey('dd', cons.in_out.description, 'in-out');
+    };
+    if ('home_work' in cons && cons.home_work) {
+      addToKey('dd', cons.home_work.description, 'in-out');
+    };
+
+    if (d3.keys(cons.people).length > 0) {
+      addToKey('dt', 'People');
+      for (c in cons.people) {
+        addToKey('dd', '<span>' + cons.people[c].description + '</span>'
+                      + '<span>' + cons.people[c].value + '</span>');
+      };
+    };
   
+    if (d3.keys(cons.activities).length > 0) {
+      addToKey('dt', 'Activities');
+      for (c in cons.activities) {
+        addToKey('dd', '<span>' + cons.activities[c].description + '</span>'
+                      + '<span>' + cons.activities[c].value + '</span>');
+      };
+    };
+
+    if ('notes' in cons && cons.notes) {
+      addToKey('dt', 'Notes');
+      addToKey('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
+    };
   };
 
   exports.setColorScale = function(scale) {
