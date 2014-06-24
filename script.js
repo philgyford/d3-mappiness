@@ -542,7 +542,7 @@ mappiness.chart = function module() {
   };
 
   /**
-   * Draw each of the three lines, on either of the charts.
+   * Draw each of the lines, on either of the charts.
    * `chart` is either 'focus' or 'context'.
    */
   function renderLines(chart) {
@@ -556,17 +556,21 @@ mappiness.chart = function module() {
       var chartLine = focusLine;
     };
 
-    chartEl.selectAll('path.line.feeling')
-        .data(function(d) { return d; }, function(d) { return d.values[0].id; })
-        .enter().append('path')
+    var line = chartEl.selectAll('path.line.feeling')
+                      .data(function(d) { return d; },
+                            function(d) { return d.values[0].id; });
+
+    line.enter().append('path')
           .attr('class', 'line feeling')
           .attr('id', function(d) { return lineCSSID(d.values[0].id, chart); })
           .style('stroke', function(d) { return colorScale(d.values[0].id); });
 
-    chartEl.selectAll('path.line.feeling')
-        .data(function(d) { return d; })
+    line.data(function(d) { return d; })
         .transition()
         .attr('d', function(d) { return chartLine(d.values); });
+
+    // Remove any currently-drawn lines that no longer exist in the data.
+    line.exit().remove();
   };
 
 
@@ -695,18 +699,39 @@ mappiness.ui = function module() {
    * Displays the summaries/key for all the lines.
    */
   exports.list_lines = function(lines) {
+    // Add keys.
     lines.forEach(function(line) {
       renderLineKey(line);
     });
+    
+    // Remove keys for any lines that no longer exist.
+    var line_ids = lines.map(function(line) { return line.id; });
+    $('.key-line').each(function(n, el) {
+      var line_id = $(this).data('line-id');
+      if (line_ids.indexOf(line_id) < 0) {
+        removeLineKey(line_id);
+      };
+    })
   };
 
+  /**
+   * Remove the descriptive key for a line.
+   */
+  function removeLineKey(line_id) {
+    $('#key-'+line_id).remove();
+  };
 
+  /**
+   * Create the descriptive key for a line.
+   * line is the data for that line.
+   */
   function renderLineKey(line) {
     if ($('#key #key-'+line.id).length == 0) {
       // This line isn't listed, so make its empty HTML.
       $('#key').append(
         $('<div/>').attr('id', 'key-'+line.id)
                    .addClass('key-line')
+                   .data('line-id', line.id)
                    .html('<h2></h2>'
                          + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
                          + '<a href="#" class="key-duplicate">Duplicate line</a>'
@@ -855,6 +880,7 @@ mappiness.controller = function module() {
 
     lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 0}));
     lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
+    lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
 
     chart = mappiness.chart().width( $('#chart').width() );
 
@@ -863,11 +889,10 @@ mappiness.controller = function module() {
 
     update_chart();
     
-    setTimeout(function(){
-      lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
-      update_chart();
-    
-    }, 3000);
+    //setTimeout(function(){
+      //lines_data.splice(2,1);
+      //update_chart();
+    //}, 3000);
   };
 
   //function prepare_form() {
