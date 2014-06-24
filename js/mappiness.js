@@ -1,6 +1,8 @@
 requirejs(['mappiness.controller'],
 function (mappiness_controller) {
 
-  mappiness_controller.init();
+  var controller = mappiness_controller();
+
+  controller.init();
 
 });
