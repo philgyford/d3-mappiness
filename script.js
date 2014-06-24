@@ -87,13 +87,14 @@ mappiness.dataManager = function module() {
    * 'feeling': One of 'happy', 'relaxed' or 'awake'.
    * [And/or any of the keys accepted by getFilteredData().]
    */
-  exports.getCleanedData = function(constraints) {
-    constraints = tidyConstraints(constraints);
+  exports.getCleanedData = function(original_constraints) {
+    constraints = tidyConstraints(original_constraints);
     var values = getFilteredData(constraints)
 
     return {
       id: values[0].id,
       constraints: getInflatedConstraints(constraints),
+      original_constraints: original_constraints,
       values: values
     };
   };
@@ -636,10 +637,6 @@ mappiness.chart = function module() {
     });
   };
 
-  exports.duplicateLine = function(line_id) {
-    console.log('hi');
-  
-  };
 
   exports.margin = function(_) {
     if (!arguments.length) return margin;
@@ -908,6 +905,22 @@ mappiness.controller = function module() {
     ui.listLines(lines_data);
   };
 
+  function duplicateLine(line_id) {
+    for (var n = 0; n < lines_data.length; n++) {
+      if (lines_data[n].id == line_id) {
+        // Make a new set of data using the original constraints passed into
+        // the line we want to duplicate:
+        var new_line = dataManager.getCleanedData(
+                                          lines_data[n].original_constraints);
+        // Originally wanted to add it just after the line that's being
+        // duplicated, but that's madness and gets complicated.
+        lines_data.push(new_line);
+        break;
+      };
+    };
+     
+  };
+
   function initListeners() {
     // The switches to turn each line on/off.
     $('#key').on('click', '.key-switch-control', function(ev) {
@@ -918,7 +931,8 @@ mappiness.controller = function module() {
     // To duplicate lines.
     $('#key').on('click', '.key-duplicate', function(ev) {
       ev.preventDefault();
-      chart.duplicateLine($(this).data('line-id'));
+      duplicateLine($(this).data('line-id'));
+      updateChart();
     });
   };
 
