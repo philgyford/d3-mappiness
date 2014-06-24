@@ -632,6 +632,11 @@ mappiness.chart = function module() {
     });
   };
 
+  exports.duplicateLine = function(line_id) {
+    console.log('hi');
+  
+  };
+
   exports.margin = function(_) {
     if (!arguments.length) return margin;
     margin = _;
@@ -704,6 +709,7 @@ mappiness.ui = function module() {
                    .addClass('key-line')
                    .html('<h2></h2>'
                          + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
+                         + '<a href="#" class="key-duplicate">Duplicate line</a>'
                          + '<dl class="key-descriptions"></dl>')
       );
     };
@@ -711,56 +717,88 @@ mappiness.ui = function module() {
     var cssid = '#key-'+line.id;
     var cons = line.constraints;
 
-    // Add an element to the current key.
-    // el is like 'dt' or 'li'.
-    // html is the HTML to put inside the element.
-    // classes is a string of class names to give the element.
-    var addToKey = function(el, html, classes) {
-      if (typeof classes == undefined) {
-        classes = '';
+    /**
+     * Add an element to the current key, or update its contents if it exists.
+     * el is like 'dt' or 'li'.
+     * html is the HTML to put inside the element.
+     * classes is a string of class names to give the element.
+     */
+    var addToKey = function(el, clss, html) {
+      if ($('.key-descriptions .'+clss, cssid).length == 0) {
+        // Element doesn't yet exist - create it.
+        $('.key-descriptions', cssid).append(
+          $('<'+el+'/>').html(html).addClass(clss)
+        );
+      } else {
+        // Element exists, so just update its html.
+        $('.key-descriptions .'+clss, cssid).html(html);
       };
-      $('.key-descriptions', cssid).append(
-        $('<'+el+'/>').html(html).addClass(classes)
-      );
     };
+
+    /**
+     * Remove an element from the current key.
+     * clss is the class name of the element to remove.
+     */
+    var removeFromKey = function(clss) {
+      $('.key-descriptions .'+clss, cssid).remove();
+    };
+
 
     $(cssid).css('border-top-color', colorScale(line.id));
 
     $('h2', cssid).text(cons.feeling.description);
 
     $('.key-switch-control', cssid).data('line-id', line.id);
+    $('.key-duplicate', cssid).data('line-id', line.id);
 
     if (('in_out' in cons && cons.in_out)
         || 
         ('home_work' in cons && cons.home_work)) {
-        addToKey('dt', 'Place');
+        addToKey('dt', 'place', 'Place');
+    } else {
+      removeFromKey('place')
     };
     if ('in_out' in cons && cons.in_out) {
-      addToKey('dd', cons.in_out.description, 'in-out');
+      addToKey('dd', 'in-out', cons.in_out.description);
+    } else {
+      removeFromKey('in-out'); 
     };
     if ('home_work' in cons && cons.home_work) {
-      addToKey('dd', cons.home_work.description, 'in-out');
+      addToKey('dd', 'home-work', cons.home_work.description);
+    } else {
+      removeFromKey('home-work');
     };
 
     if (d3.keys(cons.people).length > 0) {
-      addToKey('dt', 'People');
+      addToKey('dt', 'people-title', 'People');
       for (c in cons.people) {
-        addToKey('dd', '<span>' + cons.people[c].description + '</span>'
-                      + '<span>' + cons.people[c].value + '</span>');
+        addToKey('dd', 'people',
+                      '<span>' + cons.people[c].description + '</span>'
+                    + '<span>' + cons.people[c].value + '</span>');
       };
+    } else {
+      removeFromKey('people-title');
+      removeFromKey('people');
     };
   
     if (d3.keys(cons.activities).length > 0) {
-      addToKey('dt', 'Activities');
+      addToKey('dt', 'activities-title', 'Activities');
       for (c in cons.activities) {
-        addToKey('dd', '<span>' + cons.activities[c].description + '</span>'
-                      + '<span>' + cons.activities[c].value + '</span>');
+        addToKey('dd', 'activities',
+                      '<span>' + cons.activities[c].description + '</span>'
+                    + '<span>' + cons.activities[c].value + '</span>');
       };
+    } else {
+      removeFromKey('activities-title');
+      removeFromKey('activities');
     };
 
     if ('notes' in cons && cons.notes) {
-      addToKey('dt', 'Notes');
-      addToKey('dd', 'Include "'+cons.notes.description +'"', 'notes'); 
+      addToKey('dt', 'notes-title', 'Notes');
+      addToKey('dd', 'notes', 'Include "'+cons.notes.description +'"'); 
+    } else {
+      removeFromKey('notes-title');
+      removeFromKey('notes');
     };
   };
 
@@ -778,6 +816,7 @@ mappiness.ui = function module() {
  */
 mappiness.controller = function module() {
   var exports = {},
+      container,
       data,
       chart,
       // Each element will correspond to one line on the chart, containing
@@ -816,16 +855,19 @@ mappiness.controller = function module() {
 
     lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 0}));
     lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
-    lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
 
     chart = mappiness.chart().width( $('#chart').width() );
 
-    var container = d3.select('#chart')
-                      .data([lines_data])
-                      .call(chart);
-
+    container = d3.select('#chart');
     ui.setColorScale(chart.getColorScale());
-    ui.list_lines(lines_data);
+
+    update_chart();
+    
+    setTimeout(function(){
+      lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
+      update_chart();
+    
+    }, 3000);
   };
 
   //function prepare_form() {
@@ -834,9 +876,25 @@ mappiness.controller = function module() {
     //});
   //};
   
+  function update_chart() {
+    container.data([lines_data])
+             .call(chart);
+
+    ui.list_lines(lines_data);
+  };
+
+
   function init_listeners() {
+    // The switches to turn each line on/off.
     $('#key').on('click', '.key-switch-control', function(ev) {
+      ev.preventDefault();
       chart.toggleLine($(this).data('line-id'));
+    });
+
+    // To duplicate lines.
+    $('#key').on('click', '.key-duplicate', function(ev) {
+      ev.preventDefault();
+      chart.duplicateLine($(this).data('line-id'));
     });
   };
 
