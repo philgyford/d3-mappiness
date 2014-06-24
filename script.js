@@ -933,7 +933,6 @@ mappiness.controller = function module() {
   function initListeners() {
     // The switches to turn each line on/off.
     $('#key').on('click', '.key-switch-control', function(ev) {
-      ev.preventDefault();
       chart.toggleLine($(this).data('line-id'));
     });
 
