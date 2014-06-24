@@ -698,7 +698,7 @@ mappiness.ui = function module() {
   /**
    * Displays the summaries/key for all the lines.
    */
-  exports.list_lines = function(lines) {
+  exports.listLines = function(lines) {
     // Add keys.
     lines.forEach(function(line) {
       renderLineKey(line);
@@ -857,12 +857,12 @@ mappiness.controller = function module() {
     
     ui.init();
 
-    init_listeners();
+    initListeners();
 
     dataManager.loadJSON('mappiness.json');
 
     dataManager.on('dataReady', function() {
-      draw_chart(); 
+      drawChart(); 
     });
   };
 
@@ -874,7 +874,7 @@ mappiness.controller = function module() {
     };
   };
 
-  function draw_chart() {
+  function drawChart() {
     $('#wait').hide();
     $('#loaded').fadeIn(500);
 
@@ -887,11 +887,11 @@ mappiness.controller = function module() {
     container = d3.select('#chart');
     ui.setColorScale(chart.getColorScale());
 
-    update_chart();
+    updateChart();
     
     //setTimeout(function(){
       //lines_data.splice(2,1);
-      //update_chart();
+      //updateChart();
     //}, 3000);
   };
 
@@ -901,15 +901,14 @@ mappiness.controller = function module() {
     //});
   //};
   
-  function update_chart() {
+  function updateChart() {
     container.data([lines_data])
              .call(chart);
 
-    ui.list_lines(lines_data);
+    ui.listLines(lines_data);
   };
 
-
-  function init_listeners() {
+  function initListeners() {
     // The switches to turn each line on/off.
     $('#key').on('click', '.key-switch-control', function(ev) {
       ev.preventDefault();
