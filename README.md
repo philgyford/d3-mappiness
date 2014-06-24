@@ -17,8 +17,6 @@ Load index.html in your browser.
 * Rolling average. Configurable in UI?
 * Points rather than dots? Gaps when there's no data?
 * Filters:
-	* Copy line.
-	* Delete line.
 	* Form for changing a line's filters.
 	* Add map area filter?
 * Resize width of chart on window resize?
