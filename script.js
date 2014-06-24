@@ -731,7 +731,8 @@ mappiness.ui = function module() {
                    .data('line-id', line.id)
                    .html('<h2></h2>'
                          + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
-                         + '<a href="#" class="key-duplicate">Duplicate line</a>'
+                         + '<a href="#" class="key-duplicate">Duplicate</a>'
+                         + '<a href="#" class="key-delete">Delete</a>'
                          + '<dl class="key-descriptions"></dl>')
       );
     };
@@ -772,6 +773,7 @@ mappiness.ui = function module() {
 
     $('.key-switch-control', cssid).data('line-id', line.id);
     $('.key-duplicate', cssid).data('line-id', line.id);
+    $('.key-delete', cssid).data('line-id', line.id);
 
     if (('in_out' in cons && cons.in_out)
         || 
@@ -885,18 +887,9 @@ mappiness.controller = function module() {
     ui.setColorScale(chart.getColorScale());
 
     updateChart();
-    
-    //setTimeout(function(){
-      //lines_data.splice(2,1);
-      //updateChart();
-    //}, 3000);
+ 
   };
 
-  //function prepare_form() {
-    //$('.check-line').change(function() {
-      //chart.toggleLine($(this).val());
-    //});
-  //};
   
   function updateChart() {
     container.data([lines_data])
@@ -905,6 +898,10 @@ mappiness.controller = function module() {
     ui.listLines(lines_data);
   };
 
+  /**
+   * Makes a copy of the line's data and adds it to the end of line_data.
+   * Doesn't automatically update the chart or key displays.
+   */
   function duplicateLine(line_id) {
     for (var n = 0; n < lines_data.length; n++) {
       if (lines_data[n].id == line_id) {
@@ -918,7 +915,19 @@ mappiness.controller = function module() {
         break;
       };
     };
-     
+  };
+
+  /**
+   * Remove's the line's data from line_data.
+   * Doesn't automatically update the chart or key displays.
+   */
+  function deleteLine(line_id) {
+    for (var n = 0; n < lines_data.length; n++) {
+      if (lines_data[n].id == line_id) {
+        lines_data.splice(n, 1);
+        break;
+      };
+    };
   };
 
   function initListeners() {
@@ -928,10 +937,15 @@ mappiness.controller = function module() {
       chart.toggleLine($(this).data('line-id'));
     });
 
-    // To duplicate lines.
     $('#key').on('click', '.key-duplicate', function(ev) {
       ev.preventDefault();
       duplicateLine($(this).data('line-id'));
+      updateChart();
+    });
+
+    $('#key').on('click', '.key-delete', function(ev) {
+      ev.preventDefault();
+      deleteLine($(this).data('line-id'));
       updateChart();
     });
   };
