@@ -29,7 +29,14 @@ function(d3) {
         if (line_ids.indexOf(line_id) < 0) {
           removeLineKey(line_id);
         };
-      })
+      });
+
+      // If there's only one line left, remove the UI to delete it.
+      if (lines.length == 1) {
+        $('.key-delete').hide();
+      } else {
+        $('.key-delete').show();
+      };
     };
 
     /**
