@@ -66,8 +66,7 @@ function(d3) {
                     .data([data]);
 
         // Give each line its own color, keyed by its ID.
-        // (The ID is stored in each point of the line.)
-        colorScale.domain(data.map(function(d) { return d.values[0].id; } ));
+        colorScale.domain(data.map(function(d) { return d.id; } ));
 
         createMain();
 
