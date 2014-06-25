@@ -49,7 +49,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       updateChart();
     };
-
     
     /**
      * Updates the chart and key with whatever is now in lines_data.
