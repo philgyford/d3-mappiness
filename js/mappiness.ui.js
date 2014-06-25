@@ -16,7 +16,7 @@ function(d3) {
     /**
      * Displays the summaries/key for all the lines.
      */
-    exports.listLines = function(lines) {
+    exports.updateKey = function(lines) {
       // Add keys.
       lines.forEach(function(line) {
         renderLineKey(line);

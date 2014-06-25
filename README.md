@@ -12,6 +12,7 @@ Load index.html in your browser.
 
 ## TO DO
 
+* Fix colours of lines - need to remain consistent when deleting lines.
 * Something that shows what dates are shown in focus area.
 * Hover lines like on http://bl.ocks.org/gniemetz/4618602
 * Rolling average. Configurable in UI?

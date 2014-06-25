@@ -30,14 +30,10 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       });
     };
 
-    exports.getLinesData = function(n) {
-      if (n == null) {
-        return lines_data; 
-      } else {
-        return lines_data[n];
-      };
-    };
-
+    /**
+     * Does the initial generating of the chart, once we've loaded all the
+     * data.
+     */
     function drawChart() {
       $('#wait').hide();
       $('#loaded').fadeIn(500);
@@ -55,11 +51,14 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
     };
 
     
+    /**
+     * Updates the chart and key with whatever is now in lines_data.
+     */
     function updateChart() {
       container.data([lines_data])
                .call(chart);
 
-      ui.listLines(lines_data);
+      ui.updateKey(lines_data);
     };
 
     /**
@@ -94,6 +93,9 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       };
     };
 
+    /**
+     * Initialises all the various events we listen for in the UI.
+     */
     function initListeners() {
       // The switches to turn each line on/off.
       $('#key').on('click', '.key-switch-control', function(ev) {
