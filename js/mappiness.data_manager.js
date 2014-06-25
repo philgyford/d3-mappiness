@@ -62,7 +62,19 @@ function(d3) {
                       do_other: "Something else",
                       do_other2: "Something else"
           }
-        };
+        },
+        colorPool = [
+          '#4D4D4D', // gray
+          '#5DA5DA', // blue
+          '#FAA43A', // orange
+          '#60BD68', // green
+          '#F17CB0', // pink
+          '#B2912F', // brown
+          '#B276B2', // purple
+          '#DECF3F', // yellow
+          '#F15854'  // red
+        ],
+        colorsInUse = [];
 
     exports.loadJSON = function(filepath) {
       var load = d3.json(filepath); 
@@ -90,15 +102,49 @@ function(d3) {
     exports.getCleanedData = function(original_constraints) {
       constraints = tidyConstraints(original_constraints);
       var values = getFilteredData(constraints)
+      var color = getNextColor();
 
       return {
         id: values[0].id,
+        color: color,
         constraints: getInflatedConstraints(constraints),
         original_constraints: original_constraints,
         values: values
       };
     };
 
+    /**
+     * Call this to remove a color from the list of colors currently in use.
+     * The color will then be available for newly-created lines.
+     * color is one of the colors in colorPool and colorsInUse.
+     * eg '#4D4D4D'.
+     */
+    exports.releaseColor = function(color) {
+      if (colorsInUse.indexOf(color) >= 0) {
+        colorsInUse.splice(colorsInUse.indexOf(color), 1);  
+      }; 
+    };
+
+    /**
+     * Returns the next available color (eg, '#4D4D4D') from colorPool.
+     * Adds that color to colorsInUse so it is not available next time.
+     * If all colors are already in use, returns '#000'.
+     */
+    var getNextColor = function() {
+      for (n=0; n < colorPool.length; n++) {
+        if (colorsInUse.indexOf(colorPool[n]) < 0) {
+          var color = colorPool[n];
+          colorsInUse.push(color);
+          break;
+        };
+      };
+      // All the colors in the pool have been used.
+      if (color == undefined) {
+        // Yes, it'd be nicer to do something better than this.
+        color = '#000';
+      };
+      return color;
+    };
 
     /**
      * Ensures the submitted constraints are the correct format and have any

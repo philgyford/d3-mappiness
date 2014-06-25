@@ -4,9 +4,7 @@
 define(['d3'],
 function(d3) {
   return function() {
-    var exports = {},
-        // Will be a d3 scale once set by setColorScale().
-        colorScale;
+    var exports = {};
 
     exports.init = function() {
     };
@@ -95,7 +93,7 @@ function(d3) {
       };
 
 
-      $(cssid).css('border-top-color', colorScale(line.id));
+      $(cssid).css('border-top-color', line.color);
 
       $('h2', cssid).text(cons.feeling.description);
 
@@ -152,10 +150,6 @@ function(d3) {
         removeFromKey('notes-title');
         removeFromKey('notes');
       };
-    };
-
-    exports.setColorScale = function(scale) {
-      colorScale = scale;
     };
 
     return exports;

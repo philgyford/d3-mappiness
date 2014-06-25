@@ -25,3 +25,4 @@ Load index.html in your browser.
 * Demo site with dummy data.
 * Permalinks?
 * Remove require cache-busting in mappiness.js.
+* Improve mappiness.dataManager's getNextColor() when colorPool runs out of colors.

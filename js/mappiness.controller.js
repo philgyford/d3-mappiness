@@ -45,7 +45,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       chart = mappiness_chart().width( $('#chart').width() );
 
       container = d3.select('#chart');
-      ui.setColorScale(chart.getColorScale());
 
       updateChart();
     };
@@ -86,6 +85,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
     function deleteLine(line_id) {
       for (var n = 0; n < lines_data.length; n++) {
         if (lines_data[n].id == line_id) {
+          dataManager.releaseColor(lines_data[n].color);
           lines_data.splice(n, 1);
           break;
         };

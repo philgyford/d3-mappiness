@@ -52,10 +52,7 @@ function(d3) {
                             .orient('left'),
         
         contextLine = d3.svg.line().x(X).y(contextY),
-        focusLine = d3.svg.line().x(X).y(focusY),
-        
-        colorScale = d3.scale.ordinal()
-                        .range(['#dc3a2d', '#2e5aa9', '#518d48', '#000', '#666']);
+        focusLine = d3.svg.line().x(X).y(focusY);
 
     function exports(_selection) {
       _selection.each(function(data) {
@@ -64,9 +61,6 @@ function(d3) {
         svg = d3.select(this)
                   .selectAll('svg')
                     .data([data]);
-
-        // Give each line its own color, keyed by its ID.
-        colorScale.domain(data.map(function(d) { return d.id; } ));
 
         createMain();
 
@@ -238,7 +232,7 @@ function(d3) {
       line.enter().append('path')
             .attr('class', 'line feeling')
             .attr('id', function(d) { return lineCSSID(d.id, chart); })
-            .style('stroke', function(d) { return colorScale(d.id); });
+            .style('stroke', function(d) { return d.color; });
 
       line.data(function(d) { return d; })
           .transition()
@@ -340,10 +334,6 @@ function(d3) {
       if (!arguments.length) return yValue;
       yValue = _;
       return chart;
-    };
-
-    exports.getColorScale = function() {
-      return colorScale; 
     };
 
     //d3.rebind(exports, dispatch, "on");
