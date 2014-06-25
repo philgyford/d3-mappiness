@@ -233,12 +233,12 @@ function(d3) {
 
       var line = chartEl.selectAll('path.line.feeling')
                         .data(function(d) { return d; },
-                              function(d) { return d.values[0].id; });
+                              function(d) { return d.id; });
 
       line.enter().append('path')
             .attr('class', 'line feeling')
-            .attr('id', function(d) { return lineCSSID(d.values[0].id, chart); })
-            .style('stroke', function(d) { return colorScale(d.values[0].id); });
+            .attr('id', function(d) { return lineCSSID(d.id, chart); })
+            .style('stroke', function(d) { return colorScale(d.id); });
 
       line.data(function(d) { return d; })
           .transition()
