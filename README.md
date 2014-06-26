@@ -12,7 +12,6 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Fix focus thing when a new line is created/removed and the chart is redrawn.
 * Something that shows what dates are shown in focus area.
 * Hover lines like on http://bl.ocks.org/gniemetz/4618602
 * Rolling average. Configurable in UI?
