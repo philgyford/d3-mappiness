@@ -64,13 +64,31 @@ function(d3) {
 
         createMain();
 
+        if (brush !== undefined) {
+          // Original extent of brush, if any.
+          var brush_extent = brush.extent();
+        };
+
         updateScales(data);
 
         renderAxes();
+
+        renderBrush();
+
+        if (! brush.empty()) {
+          // If the brush was in use, then set focus x domain and brush extent
+          // back to what they were.
+          focusXScale.domain(brush_extent);
+          brush.extent(brush_extent);
+        };
       
         renderLines('focus');
 
-        renderBrush();
+        // In case the brush was already in use.
+        // This will ensure the brush remains spanning the same dates if the
+        // domain has changed.
+        contextG.select('.x.brush').call(brush);
+        brushed();
       });
     };
 
@@ -117,27 +135,28 @@ function(d3) {
 
 
     function updateScales(data) {
-      setDimensions();
 
-      // Get min and max of all the start times for all the lines.
-      focusXScale.domain([
-        d3.min(data, function(line) {
-          return d3.min(line.values, function(response) {
-            return response.start_time;
+      //if (brush == undefined || brush.empty()) {
+        // Get min and max of all the start times for all the lines.
+        focusXScale.domain([
+          d3.min(data, function(line) {
+            return d3.min(line.values, function(response) {
+              return response.start_time;
+            })
+          }),
+          d3.max(data, function(line) {
+            return d3.max(line.values, function(response) {
+              return response.start_time;
+            })
           })
-        }),
-        d3.max(data, function(line) {
-          return d3.max(line.values, function(response) {
-            return response.start_time;
-          })
-        })
-      ]).range([0, focusWidth]);
+        ]).range([0, focusWidth]);
 
-      contextXScale.domain(focusXScale.domain()).range([0, contextWidth]);
+        contextXScale.domain(focusXScale.domain()).range([0, contextWidth]);
 
-      focusYScale.domain([0, 1]).range([focusHeight, 0]);
+        focusYScale.domain([0, 1]).range([focusHeight, 0]);
 
-      contextYScale.domain(focusYScale.domain()).range([contextHeight, 0]);
+        contextYScale.domain(focusYScale.domain()).range([contextHeight, 0]);
+      //};
     };
 
 
@@ -242,31 +261,27 @@ function(d3) {
       line.exit().remove();
     };
 
-
-    /**
-     * Return the string used for a line's CSS ID.
-     * id is the numeric ID of the line.
-     * chart is 'context' or 'focus'.
-     */
-    function lineCSSID(id, chart) {
-      return chart + '-' + id; 
-    };
-
     /**
      * Most of the stuff for drawing the context/brush chart.
      */
     function renderBrush() {
-      brush = d3.svg.brush().x(contextXScale)
-                            .on('brush', brushed);
-                          
-      renderLines('context');
+      // So that we don't draw another brush when updating an existing chart:
+      if (d3.select('g.brush').empty()) {
 
-      contextG.append('g')
-        .attr('class', 'x brush')
-        .call(brush)
-      .selectAll('rect')
-        .attr('y', -6)
-        .attr('height', contextHeight + 6);
+        brush = d3.svg.brush().x(contextXScale)
+                              .on('brush', brushed);
+                            
+        renderLines('context');
+
+        contextG.append('g')
+          .attr('class', 'x brush')
+          .call(brush)
+        .selectAll('rect')
+          .attr('y', -6)
+          .attr('height', contextHeight + 6);
+      } else {
+        renderLines('context');
+      };
     };
 
     function brushed() {
@@ -276,6 +291,14 @@ function(d3) {
       focusG.select(".x.axis").call(focusXAxis);
     };
 
+    /**
+     * Return the string used for a line's CSS ID.
+     * id is the numeric ID of the line.
+     * chart is 'context' or 'focus'.
+     */
+    function lineCSSID(id, chart) {
+      return chart + '-' + id; 
+    };
 
     function X(d) {
       return focusXScale(d.start_time);
