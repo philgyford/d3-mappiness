@@ -66,7 +66,7 @@ function(d3) {
 
         if (brush !== undefined) {
           // Original extent of brush, if any.
-          var brush_extent = brush.extent();
+          var brushExtent = brush.extent();
         };
 
         updateScales(data);
@@ -78,18 +78,48 @@ function(d3) {
         if (! brush.empty()) {
           // If the brush was in use, then set focus x domain and brush extent
           // back to what they were.
-          focusXScale.domain(brush_extent);
-          brush.extent(brush_extent);
+          focusXScale.domain(brushExtent);
+          brush.extent(brushExtent);
         };
       
-        renderLines('focus');
-
-        // In case the brush was already in use.
-        // This will ensure the brush remains spanning the same dates if the
-        // domain has changed.
-        contextG.select('.x.brush').call(brush);
-        brushed();
+        setBrushAndLines();
       });
+    };
+
+    /**
+     * We have to check the brush before we draw the focus chart's lines.
+     * Purely because if we add or remove a line, it might change the x-domain,
+     * and this could mean that if there's a brush, it might be partially or
+     * entirely off either end of the context chart.
+     */
+    function setBrushAndLines() {
+      if (! brush.empty()) {
+        var brushExtent = brush.extent();
+        var xDomain = contextXScale.domain();
+
+        if (brushExtent[0] > xDomain[1]
+            ||
+            brushExtent[1] < xDomain[0]
+            ) {
+          // Things have changed so much the brush is now entirely off either
+          // the left- or right-hand edge of the context chart.
+          // So remove it.
+          brush.clear();
+        } else if (brushExtent[1] > xDomain[1]) {
+          // Right-hand edge of brush is off right-hand edge of context chart.
+          brush.extent([brushExtent[0], xDomain[1]]);
+        } else if (brushExtent[0] < xDomain[0]) {
+          // Left-hand edge of brush is off left-hand edge of context chart.
+          brush.extent([xDomain[0], brushExtent[1]]);
+        };
+      };
+
+      // Ensures brush remains spanning the same dates if the domain has
+      // changed.
+      contextG.select('.x.brush').call(brush);
+      brushed();
+
+      renderLines('focus');
     };
 
 
