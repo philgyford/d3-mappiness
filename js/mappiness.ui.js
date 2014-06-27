@@ -5,10 +5,11 @@ define(['d3', 'jquery.modal'],
 function(d3, jquery_modal) {
   return function() {
     var exports = {},
-        maximumLines;
-
-    exports.init = function() {
-    };
+        // Can be set by setMaximumLines.
+        maximumLines = 3,
+        // Should be set by setConstraintsDescriptions.
+        // Will be an object containing textual descriptions of constraints.
+        constraintsDescriptions;
 
     //d3.rebind(exports, dispatch, "on");
 
@@ -50,6 +51,16 @@ function(d3, jquery_modal) {
       maximumLines = max; 
     };
 
+    exports.setConstraintsDescriptions = function(descriptions) {
+      constraintsDescriptions = descriptions; 
+    };
+
+    exports.editFormOpen = function(line_id) {
+      $('#line-edit').modal({
+        fadeDuration: 100
+      });
+    };
+
     /**
      * Remove the descriptive key for a line.
      */
@@ -70,7 +81,8 @@ function(d3, jquery_modal) {
                      .data('line-id', line.id)
                      .html('<h2></h2>'
                            + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
-                           + '<a href="#" class="key-duplicate">Duplicate</a>'
+                           + '<a href="#" class="key-duplicate">Duplicate</a> '
+                           + '<a href="#" class="key-edit">Edit</a> '
                            + '<a href="#" class="key-delete">Delete</a>'
                            + '<dl class="key-descriptions"></dl>')
         );

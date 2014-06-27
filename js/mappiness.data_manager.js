@@ -5,7 +5,7 @@ function(d3) {
     var exports = {},
         dispatch = d3.dispatch('dataReady', 'dataLoading'),
         data,
-        constraints_descriptions = {
+        constraintsDescriptions = {
           in_out: {in: 'Indoors',
                     out: 'Outdoors',
                     vehicle: 'In a vehicle'},
@@ -132,6 +132,10 @@ function(d3) {
       return colorPool.length;
     };
 
+    exports.getConstraintsDescriptions = function() {
+      return constraintsDescriptions;
+    };
+
     /**
      * Returns the next available color (eg, '#4D4D4D') from colorPool.
      * Adds that color to colorsInUse so it is not available next time.
@@ -215,21 +219,21 @@ function(d3) {
       if ('in_out' in constraints) {
         new_constraints.in_out = {
               value: constraints.in_out,
-              description: constraints_descriptions.in_out[ constraints.in_out ]};
+              description: constraintsDescriptions.in_out[ constraints.in_out ]};
       };
       if ('home_work' in constraints) {
         new_constraints.home_work = {
               value: constraints.home_work,
-              description: constraints_descriptions.home_work[
+              description: constraintsDescriptions.home_work[
                                               new_constraints.home_work.value ]};
       };
       
       // Get the descriptions for any People constraints.
       var people = {};
-      d3.keys(constraints_descriptions.people).forEach(function(k) {
+      d3.keys(constraintsDescriptions.people).forEach(function(k) {
         if (k in constraints) {
           people[k] = {value: constraints[k],
-                       description: constraints_descriptions.people[k]};
+                       description: constraintsDescriptions.people[k]};
         };
       });
       if (d3.keys(people).length > 0) {
@@ -238,10 +242,10 @@ function(d3) {
     
       // Get the descriptions for any Activities constraints.
       var activities = {};
-      d3.keys(constraints_descriptions.activities).forEach(function(k) {
+      d3.keys(constraintsDescriptions.activities).forEach(function(k) {
         if (k in constraints) {
           activities[k] = {value: constraints[k],
-                           description: constraints_descriptions.activities[k]};
+                           description: constraintsDescriptions.activities[k]};
         };
       });
       if (d3.keys(activities).length > 0) {
@@ -271,9 +275,9 @@ function(d3) {
      *
      * 'home_work': A string one of 'home', 'work' or 'other'.
      *
-     * Any of the keys from constraints_descriptions.people, set to either 1 or 0.
+     * Any of the keys from constraintsDescriptions.people, set to either 1 or 0.
      *
-     * Any of the keys from constraints_descriptions.activities, set to 1 or 0.
+     * Any of the keys from constraintsDescriptions.activities, set to 1 or 0.
      *
      * 'notes' can be a string which will be RegExp'd against the point's notes
      * field, ignoring case.
@@ -294,7 +298,7 @@ function(d3) {
         });
       };
 
-      d3.keys(constraints_descriptions.people).forEach(function(people) {
+      d3.keys(constraintsDescriptions.people).forEach(function(people) {
          if (people in constraints) {
             feeling_data = feeling_data.filter(function(d) {
               return d[people] == constraints[people]; 
@@ -302,7 +306,7 @@ function(d3) {
          };
       });
 
-      d3.keys(constraints_descriptions.activities).forEach(function(activity) {
+      d3.keys(constraintsDescriptions.activities).forEach(function(activity) {
          if (activity in constraints) {
             feeling_data = feeling_data.filter(function(d) {
               if (activity == 'do_other') {

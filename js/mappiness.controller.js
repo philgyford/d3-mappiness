@@ -1,4 +1,3 @@
-
 /**
  */
 define(['jquery', 'd3', './mappiness.chart', './mappiness.data_manager', './mappiness.ui'],
@@ -20,12 +19,12 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      */
     exports.init = function() {
       
-      ui.init();
-
       initListeners();
 
       // We only allow the number of lines that we have distinct colors for.
       ui.setMaximumLines( dataManager.colorPoolLength() );
+      // Copy the constraints descriptions from the dataManager to the ui.
+      ui.setConstraintsDescriptions( dataManager.getConstraintsDescriptions() );
 
       dataManager.loadJSON('mappiness.json');
 
@@ -115,6 +114,11 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         ev.preventDefault();
         deleteLine($(this).data('line-id'));
         updateChart();
+      });
+
+      $('#key').on('click', '.key-edit', function(ev) {
+        ev.preventDefault();
+        ui.editFormOpen($(this).data('line-id'));
       });
     };
 
