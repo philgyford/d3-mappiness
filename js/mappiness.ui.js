@@ -2,7 +2,7 @@
  * For handling all the dynamic forms etc.
  */
 define(['d3', 'jquery.modal'],
-function(d3) {
+function(d3, jquery_modal) {
   return function() {
     var exports = {},
         maximumLines;
