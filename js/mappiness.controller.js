@@ -11,6 +11,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         // Each element will correspond to one line on the chart, containing
         // all its data.
         lines_data = [],
+        maximumLines,
         dataManager = mappiness_dataManager(),
         ui = mappiness_ui();
 
@@ -22,6 +23,9 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       ui.init();
 
       initListeners();
+
+      // We only allow the number of lines that we have distinct colors for.
+      ui.setMaximumLines( dataManager.colorPoolLength() );
 
       dataManager.loadJSON('mappiness.json');
 

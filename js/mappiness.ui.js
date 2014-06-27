@@ -4,7 +4,8 @@
 define(['d3'],
 function(d3) {
   return function() {
-    var exports = {};
+    var exports = {},
+        maximumLines;
 
     exports.init = function() {
     };
@@ -35,6 +36,18 @@ function(d3) {
       } else {
         $('.key-delete').show();
       };
+
+      // If we've got the maximum lines we're allowed, hide the duplicate
+      // option.
+      if (maximumLines !== undefined && lines.length == maximumLines) {
+        $('.key-duplicate').hide();
+      } else {
+        $('.key-duplicate').show();
+      };
+    };
+
+    exports.setMaximumLines = function(max) {
+      maximumLines = max; 
     };
 
     /**

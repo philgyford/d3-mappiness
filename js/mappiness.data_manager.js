@@ -126,6 +126,13 @@ function(d3) {
     };
 
     /**
+     * Returns the number of colors in the colorPool.
+     */
+    exports.colorPoolLength = function() {
+      return colorPool.length;
+    };
+
+    /**
      * Returns the next available color (eg, '#4D4D4D') from colorPool.
      * Adds that color to colorsInUse so it is not available next time.
      * If all colors are already in use, returns '#000'.
