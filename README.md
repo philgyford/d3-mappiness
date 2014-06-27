@@ -19,7 +19,6 @@ Load index.html in your browser.
 * Filters:
 	* Form for changing a line's filters.
 	* Add map area filter?
-* Resize width of chart on window resize?
 * Demo site with dummy data.
 * Permalinks?
 * Remove require cache-busting in mappiness.js.
