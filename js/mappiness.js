@@ -1,4 +1,11 @@
 require.config({
+  shim: {
+    'jquery.modal': {
+      deps: ['jquery'],
+      exports: 'jQuery.fn.modal'
+    }
+  },
+
   // For development only.
   urlArgs: "bust=" + (new Date()).getTime()
 });

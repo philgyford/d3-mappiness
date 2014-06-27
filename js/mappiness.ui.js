@@ -1,7 +1,7 @@
 /**
  * For handling all the dynamic forms etc.
  */
-define(['d3'],
+define(['d3', 'jquery.modal'],
 function(d3) {
   return function() {
     var exports = {},
