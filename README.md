@@ -12,10 +12,6 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Load constraints_descriptions from JSON file in dataManager.
-  (Need to ensure things don't progress until both that and the mappiness data
-  have loaded.)
-  Or do it in controller, and pass into both ui and dataManager?
 * Either way, maybe on ui.init(), populate the #line-edit form with all the 
   blank fields for constraints.
 * Then, when the edit field is opened, set the fields according to current

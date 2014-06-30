@@ -111,3 +111,8 @@ body {
 .key-descriptions dt {
   font-weight: bold;
 }
+
+#line-edit {
+  position: relative;
+display: block;
+}

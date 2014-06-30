@@ -1,14 +1,15 @@
 /**
  * For handling all the dynamic forms etc.
  */
-define(['d3', 'jquery.modal'],
-function(d3, jquery_modal) {
+define(['d3', 'jquery.modal', 'underscore'],
+function(d3, jquery_modal, _) {
   return function() {
     var exports = {},
         colorPool = ['#f00', '#0f0', '#00f'],
         // Will be an object containing textual descriptions of constraints.
         // Should be set by constraintsDescriptions();
-        constraintsDescriptions = {};
+        constraintsDescriptions = {},
+        templates = makeTemplates();
 
     //d3.rebind(exports, dispatch, "on");
 
@@ -51,6 +52,27 @@ function(d3, jquery_modal) {
       $('#line-edit').modal({
         fadeDuration: 100
       });
+    };
+
+    /**
+     * Updates the contents of the edit form with all the correct inputs.
+     */
+    editFormUpdate = function() {
+      $('#line-edit-constraints').empty();
+
+      $('#line-edit-constraints').append(templates.line_edit_feelings({
+        feelings: ['happy', 'relaxed', 'awake']
+      }));
+    
+      $('#line-edit-constraints').append(templates.line_edit_people({
+        options: constraintsDescriptions.people
+      }));
+      
+      //$('#line-edit-constraints').append(
+        //$('<dt/>').text('People')
+      //).append(
+        //$('<dd/>').html('<label for="feeling-all"><input type="radio" name="feeling" id="feeling-all" value="all" checked="checked"> All</label>'
+      //);
     };
 
     /**
@@ -169,9 +191,66 @@ function(d3, jquery_modal) {
       };
     };
 
+    /**
+     * Handy.
+     */
+    function capitalizeFirstLetter(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1)
+    };
+
+    function makeTemplates() {
+      var templates = {};
+
+      templates.line_edit_feelings = _.template(' \
+        <dt>Feelings</dt> \
+        <dd> \
+          <% _.each(feelings, function(feeling) { %> \
+            <label for="le-feeling-happy"> \
+              <input type="radio" name="feeling" id="le-feeling-<%= feeling %>" value="<%= feeling %>"> \
+              <%= feeling.charAt(0).toUpperCase() + feeling.slice(1) %> \
+            </label> \
+          <% }); %> \
+        </dd> \
+      ');
+
+      templates.line_edit_people = _.template(' \
+        <dt>People</dt> \
+        <dd> \
+          <label for="le-people-alone-yes"> \
+            <input type="radio" name="le-people-alone" id="le-people-alone-yes" value="yes"> \
+            Alone, or with strangers only \
+          </label> \
+          <br> \
+          <label for="le-people-alone-no"> \
+            <input type="radio" name="le-people-alone" id="le-people-alone-no" value="no"> \
+            Or with… \
+          </label> \
+          <ul> \
+            <% _.each(options, function(description, key) { %> \
+              <li> \
+                <select name="le-people" id="le-people-<%= key %>"> \
+                  <option value="any">Ignore</option> \
+                  <option value="yes">Yes</option> \
+                  <option value="no">No</option> \
+                </select> \
+                <label for="le-people-<%= key %>"><%= description %></label> \
+              </li> \
+            <% }); %> \
+          </ul> \
+        </dd> \
+      ');
+
+      return templates;
+    };
+
+    /**
+     * Not only sets the constraintsDescriptions property, but also updates
+     * the line edit form to use the new data.
+     */
     exports.constraintsDescriptions = function(_) {
       if (!arguments.length) return constraintsDescriptions;
       constraintsDescriptions = _;
+      editFormUpdate();
       return this;
     };
 
