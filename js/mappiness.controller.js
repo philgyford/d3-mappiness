@@ -10,21 +10,26 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         // Each element will correspond to one line on the chart, containing
         // all its data.
         lines_data = [],
-        maximumLines,
         dataManager = mappiness_dataManager(),
         ui = mappiness_ui();
 
     /**
      * Call this to kick things off.
      */
-    exports.init = function() {
-      
-      initListeners();
+    exports.init = function(spec) {
 
-      // We only allow the number of lines that we have distinct colors for.
-      ui.setMaximumLines( dataManager.colorPoolLength() );
-      // Copy the constraints descriptions from the dataManager to the ui.
-      ui.setConstraintsDescriptions( dataManager.getConstraintsDescriptions() );
+      if (spec) {
+        if ('lineColors' in spec) {
+          dataManager.colorPool(spec.lineColors);
+          ui.colorPool(spec.lineColors);
+        };
+        if ('dataDictionary' in spec) {
+           dataManager.constraintsDescriptions(spec.dataDictionary);
+           ui.constraintsDescriptions(spec.dataDictionary);
+        };
+      };
+
+      initListeners();
 
       dataManager.loadJSON('mappiness.json');
 

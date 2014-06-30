@@ -5,75 +5,9 @@ function(d3) {
     var exports = {},
         dispatch = d3.dispatch('dataReady', 'dataLoading'),
         data,
-        constraintsDescriptions = {
-          in_out: {in: 'Indoors',
-                    out: 'Outdoors',
-                    vehicle: 'In a vehicle'},
-          home_work: {home: 'At home',
-                      work: 'At work',
-                      other: 'Elsewhere'},
-          people: {with_partner: "Spouse, partner, girl/boyfriend",
-                  with_children: "Children",
-                  with_relatives: "Other family members",
-                  with_peers: "Colleagues, classmates",
-                  with_clients: "Clients, customers",
-                  with_friends: "Friends",
-                  with_others: "Other people you know"},
-          activities: {do_work: "Working, studying",
-                      do_meet: "In a meeting, seminar, class",
-                      do_travel: "Travelling, commuting",
-                      do_cook: "Cooking, preparing food",
-                      do_chores: "Housework, chores, DIY",
-                      do_admin: "Admin, finances, organising",
-                      do_shop: "Shopping, errands",
-                      do_wait: "Waiting, queueing",
-                      do_child: "Childcare, playing with children",
-                      do_pet: "Pet care, playing with pets",
-                      do_care: "Care or help for adults",
-                      do_rest: "Sleeping, resting, relaxing",
-                      do_sick: "Sick in bed",
-                      do_pray: "Meditating, religious activities",
-                      do_wash: "Washing, dressing, grooming",
-                      do_love: "Intimacy, making love",
-                      do_chat: "Talking, chatting, socialising",
-                      do_eat: "Eating, snacking",
-                      do_caffeine: "Drinking tea/coffee",
-                      do_booze: "Drinking alcohol",
-                      do_smoke: "Smoking",
-                      do_msg: "Texting, email, social media",
-                      do_net: "Browsing the Internet",
-                      do_tv: "Watching TV, film",
-                      do_music: "Listening to music",
-                      do_speech: "Listening to speech/podcast",
-                      do_read: "Reading",
-                      do_theatre: "Theatre, dance, concert",
-                      do_museum: "Exhibition, museum, library",
-                      do_match: "Match, sporting event",
-                      do_walk: "Walking, hiking",
-                      do_sport: "Sports, running, exercise",
-                      do_gardening: "Gardening, allotment",
-                      do_birdwatch: "Birdwatching, nature watching",
-                      do_hunt: "Hunting, fishing",
-                      do_compgame: "Computer games, iPhone games",
-                      do_game: "Other games, puzzles",
-                      do_bet: "Gambling, betting",
-                      do_art: "Hobbies, arts, crafts",
-                      do_sing: "Singing, performing",
-                      do_other: "Something else",
-                      do_other2: "Something else"
-          }
-        },
-        colorPool = [
-          '#4D4D4D', // gray
-          '#5DA5DA', // blue
-          '#FAA43A', // orange
-          '#60BD68', // green
-          '#F17CB0', // pink
-          '#B2912F', // brown
-          '#B276B2', // purple
-          '#DECF3F', // yellow
-          '#F15854'  // red
-        ],
+        // Should be set by constraintsDescriptions();
+        constraintsDescriptions = {},
+        colorPool = [ '#f00', '#0f0', '#00f' ],
         colorsInUse = [];
 
     exports.loadJSON = function(filepath) {
@@ -93,7 +27,6 @@ function(d3) {
       });
     };
 
-    
     /**
      * `constraints` is null, or an object with one or more of these keys:
      * 'feeling': One of 'happy', 'relaxed' or 'awake'.
@@ -123,17 +56,6 @@ function(d3) {
       if (colorsInUse.indexOf(color) >= 0) {
         colorsInUse.splice(colorsInUse.indexOf(color), 1);  
       }; 
-    };
-
-    /**
-     * Returns the number of colors in the colorPool.
-     */
-    exports.colorPoolLength = function() {
-      return colorPool.length;
-    };
-
-    exports.getConstraintsDescriptions = function() {
-      return constraintsDescriptions;
     };
 
     /**
@@ -374,6 +296,18 @@ function(d3) {
       d.beep_time = new Date(d.beep_time);
       d.start_time = new Date(d.start_time);
       return d;
+    };
+
+    exports.constraintsDescriptions = function(_) {
+      if (!arguments.length) return constraintsDescriptions;
+      constraintsDescriptions = _;
+      return this;
+    };
+
+    exports.colorPool = function(_) {
+      if (!arguments.length) return colorPool;
+      colorPool = _;
+      return this;
     };
 
     d3.rebind(exports, dispatch, 'on');

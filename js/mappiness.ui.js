@@ -5,13 +5,13 @@ define(['d3', 'jquery.modal'],
 function(d3, jquery_modal) {
   return function() {
     var exports = {},
-        // Can be set by setMaximumLines.
-        maximumLines = 3,
-        // Should be set by setConstraintsDescriptions.
+        colorPool = ['#f00', '#0f0', '#00f'],
         // Will be an object containing textual descriptions of constraints.
-        constraintsDescriptions;
+        // Should be set by constraintsDescriptions();
+        constraintsDescriptions = {};
 
     //d3.rebind(exports, dispatch, "on");
+
 
     /**
      * Displays the summaries/key for all the lines.
@@ -40,19 +40,11 @@ function(d3, jquery_modal) {
 
       // If we've got the maximum lines we're allowed, hide the duplicate
       // option.
-      if (maximumLines !== undefined && lines.length == maximumLines) {
+      if (lines.length == colorPool.length) {
         $('.key-duplicate').hide();
       } else {
         $('.key-duplicate').show();
       };
-    };
-
-    exports.setMaximumLines = function(max) {
-      maximumLines = max; 
-    };
-
-    exports.setConstraintsDescriptions = function(descriptions) {
-      constraintsDescriptions = descriptions; 
     };
 
     exports.editFormOpen = function(line_id) {
@@ -175,6 +167,18 @@ function(d3, jquery_modal) {
         removeFromKey('notes-title');
         removeFromKey('notes');
       };
+    };
+
+    exports.constraintsDescriptions = function(_) {
+      if (!arguments.length) return constraintsDescriptions;
+      constraintsDescriptions = _;
+      return this;
+    };
+
+    exports.colorPool = function(_) {
+      if (!arguments.length) return colorPool;
+      colorPool = _;
+      return this;
     };
 
     return exports;
