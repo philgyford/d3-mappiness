@@ -355,7 +355,7 @@ function(d3,   _,            jquery_modal) {
       templates.line_edit_notes = _.template(' \
         <h3><label for="le-notes">Notes containing:</label></h3> \
         <p> \
-          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Ignore"> \
+          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Anything or nothing"> \
         </p> \
       ');
 
