@@ -1,8 +1,8 @@
 /**
  * For handling all the dynamic forms etc.
  */
-define(['d3', 'jquery.modal', 'underscore'],
-function(d3, jquery_modal, _) {
+define(['d3', 'underscore', 'jquery.modal'],
+function(d3,   _,            jquery_modal) {
   return function() {
     var exports = {},
         colorPool = ['#f00', '#0f0', '#00f'],
@@ -49,30 +49,85 @@ function(d3, jquery_modal, _) {
     };
 
     exports.editFormOpen = function(line_id) {
-      $('#line-edit').modal({
-        fadeDuration: 100
-      });
+      $('#line-edit').modal();
     };
+
+    //modalOpen = function(selector) {
+      //var fadeDuration = 100;
+
+      //$(body).append(
+        //$('<div class="modal-blocker"></div>').css({
+          //top: 0, right: 0, bottom: 0, left: 0,
+          //width: '100%', height: '100%',
+          //position: 'fixed',
+          //zIndex: 1,
+          //background: '#000',
+          //opacity: 0
+        //});
+      //).animate({opacity: 0.5}, fadeDuration);
+
+      //$(selector).fadeIn(fadeDuration);
+    //};
+
+    //modalClose = function(selector) {
+      //var fadeDuration = 100;
+
+      //$('.modal-blocker').fadeOut(fadeDuration, function() {
+        //$(this).remove();
+      //});
+      //$(selector).fadeOut(fadeDuration);
+    //};
 
     /**
      * Updates the contents of the edit form with all the correct inputs.
      */
-    editFormUpdate = function() {
-      $('#line-edit-constraints').empty();
+    editFormInitialize = function() {
 
-      $('#line-edit-constraints').append(templates.line_edit_feelings({
-        feelings: ['happy', 'relaxed', 'awake']
+      // Create the vanilla form from templates.
+      
+      $('.line-edit-col').empty();
+
+      $('#line-edit-col-1').append(templates.line_edit_feelings({
+        feelings: {happy: 'Happy', relaxed: 'Relaxed', awake: 'Awake'}
       }));
     
-      $('#line-edit-constraints').append(templates.line_edit_people({
-        options: constraintsDescriptions.people
+      $('#line-edit-col-1').append(templates.line_edit_people({
+        people: constraintsDescriptions.people
+      }));
+
+      $('#line-edit-col-1').append(templates.line_edit_place({
+        in_out: constraintsDescriptions.in_out,
+        home_work: constraintsDescriptions.home_work
       }));
       
-      //$('#line-edit-constraints').append(
-        //$('<dt/>').text('People')
-      //).append(
-        //$('<dd/>').html('<label for="feeling-all"><input type="radio" name="feeling" id="feeling-all" value="all" checked="checked"> All</label>'
-      //);
+      $('#line-edit-col-1').append(templates.line_edit_notes());
+
+      $('#line-edit-col-2').append(templates.line_edit_activities({
+        activities: constraintsDescriptions.activities
+      }));
+
+      // Set up custom events when changing certain fields.
+      
+      $('#le-people').on('change', 'input[type=radio]', function(ev) {
+        if ($(this).attr('id') == 'le-people-with') {
+          $('#le-people-with-list').slideDown(); 
+        } else {
+          $('#le-people-with-list').slideUp(); 
+          $('#le-people-with-list select').val('ignore');
+        };
+      });
+
+      // Default state.
+      $('.muted-labels label').addClass('text-muted');
+
+      $('.muted-labels').on('change', 'select', function(ev) {
+        if ($(this).val() == 'ignore') {
+          $(this).next('label').addClass('text-muted');
+        } else {
+          $(this).next('label').removeClass('text-muted');
+        };
+      
+      });
     };
 
     /**
@@ -184,52 +239,59 @@ function(d3, jquery_modal, _) {
 
       if ('notes' in cons && cons.notes) {
         addToKey('dt', 'notes-title', 'Notes');
-        addToKey('dd', 'notes', 'Include "'+cons.notes.description +'"'); 
+        addToKey('dd', 'notes', 'Containing “'+cons.notes.description +'”'); 
       } else {
         removeFromKey('notes-title');
         removeFromKey('notes');
       };
     };
 
-    /**
-     * Handy.
-     */
-    function capitalizeFirstLetter(s) {
-      return s.charAt(0).toUpperCase() + s.slice(1)
-    };
 
+    /**
+     * Populates the templates object with compiled Underscore HTML templates.
+     */
     function makeTemplates() {
       var templates = {};
 
       templates.line_edit_feelings = _.template(' \
-        <dt>Feelings</dt> \
-        <dd> \
-          <% _.each(feelings, function(feeling) { %> \
-            <label for="le-feeling-happy"> \
-              <input type="radio" name="feeling" id="le-feeling-<%= feeling %>" value="<%= feeling %>"> \
-              <%= feeling.charAt(0).toUpperCase() + feeling.slice(1) %> \
+        <h3>Feelings</h3> \
+        <p> \
+          <% count = 1; %> \
+          <% _.each(feelings, function(description, key) { %> \
+            <label for="le-feeling-<%= key %>"> \
+              <input type="radio" name="feeling" id="le-feeling-<%= key %>" value="<%= key %>"<% if (key == "happy") { print(" checked=\'checked\'"); } %>> \
+              <%= description %> \
             </label> \
+            <% if (count < _.keys(feelings).length) { print("<br>") } %> \
+            <% count += 1; %> \
           <% }); %> \
-        </dd> \
+        </p> \
       ');
 
       templates.line_edit_people = _.template(' \
-        <dt>People</dt> \
-        <dd> \
-          <label for="le-people-alone-yes"> \
-            <input type="radio" name="le-people-alone" id="le-people-alone-yes" value="yes"> \
-            Alone, or with strangers only \
-          </label> \
-          <br> \
-          <label for="le-people-alone-no"> \
-            <input type="radio" name="le-people-alone" id="le-people-alone-no" value="no"> \
-            Or with… \
-          </label> \
-          <ul> \
-            <% _.each(options, function(description, key) { %> \
+        <div id="le-people"> \
+          <h3>People</h3> \
+          <p> \
+            <label for="le-people-ignore"> \
+              <input type="radio" name="le-people" id="le-people-ignore" value="ignore" checked="checked"> \
+              Any \
+            </label> \
+            <br> \
+            <label for="le-people-alone"> \
+              <input type="radio" name="le-people" id="le-people-alone" value="alone"> \
+              Alone, or with strangers only \
+            </label> \
+            <br> \
+            <label for="le-people-with"> \
+              <input type="radio" name="le-people" id="le-people-with" value="with"> \
+              Or with… \
+            </label> \
+          </p> \
+          <ul id="le-people-with-list" class="list-unstyled muted-labels"> \
+            <% _.each(people, function(description, key) { %> \
               <li> \
-                <select name="le-people" id="le-people-<%= key %>"> \
-                  <option value="any">Ignore</option> \
+                <select name="le-people-with" id="le-people-<%= key %>"> \
+                  <option value="ignore">Ignore</option> \
                   <option value="yes">Yes</option> \
                   <option value="no">No</option> \
                 </select> \
@@ -237,7 +299,56 @@ function(d3, jquery_modal, _) {
               </li> \
             <% }); %> \
           </ul> \
-        </dd> \
+        </div> \
+      ');
+
+      templates.line_edit_place = _.template(' \
+        <h3>Place</h3> \
+        <p> \
+          <select name="le-place-inout" id="le-place-inout"> \
+            <option value="ignore"><%= _.values(in_out).join(" / ") %></option> \
+            <% _.each(in_out, function(description, key) { %> \
+              <option value="<%= key %>"><%= description %> only</option> \
+            <% }); %> \
+          </select> \
+          <label for="le-place-inout" class="hide"><%= _.values(in_out).join(" / ") %></label> \
+        </p> \
+        <p> \
+          <select name="le-place-homework" id="le-place-homework"> \
+            <option value="ignore"><%= _.values(home_work).join(" / ") %></option> \
+            <% _.each(home_work, function(description, key) { %> \
+              <option value="<%= key %>"><%= description %> only</option> \
+            <% }); %> \
+          </select> \
+          <label for="le-place-homework" class="hide"><%= _.values(home_work).join(" / ") %></label> \
+        </p> \
+      ');
+
+      templates.line_edit_activities = _.template(' \
+        <div id="le-activities"> \
+          <h3>Activities</h3> \
+          <ul id="le-activities-list" class="list-unstyled muted-labels"> \
+            <% _.each(activities, function(description, key) { %> \
+              <% if (key != "do_other2") { %> \
+                <li> \
+                  <select name="le-activities" id="le-activities-<%= key %>"> \
+                    <option value="ignore">Ignore</option> \
+                    <option value="yes">Yes</option> \
+                    <option value="no">No</option> \
+                  </select> \
+                  <label for="le-activities-<%= key %>"><%= description %></label> \
+                </li> \
+              <% } %> \
+            <% }); %> \
+          </ul> \
+        </div> \
+      ');
+
+      templates.line_edit_notes = _.template(' \
+        <h3><label for="le-notes">Notes containing:</label></h3> \
+        <p> \
+          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Ignore"> \
+        </p> \
       ');
 
       return templates;
@@ -250,7 +361,7 @@ function(d3, jquery_modal, _) {
     exports.constraintsDescriptions = function(_) {
       if (!arguments.length) return constraintsDescriptions;
       constraintsDescriptions = _;
-      editFormUpdate();
+      editFormInitialize();
       return this;
     };
 

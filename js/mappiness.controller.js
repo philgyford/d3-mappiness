@@ -36,6 +36,11 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       dataManager.on('dataReady', function() {
         drawChart(); 
       });
+
+
+      $('#line-edit').modal();
+
+      
     };
 
     /**

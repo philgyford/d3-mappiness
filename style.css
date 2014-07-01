@@ -6,19 +6,26 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+/* Clearfix */
+.cf:before,
+.cf:after {
+    content: " ";
+    display: table;
+}
+.cf:after {
+    clear: both;
+}
+.cf {
+    *zoom: 1;
+}
 
 /* jQuery Modal */
 /* https://github.com/kylefox/jquery-modal */
 .modal {
   display: none;
-  width: 400px;
+  width: 80%;
   background: #fff;
   padding: 15px 30px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -o-border-radius: 8px;
-  -ms-border-radius: 8px;
-  border-radius: 8px;
   -webkit-box-shadow: 0 0 10px #000;
   -moz-box-shadow: 0 0 10px #000;
   -o-box-shadow: 0 0 10px #000;
@@ -52,6 +59,28 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
   border-radius: 8px;
 }
 
+input, option, select {
+  font-size: 1em;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+p, li, dt, dd {
+  line-height: 1.2em;
+}
+p {
+  margin-bottom: 0.5em;
+}
+.hide {
+  display: none;
+}
+.list-unstyled {
+  list-style-type: none;
+}
+.text-muted {
+  color: #999;
+}
+input[type=text] {
+  padding: 0.2em 5px 0.3em 5px;
+}
 
 
 body {
@@ -112,7 +141,29 @@ body {
   font-weight: bold;
 }
 
+/* Pop-up.*/
+
 #line-edit {
-  position: relative;
-display: block;
+  height: 80%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
+.line-edit-col {
+  width: 40%;
+  float: left;
+  margin: 0 10px;
+}
+#line-edit h3 {
+  margin: 1.5em 0 0.5em 0;
+}
+#le-people-with-list {
+  display: none;
+}
+#le-notes {
+  width: 95%;
+}
+.muted-labels label {
+  margin-left: 5px;
+}
+
+
