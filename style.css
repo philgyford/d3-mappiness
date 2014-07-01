@@ -162,7 +162,7 @@ body {
 #le-notes {
   width: 95%;
 }
-.muted-labels label {
+ul.muted-labels label {
   margin-left: 5px;
 }
 

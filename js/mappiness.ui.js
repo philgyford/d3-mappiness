@@ -113,21 +113,29 @@ function(d3,   _,            jquery_modal) {
           $('#le-people-with-list').slideDown(); 
         } else {
           $('#le-people-with-list').slideUp(); 
-          $('#le-people-with-list select').val('ignore');
+          $('#le-people-with-list select').val('ignore')
+                                        .next('label').addClass('text-muted');
         };
       });
 
       // Default state.
       $('.muted-labels label').addClass('text-muted');
 
-      $('.muted-labels').on('change', 'select', function(ev) {
-        if ($(this).val() == 'ignore') {
-          $(this).next('label').addClass('text-muted');
-        } else {
+      $('.muted-labels').on('change', 'select,input[type=radio]', function(ev) {
+        if ($(this).attr('type') == 'radio') {
+          $(this).siblings('input:radio').next('label').addClass('text-muted');
           $(this).next('label').removeClass('text-muted');
+        
+        } else {
+          // select fields.
+          if ($(this).val() == 'ignore') {
+            $(this).next('label').addClass('text-muted');
+          } else {
+            $(this).next('label').removeClass('text-muted');
+          };
         };
-      
       });
+
     };
 
     /**
@@ -255,11 +263,11 @@ function(d3,   _,            jquery_modal) {
 
       templates.line_edit_feelings = _.template(' \
         <h3>Feelings</h3> \
-        <p> \
+        <p class="muted-labels"> \
           <% count = 1; %> \
           <% _.each(feelings, function(description, key) { %> \
+            <input type="radio" name="feeling" id="le-feeling-<%= key %>" value="<%= key %>"<% if (key == "happy") { print(""); } %>> \
             <label for="le-feeling-<%= key %>"> \
-              <input type="radio" name="feeling" id="le-feeling-<%= key %>" value="<%= key %>"<% if (key == "happy") { print(" checked=\'checked\'"); } %>> \
               <%= description %> \
             </label> \
             <% if (count < _.keys(feelings).length) { print("<br>") } %> \
@@ -271,20 +279,20 @@ function(d3,   _,            jquery_modal) {
       templates.line_edit_people = _.template(' \
         <div id="le-people"> \
           <h3>People</h3> \
-          <p> \
+          <p class="muted-labels"> \
+            <input type="radio" name="le-people" id="le-people-ignore" value="ignore"> \
             <label for="le-people-ignore"> \
-              <input type="radio" name="le-people" id="le-people-ignore" value="ignore" checked="checked"> \
               Any \
             </label> \
             <br> \
+            <input type="radio" name="le-people" id="le-people-alone" value="alone"> \
             <label for="le-people-alone"> \
-              <input type="radio" name="le-people" id="le-people-alone" value="alone"> \
               Alone, or with strangers only \
             </label> \
             <br> \
+            <input type="radio" name="le-people" id="le-people-with" value="with"> \
             <label for="le-people-with"> \
-              <input type="radio" name="le-people" id="le-people-with" value="with"> \
-              Or with… \
+              With… \
             </label> \
           </p> \
           <ul id="le-people-with-list" class="list-unstyled muted-labels"> \
