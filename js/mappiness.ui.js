@@ -53,32 +53,6 @@ function(d3,   _,            jquery_modal) {
       $('#line-edit').modal({showClose: false});
     };
 
-    //modalOpen = function(selector) {
-      //var fadeDuration = 100;
-
-      //$(body).append(
-        //$('<div class="modal-blocker"></div>').css({
-          //top: 0, right: 0, bottom: 0, left: 0,
-          //width: '100%', height: '100%',
-          //position: 'fixed',
-          //zIndex: 1,
-          //background: '#000',
-          //opacity: 0
-        //});
-      //).animate({opacity: 0.5}, fadeDuration);
-
-      //$(selector).fadeIn(fadeDuration);
-    //};
-
-    //modalClose = function(selector) {
-      //var fadeDuration = 100;
-
-      //$('.modal-blocker').fadeOut(fadeDuration, function() {
-        //$(this).remove();
-      //});
-      //$(selector).fadeOut(fadeDuration);
-    //};
-
     /**
      * Prepares the edit form for a particular line.
      */
