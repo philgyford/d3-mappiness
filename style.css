@@ -165,5 +165,13 @@ body {
 ul.muted-labels label {
   margin-left: 5px;
 }
+.le-select-label {
+  display: inline-block;
+  width: 75%;
+}
+.le-select-field {
+  display: inline-block;
+  width: 20%;
+}
 
 

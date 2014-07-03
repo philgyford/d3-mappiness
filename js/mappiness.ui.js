@@ -49,6 +49,7 @@ function(d3,   _,            jquery_modal) {
     };
 
     exports.editFormOpen = function(line_id) {
+      editFormPrepare(line_id);
       $('#line-edit').modal();
     };
 
@@ -79,12 +80,20 @@ function(d3,   _,            jquery_modal) {
     //};
 
     /**
+     * Prepares the edit form for a particular line.
+     */
+    editFormPrepare = function(line_id) {
+      editFormInitialize();
+
+
+
+    };
+
+    /**
      * Updates the contents of the edit form with all the correct inputs.
+     * No form fields will be selected etc.
      */
     editFormInitialize = function() {
-
-      // Create the vanilla form from templates.
-      
       $('.line-edit-col').empty();
 
       $('#line-edit-col-1').append(templates.line_edit_feelings({
@@ -129,9 +138,9 @@ function(d3,   _,            jquery_modal) {
         } else {
           // select fields.
           if ($(this).val() == 'ignore') {
-            $(this).next('label').addClass('text-muted');
+            $(this).closest('li').children('label').addClass('text-muted');
           } else {
-            $(this).next('label').removeClass('text-muted');
+            $(this).closest('li').children('label').removeClass('text-muted');
           };
         };
       });
@@ -298,12 +307,14 @@ function(d3,   _,            jquery_modal) {
           <ul id="le-people-with-list" class="list-unstyled muted-labels"> \
             <% _.each(people, function(description, key) { %> \
               <li> \
-                <select name="le-people-with" id="le-people-<%= key %>"> \
-                  <option value="ignore">Ignore</option> \
-                  <option value="yes">Yes</option> \
-                  <option value="no">No</option> \
-                </select> \
-                <label for="le-people-<%= key %>"><%= description %></label> \
+                <label class="le-select-label" for="le-people-<%= key %>"><%= description %></label> \
+                <span class="le-select-field"> \
+                  <select name="le-people-with" id="le-people-<%= key %>"> \
+                    <option value="ignore">Ignore</option> \
+                    <option value="yes">Yes</option> \
+                    <option value="no">No</option> \
+                  </select> \
+                </span> \
               </li> \
             <% }); %> \
           </ul> \
@@ -339,12 +350,14 @@ function(d3,   _,            jquery_modal) {
             <% _.each(activities, function(description, key) { %> \
               <% if (key != "do_other2") { %> \
                 <li> \
-                  <select name="le-activities" id="le-activities-<%= key %>"> \
-                    <option value="ignore">Ignore</option> \
-                    <option value="yes">Yes</option> \
-                    <option value="no">No</option> \
-                  </select> \
-                  <label for="le-activities-<%= key %>"><%= description %></label> \
+                  <label class="le-select-label" for="le-activities-<%= key %>"><%= description %></label> \
+                  <span class="le-select-field"> \
+                    <select name="le-activities" id="le-activities-<%= key %>"> \
+                      <option value="ignore">Ignore</option> \
+                      <option value="yes">Yes</option> \
+                      <option value="no">No</option> \
+                    </select> \
+                  </span> \
                 </li> \
               <% } %> \
             <% }); %> \
