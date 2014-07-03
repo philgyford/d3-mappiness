@@ -346,22 +346,30 @@ function(d3,   _,            jquery_modal) {
       templates.line_edit_activities = _.template(' \
         <div id="le-activities"> \
           <h3>Activities</h3> \
-          <ul id="le-activities-list" class="list-unstyled muted-labels"> \
-            <% _.each(activities, function(description, key) { %> \
-              <% if (key != "do_other2") { %> \
-                <li> \
-                  <label class="le-select-label" for="le-activities-<%= key %>"><%= description %></label> \
-                  <span class="le-select-field"> \
-                    <select name="le-activities" id="le-activities-<%= key %>"> \
-                      <option value="ignore">Ignore</option> \
-                      <option value="yes">Yes</option> \
-                      <option value="no">No</option> \
-                    </select> \
-                  </span> \
-                </li> \
-              <% } %> \
-            <% }); %> \
-          </ul> \
+          <div id="le-activities-list"> \
+            <ul class="list-unstyled muted-labels"> \
+              <% count = 1; %> \
+              <% _.each(activities, function(description, key) { %> \
+                <% if (key != "do_other2") { %> \
+                  <li> \
+                    <label class="le-select-label" for="le-activities-<%= key %>"><%= description %></label> \
+                    <span class="le-select-field"> \
+                      <select name="le-activities" id="le-activities-<%= key %>"> \
+                        <option value="ignore">Ignore</option> \
+                        <option value="yes">Yes</option> \
+                        <option value="no">No</option> \
+                      </select> \
+                    </span> \
+                  </li> \
+                  <% if (count == Math.floor(_.keys(activities).length / 2)) { %> \
+                    </ul> \
+                    <ul class="list-unstyled muted-labels last"> \
+                  <% } %> \
+                <% } %> \
+                <% count += 1; %> \
+              <% }); %> \
+            </ul> \
+          </div> \
         </div> \
       ');
 

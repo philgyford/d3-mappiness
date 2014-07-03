@@ -149,9 +149,7 @@ body {
   overflow-x: hidden;
 }
 .line-edit-col {
-  width: 40%;
   float: left;
-  margin: 0 10px;
 }
 #line-edit h3 {
   margin: 1.5em 0 0.5em 0;
@@ -174,4 +172,27 @@ ul.muted-labels label {
   width: 20%;
 }
 
+/* Defaults at really wide widths.
+ * Activities list is split into two columns. */
+#line-edit     { width: 1130px; }
+#line-edit-col-1 { width: 330px; margin-right: 30px; }
+#line-edit-col-2 { width: 690px; }
+#le-activities-list ul { float: left; margin: 0 30px 0 0; }
+#le-activities-list ul.last { margin-right: 0; }
+#le-activities-list li { width: 330px; }
+
+/* At more sensible desktop widths.
+ * Collapse activities into a single column. */
+@media only screen and (max-width: 1200px) {
+  #line-edit     { width: 770px; }
+  #le-activities-list ul { float: none; margin-right: 0; }
+  #line-edit-col-2 { width: 330px; }
+}
+
+/* At narrower widths, collapse the two columns into a single one. */
+@media only screen and (max-width: 820px) {
+  /* Collapse columns. */
+  #line-edit     { width: 420px; }
+  .line-edit-col { float: none; }
+}
 
