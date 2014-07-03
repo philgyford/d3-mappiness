@@ -115,6 +115,13 @@ function(d3,   _,            jquery_modal) {
         activities: constraintsDescriptions.activities
       }));
 
+      // Resizing...
+      
+      $(window).resize(function(){
+        // Keep the edit window centered.
+        $.modal.resize(); 
+      });
+
       // Set up custom events when changing certain fields.
       
       $('#le-people').on('change', 'input[type=radio]', function(ev) {
@@ -125,11 +132,6 @@ function(d3,   _,            jquery_modal) {
           $('#le-people-with-list select').val('ignore')
                                         .next('label').addClass('text-muted');
         };
-      });
-
-      $(window).resize(function(){
-        // Keep the edit window centered.
-        $.modal.resize(); 
       });
 
       // Default state.
@@ -383,6 +385,13 @@ function(d3,   _,            jquery_modal) {
         <p> \
           <input type="text" name="le-notes" id="le-notes" value="" placeholder="Anything or nothing"> \
         </p> \
+      ');
+
+      templates.line_edit_buttons = _.template(' \
+        <div id="le-buttons"> \
+          <button type="button" class="btn btn-default">Cancel</button> \
+          <button type="submit" class="btn btn-default">Submit</button> \
+        </div> \
       ');
 
       return templates;
