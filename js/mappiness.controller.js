@@ -126,6 +126,23 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         ev.preventDefault();
         ui.editFormOpen($(this).data('line-id'));
       });
+      
+      // Edit form button events.
+      
+      $('#line-edit-buttons .button-cancel').on('click', function(ev) {
+        ev.preventDefault();
+        $.modal.close();
+      });
+
+      $('#line-edit-buttons .button-submit').on('click', function(ev) {
+        ev.preventDefault();
+        var newConstraints = ui.editFormMakeConstraints();
+        $.modal.close();
+        // TODO:
+        // Update graph
+        // Update key
+      });
+
     };
 
     return exports;

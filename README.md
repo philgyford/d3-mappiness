@@ -12,10 +12,7 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Either way, maybe on ui.init(), populate the #line-edit form with all the 
-  blank fields for constraints.
-* Then, when the edit field is opened, set the fields according to current
-  line's properties.
+* When the edit field is opened, set the fields according to current line's properties.
 * Update line's constraints and the chart when the form is submitted.
 
 

@@ -53,8 +53,19 @@ function(d3,   _,            jquery_modal) {
 
     exports.editFormOpen = function(line_id) {
       editFormPrepare(line_id);
-      $('#line-edit').modal({showClose: false});
+      $('#line-edit').modal({
+                          showClose: false,
+                          clickClose: false
+                      });
     };
+
+    exports.editFormMakeConstraints = function() {
+      var constraints = {};
+      // TODO
+    
+      return constraints; 
+    };
+
 
     /**
      * Prepares the edit form for a particular line.
