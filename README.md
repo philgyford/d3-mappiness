@@ -12,21 +12,20 @@ Load index.html in your browser.
 
 ## TO DO
 
-* When the edit field is opened, set the fields according to current line's properties.
-* Update line's constraints and the chart when the form is submitted.
-
-
+* Line edit form
+  * When the edit field is opened, set the fields according to current line's properties.
+  * Update line's constraints and the chart when the form is submitted.
+* Hover over point, see its constraints.
 * Something that shows what dates are shown in focus area.
-* Hover lines like on http://bl.ocks.org/gniemetz/4618602
-* Rolling average. Configurable in UI?
-* Points rather than dots? Gaps when there's no data?
-* Filters:
-	* Form for changing a line's filters.
-	* Add map area filter?
 * Demo site with dummy data.
-* Permalinks?
 * Remove require cache-busting in mappiness.js.
-* Improve mappiness.dataManager's getNextColor() when colorPool runs out of colors.
+
+* Maybe:
+  * Hover lines like on http://bl.ocks.org/gniemetz/4618602
+  * Rolling average. Configurable in UI?
+  * Points rather than dots? Gaps when there's no data?
+  * Add map area filter?
+  * Permalinks?
 
 
 ## For writeup
