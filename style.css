@@ -66,6 +66,24 @@ input, option, select {
   font-size: 1em;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+p, li, dt, dd {
+  line-height: 1.2em;
+}
+p {
+  margin-bottom: 0.5em;
+}
+.hide {
+  display: none;
+}
+.list-unstyled {
+  list-style-type: none;
+}
+.text-muted {
+  color: #999;
+}
+input[type=text] {
+  padding: 0.2em 5px 0.3em 5px;
+}
 .button {
   display: inline-block;
   text-align center;
@@ -73,7 +91,7 @@ input, option, select {
   cursor: pointer;
   border: 1px solid transparent;
   white-space: nowrap;
-  padding: 0.5em 10px;
+  padding: 0.5em 15px;
   font-size: 1em;
   line-height: 1em;
   border-radius: 0px;
@@ -107,28 +125,10 @@ input, option, select {
   text-align: right;
 }
 .button-group .button {
-  margin-right: 30px;
+  margin-right: 20px;
 }
 .button-group .button:last-child {
   margin-right: 0;
-}
-p, li, dt, dd {
-  line-height: 1.2em;
-}
-p {
-  margin-bottom: 0.5em;
-}
-.hide {
-  display: none;
-}
-.list-unstyled {
-  list-style-type: none;
-}
-.text-muted {
-  color: #999;
-}
-input[type=text] {
-  padding: 0.2em 5px 0.3em 5px;
 }
 
 
