@@ -9,7 +9,8 @@ function(d3,   _,            jquery_modal) {
         // Will be an object containing textual descriptions of constraints.
         // Should be set by constraintsDescriptions();
         constraintsDescriptions = {},
-        templates = makeTemplates();
+        templates = makeTemplates(),
+        lines;
 
     //d3.rebind(exports, dispatch, "on");
 
@@ -17,7 +18,9 @@ function(d3,   _,            jquery_modal) {
     /**
      * Displays the summaries/key for all the lines.
      */
-    exports.updateKey = function(lines) {
+    exports.updateKey = function(new_lines) {
+      lines = new_lines;
+
       // Add keys.
       lines.forEach(function(line) {
         renderLineKey(line);
@@ -57,8 +60,14 @@ function(d3,   _,            jquery_modal) {
      * Prepares the edit form for a particular line.
      */
     editFormPrepare = function(line_id) {
-      editFormInitialize();
-      editFormSize();
+      var line = _.find(lines, function(ln){ return ln.id == line_id; });
+      if (line) {
+        editFormInitialize();
+        editFormSize();
+        $('#line-edit-body').css('borderTopColor', line.color);
+      } else {
+        alert("Sorry, can't find the data for this line."); 
+      };
     };
 
     /**
@@ -154,9 +163,9 @@ function(d3,   _,            jquery_modal) {
                      .data('line-id', line.id)
                      .html('<h2></h2>'
                            + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
-                           + '<a href="#" class="key-duplicate">Duplicate</a> '
-                           + '<a href="#" class="key-edit">Edit</a> '
-                           + '<a href="#" class="key-delete">Delete</a>'
+                           + '<a href="#" class="key-duplicate" data-line-id="' + line.id + '">Duplicate</a> '
+                           + '<a href="#" class="key-edit" data-line-id="' + line.id + '">Edit</a> '
+                           + '<a href="#" class="key-delete" data-line-id="' + line.id + '">Delete</a>'
                            + '<dl class="key-descriptions"></dl>')
         );
       };
