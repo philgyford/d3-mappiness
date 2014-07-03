@@ -50,7 +50,7 @@ function(d3,   _,            jquery_modal) {
 
     exports.editFormOpen = function(line_id) {
       editFormPrepare(line_id);
-      $('#line-edit').modal();
+      $('#line-edit').modal({showClose: false});
     };
 
     //modalOpen = function(selector) {
@@ -296,6 +296,7 @@ function(d3,   _,            jquery_modal) {
             <% count += 1; %> \
           <% }); %> \
         </p> \
+        <hr> \
       ');
 
       templates.line_edit_people = _.template(' \
@@ -332,6 +333,7 @@ function(d3,   _,            jquery_modal) {
             <% }); %> \
           </ul> \
         </div> \
+        <hr> \
       ');
 
       templates.line_edit_place = _.template(' \
@@ -354,6 +356,15 @@ function(d3,   _,            jquery_modal) {
           </select> \
           <label for="le-place-homework" class="hide"><%= _.values(home_work).join(" / ") %></label> \
         </p> \
+        <hr> \
+      ');
+
+      templates.line_edit_notes = _.template(' \
+        <h3><label for="le-notes">Notes containing:</label></h3> \
+        <p> \
+          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Anything or nothing"> \
+        </p> \
+        <hr class="le-notes-hr"> \
       ');
 
       templates.line_edit_activities = _.template(' \
@@ -384,13 +395,6 @@ function(d3,   _,            jquery_modal) {
             </ul> \
           </div> \
         </div> \
-      ');
-
-      templates.line_edit_notes = _.template(' \
-        <h3><label for="le-notes">Notes containing:</label></h3> \
-        <p> \
-          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Anything or nothing"> \
-        </p> \
       ');
 
       templates.line_edit_buttons = _.template(' \

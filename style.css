@@ -72,6 +72,11 @@ p, li, dt, dd {
 p {
   margin-bottom: 0.5em;
 }
+hr {
+  border: 0;
+  border-bottom: 1px solid #eee;
+  margin: 1.5em 0;
+}
 .hide {
   display: none;
 }
@@ -97,6 +102,7 @@ input[type=text] {
   border-radius: 0px;
   color: #fff;
   background: #666;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .button:hover,
 .button:focus {
@@ -126,9 +132,6 @@ input[type=text] {
 }
 .button-group .button {
   margin-right: 20px;
-}
-.button-group .button:last-child {
-  margin-right: 0;
 }
 
 
@@ -214,7 +217,7 @@ body {
   width: 100%;
   height: 60px;
   padding: 10px 30px;
-  background: yellow;
+  background: #f9f9f9;
 }
 
 .line-edit-col {
@@ -228,6 +231,7 @@ body {
 #le-activities-list ul { float: left; margin: 0 30px 0 0; }
 #le-activities-list ul.last { margin-right: 0; }
 #le-activities-list li { width: 330px; }
+.le-notes-hr { display: none; }
 
 /* At more sensible desktop widths.
  * Collapse activities into a single column. */
@@ -242,9 +246,10 @@ body {
   /* Collapse columns. */
   #line-edit     { width: 420px; }
   .line-edit-col { float: none; }
+  .le-notes-hr { display: block; }
 }
 #line-edit h3 {
-  margin: 1.5em 0 0.5em 0;
+  margin: 1em 0 0.5em 0;
 }
 #le-people-with-list {
   display: none;
