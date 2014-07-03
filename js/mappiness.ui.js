@@ -84,9 +84,14 @@ function(d3,   _,            jquery_modal) {
      */
     editFormPrepare = function(line_id) {
       editFormInitialize();
+      editFormSize();
+    };
 
-
-
+    /**
+     * Adjust height of scrollable form body.
+     */
+    editFormSize = function() {
+      $('#line-edit-body').height($('#line-edit').height() - $('#line-edit-buttons').outerHeight());
     };
 
     /**
@@ -120,6 +125,7 @@ function(d3,   _,            jquery_modal) {
       $(window).resize(function(){
         // Keep the edit window centered.
         $.modal.resize(); 
+        editFormSize();
       });
 
       // Set up custom events when changing certain fields.
