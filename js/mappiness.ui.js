@@ -127,6 +127,11 @@ function(d3,   _,            jquery_modal) {
         };
       });
 
+      $(window).resize(function(){
+        // Keep the edit window centered.
+        $.modal.resize(); 
+      });
+
       // Default state.
       $('.muted-labels label').addClass('text-muted');
 
