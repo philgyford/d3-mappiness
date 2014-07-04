@@ -133,7 +133,29 @@ function(_) {
 
       if (_.keys(cons.people).length > 0) {
         addToKey({clss: 'people-title', title: 'People'});
-        addToKey({clss: 'people', rows: cons.people});
+
+        // How many possible people constraints are there?
+        var total_people_constraints = _.keys(MAPPINESS_DATA_DICTIONARY.people).length;
+        
+        // How many of the constraints we have are 0?
+        var num_zero_people_constraints = _.filter(
+            _.values(cons.people), function(v){ return v.value == 0; }
+          ).length;
+
+        if (num_zero_people_constraints == total_people_constraints) {
+          // ALL of the people constraints are set and they're ALL 0.
+          // That means we've chosen 'Alone'.
+          addToKey({
+                clss: 'people',
+                rows: [
+                  // Fake a constraint:
+                  {description: 'Alone, or with strangers only', value: 1}
+                ]
+              });
+        } else {
+          // SOME people constraints are set.
+          addToKey({clss: 'people', rows: cons.people});
+        };
       } else {
         removeFromKey('people-title');
         removeFromKey('people');
@@ -208,6 +230,7 @@ function(_) {
       return templates;
     };
     
+    /* Getters/setters */
 
     exports.colorPool = function(val) {
       if (!arguments.length) return colorPool;

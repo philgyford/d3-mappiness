@@ -36,9 +36,19 @@ function(d3) {
       constraints = tidyConstraints(original_constraints);
       var values = getFilteredData(constraints)
       var color = getNextColor();
+      var id;
+
+      // No data matches these constraints, so we don't already have an ID
+      // for this line, so make one.
+      if (values.length == 0) {
+        id = makeID();
+      } else {
+        // We have values, so use this line's already-given ID.
+        id = values[0].id;
+      };
 
       return {
-        id: values[0].id,
+        id: id,
         color: color,
         constraints: getInflatedConstraints(constraints),
         original_constraints: original_constraints,
@@ -141,13 +151,14 @@ function(d3) {
       if ('in_out' in constraints) {
         new_constraints.in_out = {
               value: constraints.in_out,
-              description: constraintsDescriptions.in_out[ constraints.in_out ]};
+              description: constraintsDescriptions.in_out[
+                                                        constraints.in_out ]};
       };
       if ('home_work' in constraints) {
         new_constraints.home_work = {
               value: constraints.home_work,
               description: constraintsDescriptions.home_work[
-                                              new_constraints.home_work.value ]};
+                                                      constraints.home_work ]};
       };
       
       // Get the descriptions for any People constraints.
@@ -275,7 +286,7 @@ function(d3) {
       var feeling_data = [];
 
       // Give this line a unique-enough ID.
-      var id = Date.now();
+      var id = makeID();
 
       data.forEach(function(d, n) {
         // Don't like having to use jQuery here, but seems simplest/best way
@@ -289,6 +300,13 @@ function(d3) {
       return feeling_data; 
     };
 
+    /**
+     * Make the ID we use for a particular line.
+     * Unique enough.
+     */
+    var makeID = function() {
+      return Math.floor(Math.random() * 100000000000);
+    };
 
     // Do any tidying up of the data we need.
     var cleanData = function(d) {

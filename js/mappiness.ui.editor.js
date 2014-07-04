@@ -12,13 +12,21 @@ function(_,            jquery_modal) {
      * Open the editor for a particular line.
      */
     exports.open = function(line_id) {
-      prepare(line_id);
-      $('#line-edit').modal({
-                          showClose: false,
-                          clickClose: false
-                      });
+      if (prepare(line_id)) {
+        $('#line-edit').modal({
+                            showClose: false,
+                            clickClose: false
+                        });
+        
+        // Occasionally it could re-open scrolled to the bottom, so:
+        $('#line-edit-body').scrollTop(0);
+      };
     };
 
+    /**
+     * When the form is submitted, go through the settings and create a new
+     * set of constraints for this line and return them.
+     */
     exports.makeConstraints = function() {
       var constraints = {};
       // TODO
@@ -30,14 +38,14 @@ function(_,            jquery_modal) {
     /**
      * Prepares the edit form for a particular line.
      */
-    prepare = function(line_id) {
+    function prepare(line_id) {
       var line = _.find(lines, function(ln){ return ln.id == line_id; });
       if (line) {
-        initialize();
-        resize();
-        $('#line-edit-buttons').css('borderTopColor', line.color);
+        setupForLine(line);
+        return true;
       } else {
         alert("Sorry, can't find the data for this line."); 
+        return false;
       };
     };
 
@@ -45,15 +53,18 @@ function(_,            jquery_modal) {
     /**
      * Adjust height of scrollable form body.
      */
-    resize = function() {
-      $('#line-edit-body').height($('#line-edit').height() - $('#line-edit-buttons').outerHeight());
+    function resize() {
+      $('#line-edit-body').height(
+            $('#line-edit').height() - $('#line-edit-buttons').outerHeight()
+          );
     };
+
 
     /**
      * Updates the contents of the edit form with all the correct inputs.
      * No form fields will be selected etc.
      */
-    initialize = function() {
+    function initialize() {
       $('.line-edit-col').empty();
 
       $('#line-edit-col-1').append(templates.line_edit_feelings({
@@ -80,11 +91,12 @@ function(_,            jquery_modal) {
       $(window).resize(function(){
         // Keep the edit window centered.
         $.modal.resize(); 
-        Resize();
+        resize();
       });
 
       // Set up custom events when changing certain fields.
-      
+
+      // Show the With... constraints when selecting that People radio button.
       $('#le-people').on('change', 'input[type=radio]', function(ev) {
         if ($(this).attr('id') == 'le-people-with') {
           $('#le-people-with-list').slideDown(); 
@@ -98,6 +110,8 @@ function(_,            jquery_modal) {
       // Default state.
       $('.muted-labels label').addClass('text-muted');
 
+      // Make the label of checked radio buttons, or selected selects
+      // change color.
       $('.muted-labels').on('change', 'select,input[type=radio]', function(ev) {
         if ($(this).attr('type') == 'radio') {
           $(this).siblings('input:radio').next('label').addClass('text-muted');
@@ -113,7 +127,73 @@ function(_,            jquery_modal) {
         };
       });
 
+
     };
+
+
+    /**
+     * Creates a new form for a particular line and its constraints.
+     * line is a d3 line object.
+     */
+    function setupForLine(line) {
+      // Clear any old settings.
+      initialize();
+
+      var c = line.constraints;
+
+      if ('feeling' in c) {
+        $('#le-feeling-'+c.feeling.value).prop('checked', true).change(); 
+      };
+
+      if ('people' in c) {
+        // How many possible people constraints are there?
+        var total_people_constraints = _.keys(MAPPINESS_DATA_DICTIONARY.people).length;
+
+        // How many of the constraints we have are 0?
+        var num_zero_people_constraints = _.filter(
+            _.values(c.people), function(v){ return v.value == 0; }
+          ).length;
+
+        if (num_zero_people_constraints == total_people_constraints) {
+          // ALL of the people constraints are set and they're ALL 0.
+          // That means we've chosen 'Alone'.
+          $('#le-people-alone').prop('checked', true).change();
+        
+        } else {
+          // SOME people constraints are set.
+          $('#le-people-with').prop('checked', true).change();
+
+          _.each(c.people, function(constraint, name) {
+            $('#le-people-'+name).val(constraint.value.toString()).change();
+          });
+        };
+      
+      } else {
+        // No people constraints are set, either 1 or 0, at all.
+        $('#le-people-ignore').prop('checked', true).change();
+      };
+
+      if ('in_out' in c) {
+        $('#le-place-inout').val(c.in_out.value).change(); 
+      };
+
+      if ('home_work' in c) {
+        $('#le-place-homework').val(c.home_work.value).change(); 
+      };
+
+      if ('notes' in c) {
+        $('#le-notes').val(c.notes.value).change();
+      };
+
+      if ('activities' in c) {
+        _.each(c.activities, function(constraint, name) {
+          $('#le-activities-'+name).val(constraint.value.toString()).change();
+        });
+      };
+
+      $('#line-edit-buttons').css('borderTopColor', line.color);
+    };
+
 
     /**
      * Populates the templates object with compiled Underscore HTML templates.
@@ -163,8 +243,8 @@ function(_,            jquery_modal) {
                 <span class="le-select-field"> \
                   <select name="le-people-with" id="le-people-<%= key %>"> \
                     <option value="ignore">Ignore</option> \
-                    <option value="yes">Yes</option> \
-                    <option value="no">No</option> \
+                    <option value="1">Yes</option> \
+                    <option value="0">No</option> \
                   </select> \
                 </span> \
               </li> \
@@ -218,8 +298,8 @@ function(_,            jquery_modal) {
                     <span class="le-select-field"> \
                       <select name="le-activities" id="le-activities-<%= key %>"> \
                         <option value="ignore">Ignore</option> \
-                        <option value="yes">Yes</option> \
-                        <option value="no">No</option> \
+                        <option value="1">Yes</option> \
+                        <option value="0">No</option> \
                       </select> \
                     </span> \
                   </li> \
@@ -245,10 +325,8 @@ function(_,            jquery_modal) {
       return templates;
     };
 
-    /**
-     * Not only sets the constraintsDescriptions property, but also updates
-     * the line edit form to use the new data.
-     */
+    /* Getters/setters */
+
     exports.constraintsDescriptions = function(val) {
       if (!arguments.length) return constraintsDescriptions;
       constraintsDescriptions = val;

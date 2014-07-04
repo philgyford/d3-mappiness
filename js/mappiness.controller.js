@@ -47,10 +47,9 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       $('#wait').hide();
       $('#loaded').fadeIn(500);
 
-      lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', do_admin: 1, do_music: 0}));
-      lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_peers: 1}));
-      lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', notes: 'Pepys'}));
-
+      lines_data.push(dataManager.getCleanedData({feeling: 'happy', home_work: 'work', do_admin: 1, do_music: 0}));
+      lines_data.push(dataManager.getCleanedData({feeling: 'awake', with_relatives: 1, with_children: 1}));
+      lines_data.push(dataManager.getCleanedData({feeling: 'relaxed', with_partner: 0, with_children: 0, with_relatives: 0, with_peers: 0, with_clients: 0, with_friends: 0, with_others: 0,         notes: 'Pepys'})); 
       chart = mappiness_chart().width( $('#chart').width() );
 
       container = d3.select('#chart');
