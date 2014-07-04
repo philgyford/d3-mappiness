@@ -252,7 +252,6 @@ function(_,            jquery_modal) {
     exports.constraintsDescriptions = function(val) {
       if (!arguments.length) return constraintsDescriptions;
       constraintsDescriptions = val;
-      initialize();
       return this;
     };
 

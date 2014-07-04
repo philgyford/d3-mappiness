@@ -90,9 +90,6 @@ function(_) {
           template = templates.line_key_title;
         } else if ('rows' in content) {
           template = templates.line_key_rows; 
-          if (content.clss == 'activities') {
-            console.log(content.rows);
-          }
         };
 
         if ($('.key-descriptions .'+content.clss, cssid).length == 0) {
