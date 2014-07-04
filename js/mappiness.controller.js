@@ -21,11 +21,11 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       if (spec) {
         if ('lineColors' in spec) {
           dataManager.colorPool(spec.lineColors);
-          ui.colorPool(spec.lineColors);
+          ui.key.colorPool(spec.lineColors);
         };
         if ('dataDictionary' in spec) {
            dataManager.constraintsDescriptions(spec.dataDictionary);
-           ui.constraintsDescriptions(spec.dataDictionary);
+           ui.editor.constraintsDescriptions(spec.dataDictionary);
         };
       };
 
@@ -65,7 +65,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       container.data([lines_data])
                .call(chart);
 
-      ui.updateKey(lines_data);
+      ui.updateLines(lines_data);
     };
 
     /**
@@ -124,7 +124,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       $('#key').on('click', '.key-edit', function(ev) {
         ev.preventDefault();
-        ui.editFormOpen($(this).data('line-id'));
+        ui.editor.open($(this).data('line-id'));
       });
       
       // Edit form button events.
@@ -136,7 +136,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       $('#line-edit-buttons .button-submit').on('click', function(ev) {
         ev.preventDefault();
-        var newConstraints = ui.editFormMakeConstraints();
+        var newConstraints = ui.editor.makeConstraints();
         $.modal.close();
         // TODO:
         // Update graph
