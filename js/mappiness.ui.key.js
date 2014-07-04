@@ -15,7 +15,7 @@ function(_) {
     /**
      * Displays the summaries/key for all the lines.
      */
-    exports.updateKey = function() {
+    exports.update = function() {
       // Add keys.
       lines.forEach(function(line) {
         renderLineKey(line);
@@ -90,6 +90,9 @@ function(_) {
           template = templates.line_key_title;
         } else if ('rows' in content) {
           template = templates.line_key_rows; 
+          if (content.clss == 'activities') {
+            console.log(content.rows);
+          }
         };
 
         if ($('.key-descriptions .'+content.clss, cssid).length == 0) {
@@ -97,7 +100,7 @@ function(_) {
           $('.key-descriptions', cssid).append( template(content) );
         } else {
           // Element exists, so just update its html.
-          $('.key-descriptions .'+content.clss, cssid).html( template(content) );
+          $('.key-descriptions .'+content.clss, cssid).css('backgroundColor', 'yellow').html( template(content) );
         };
       };
 
@@ -174,33 +177,35 @@ function(_) {
           <a href="#" class="key-duplicate" data-line-id="<%= line_id %>">Duplicate</a> \
           <a href="#" class="key-edit" data-line-id="<%= line_id %>">Edit</a> \
           <a href="#" class="key-delete" data-line-id="<%= line_id %>">Delete</a> \
-          <dl class="key-descriptions"> \
-          </dl> \
+          <div class="key-descriptions"> \
+          </div> \
         </div> \
       ');
 
       // Subtitle for a bit of the key.
       // Requires clss and title.
       templates.line_key_title = _.template(' \
-        <dt class="<%= clss %>"><%= title %></dt> \
+        <h3 class="<%= clss %>"><%= title %></h3> \
       ');
 
       // A line of text in the key.
       // Requires clss and text.
       templates.line_key_text = _.template(' \
-        <dd class="<%= clss %>"><%= text %></dd> \
+        <p class="<%= clss %>"><%= text %></p> \
       ');
 
       // One or more rows in the key.
       // Requires clss and a rows array.
       // Each element of rows is an object with description and value elements.
       templates.line_key_rows = _.template(' \
-        <% _.each(rows, function(row){ %> \
-          <dd class="<%- clss %>"> \
-            <span><%= row.description %></span> \
-            <span><%= row.value %></span> \
-          </dd> \
-        <% }); %> \
+        <ul class="<%= clss %>"> \
+          <% _.each(rows, function(row){ %> \
+            <li> \
+              <span><%= row.description %></span> \
+              <span><%= row.value %></span> \
+            </li> \
+          <% }); %> \
+        </ul> \
       ');
 
       return templates;

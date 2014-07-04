@@ -17,7 +17,7 @@ function(  mappiness_ui_key,     mappiness_ui_editor) {
      */
     exports.updateLines = function(lines) {
       exports.key.lines(lines);
-      exports.key.updateKey();
+      exports.key.update();
       exports.editor.lines(lines);
     };
 
