@@ -168,37 +168,42 @@ function(d3,   _,            jquery_modal) {
     function renderLineKey(line) {
       if ($('#key #key-'+line.id).length == 0) {
         // This line isn't listed, so make its empty HTML.
-        $('#key').append(
-          $('<div/>').attr('id', 'key-'+line.id)
-                     .addClass('key-line')
-                     .data('line-id', line.id)
-                     .html('<h2></h2>'
-                           + '<label class="key-switch"><input type="checkbox" class="key-switch-control" checked="checked"> Show line</label>'
-                           + '<a href="#" class="key-duplicate" data-line-id="' + line.id + '">Duplicate</a> '
-                           + '<a href="#" class="key-edit" data-line-id="' + line.id + '">Edit</a> '
-                           + '<a href="#" class="key-delete" data-line-id="' + line.id + '">Delete</a>'
-                           + '<dl class="key-descriptions"></dl>')
-        );
+        $('#key').append(templates.line_key({
+          line_id: line.id,
+          line_color: line.color
+        }));
       };
 
+      // Needs to be in scope for AddToKey() and RemoveFromKey() to see it.
+      // A bit nasty.
       var cssid = '#key-'+line.id;
-      var cons = line.constraints;
+
 
       /**
        * Add an element to the current key, or update its contents if it exists.
-       * el is like 'dt' or 'li'.
-       * html is the HTML to put inside the element.
-       * classes is a string of class names to give the element.
+       * content is an object containing:
+       * clss: The class of the element(s) that will be added.
+       * And one of:
+       * title: Text to use for a title.
+       * text: Text to use for this line.
+       * rows: An array of objects with `description` and `value` elements.
        */
-      var addToKey = function(el, clss, html) {
-        if ($('.key-descriptions .'+clss, cssid).length == 0) {
+      var addToKey = function(content) {
+        // Which template do we need?
+        var template = templates.line_key_text;
+
+        if ('title' in content) {
+          template = templates.line_key_title;
+        } else if ('rows' in content) {
+          template = templates.line_key_rows; 
+        };
+
+        if ($('.key-descriptions .'+content.clss, cssid).length == 0) {
           // Element doesn't yet exist - create it.
-          $('.key-descriptions', cssid).append(
-            $('<'+el+'/>').html(html).addClass(clss)
-          );
+          $('.key-descriptions', cssid).append( template(content) );
         } else {
           // Element exists, so just update its html.
-          $('.key-descriptions .'+clss, cssid).html(html);
+          $('.key-descriptions .'+content.clss, cssid).html( template(content) );
         };
       };
 
@@ -210,60 +215,47 @@ function(d3,   _,            jquery_modal) {
         $('.key-descriptions .'+clss, cssid).remove();
       };
 
-
-      $(cssid).css('border-top-color', line.color);
+      var cons = line.constraints;
 
       $('h2', cssid).text(cons.feeling.description);
-
-      $('.key-switch-control', cssid).data('line-id', line.id);
-      $('.key-duplicate', cssid).data('line-id', line.id);
-      $('.key-delete', cssid).data('line-id', line.id);
 
       if (('in_out' in cons && cons.in_out)
           || 
           ('home_work' in cons && cons.home_work)) {
-          addToKey('dt', 'place', 'Place');
+          addToKey({clss: 'place', title: 'Place'});
       } else {
         removeFromKey('place')
       };
       if ('in_out' in cons && cons.in_out) {
-        addToKey('dd', 'in-out', cons.in_out.description);
+        addToKey({clss: 'in-out', text: cons.in_out.description});
       } else {
         removeFromKey('in-out'); 
       };
       if ('home_work' in cons && cons.home_work) {
-        addToKey('dd', 'home-work', cons.home_work.description);
+        addToKey({clss: 'home-work',text: cons.home_work.description});
       } else {
         removeFromKey('home-work');
       };
 
       if (d3.keys(cons.people).length > 0) {
-        addToKey('dt', 'people-title', 'People');
-        for (c in cons.people) {
-          addToKey('dd', 'people',
-                        '<span>' + cons.people[c].description + '</span>'
-                      + '<span>' + cons.people[c].value + '</span>');
-        };
+        addToKey({clss: 'people-title', title: 'People'});
+        addToKey({clss: 'people', rows: cons.people});
       } else {
         removeFromKey('people-title');
         removeFromKey('people');
       };
     
       if (d3.keys(cons.activities).length > 0) {
-        addToKey('dt', 'activities-title', 'Activities');
-        for (c in cons.activities) {
-          addToKey('dd', 'activities',
-                        '<span>' + cons.activities[c].description + '</span>'
-                      + '<span>' + cons.activities[c].value + '</span>');
-        };
+        addToKey({clss: 'activities-title', title: 'Activities'});
+        addToKey({clss: 'activities', rows: cons.activities});
       } else {
         removeFromKey('activities-title');
         removeFromKey('activities');
       };
 
       if ('notes' in cons && cons.notes) {
-        addToKey('dt', 'notes-title', 'Notes');
-        addToKey('dd', 'notes', 'Containing “'+cons.notes.description +'”'); 
+        addToKey({clss: 'notes-title', title: 'Notes'});
+        addToKey({clss: 'notes', text: 'Containing “'+cons.notes.description +'”'}); 
       } else {
         removeFromKey('notes-title');
         removeFromKey('notes');
@@ -276,6 +268,51 @@ function(d3,   _,            jquery_modal) {
      */
     function makeTemplates() {
       var templates = {};
+
+      // Templates for the line key.
+
+      // The outline structure for a line's key.
+      // Requires line_id and line_color.
+      templates.line_key = _.template(' \
+        <div id="key-<%= line_id %>" class="key-line" data-line-id="<%= line_id %>" style="border-top-color: <%= line_color %>;"> \
+          <h2></h2> \
+          <label class="key-switch"> \
+            <input type="checkbox" class="key-switch-control" checked="checked" data-line-id="<%= line_id %>"> Show line \
+          </label> \
+          <a href="#" class="key-duplicate" data-line-id="<%= line_id %>">Duplicate</a> \
+          <a href="#" class="key-edit" data-line-id="<%= line_id %>">Edit</a> \
+          <a href="#" class="key-delete" data-line-id="<%= line_id %>">Delete</a> \
+          <dl class="key-descriptions"> \
+          </dl> \
+        </div> \
+      ');
+
+      // Subtitle for a bit of the key.
+      // Requires clss and title.
+      templates.line_key_title = _.template(' \
+        <dt class="<%= clss %>"><%= title %></dt> \
+      ');
+
+      // A line of text in the key.
+      // Requires clss and text.
+      templates.line_key_text = _.template(' \
+        <dd class="<%= clss %>"><%= text %></dd> \
+      ');
+
+      // One or more rows in the key.
+      // Requires clss and a rows array.
+      // Each element of rows is an object with description and value elements.
+      templates.line_key_rows = _.template(' \
+        <% _.each(rows, function(row){ %> \
+          <dd class="<%- clss %>"> \
+            <span><%= row.description %></span> \
+            <span><%= row.value %></span> \
+          </dd> \
+        <% }); %> \
+      ')
+
+
+      // Templates for the line edit form.
 
       templates.line_edit_feelings = _.template(' \
         <h3>Feelings</h3> \
