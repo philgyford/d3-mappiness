@@ -35,7 +35,7 @@ function(_,            jquery_modal) {
       if (line) {
         initialize();
         resize();
-        $('#line-edit-body').css('borderTopColor', line.color);
+        $('#line-edit-buttons').css('borderTopColor', line.color);
       } else {
         alert("Sorry, can't find the data for this line."); 
       };

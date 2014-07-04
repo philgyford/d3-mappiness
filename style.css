@@ -206,16 +206,16 @@ body {
   padding: 1em 30px;
   width: 100%;
   height: 100%;
-  border-top: 3px solid #000; 
 }
 #line-edit-buttons {
   position: absolute;
   bottom: 0;
   right: 0;
   width: 100%;
-  height: 60px;
-  padding: 10px 30px;
+  height: 63px;
+  padding: 10px 30px 10px 30px;
   background: #f9f9f9;
+  border-top: 3px solid #000; 
 }
 
 .line-edit-col {
