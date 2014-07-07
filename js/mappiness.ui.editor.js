@@ -311,8 +311,8 @@ function(_,            jquery_modal) {
                 <span class="le-select-field"> \
                   <select name="le-people-<%= key %>" id="le-people-<%= key %>"> \
                     <option value="ignore">Ignore</option> \
-                    <option value="1">Yes</option> \
-                    <option value="0">No</option> \
+                    <option value="1">&nbsp;&nbsp;&nbsp;&nbsp;✓</option> \
+                    <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
                   </select> \
                 </span> \
               </li> \
@@ -366,8 +366,8 @@ function(_,            jquery_modal) {
                     <span class="le-select-field"> \
                       <select name="le-activities" id="le-activities-<%= key %>"> \
                         <option value="ignore">Ignore</option> \
-                        <option value="1">Yes</option> \
-                        <option value="0">No</option> \
+                        <option value="1">&nbsp;&nbsp;&nbsp;&nbsp;✓</option> \
+                        <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
                       </select> \
                     </span> \
                   </li> \

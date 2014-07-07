@@ -221,7 +221,7 @@ function(_) {
           <% _.each(rows, function(row){ %> \
             <li> \
               <span><%= row.description %></span> \
-              <span><%= row.value %></span> \
+              <span><% if (row.value == 1) { print("✓") } else if (row.value == 0) { print("✕") } else { print(row.value) } %></span> \
             </li> \
           <% }); %> \
         </ul> \

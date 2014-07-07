@@ -12,10 +12,7 @@ Load index.html in your browser.
 
 ## TO DO
 
-* Line edit form
-  * Update line's constraints and the chart when the form is submitted.
-  * NOTE: With people constraints, if 'Alone' is checked, set ALL possible
-    people constraints to 0.
+* Make key for lines prettier.
 * Hover over point, see its constraints.
 * Something that shows what dates are shown in focus area.
 * Demo site with dummy data.
