@@ -73,7 +73,6 @@ function(_) {
       var cssid = '#key-'+line.id;
 
       
-      console.log(line.values.length);
       if (line.values.length > 0) {
         $('.key-no-data', cssid).hide();
       } else {
