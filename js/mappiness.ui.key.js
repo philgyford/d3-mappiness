@@ -72,6 +72,13 @@ function(_) {
       // A bit nasty.
       var cssid = '#key-'+line.id;
 
+      
+      console.log(line.values.length);
+      if (line.values.length > 0) {
+        $('.key-no-data', cssid).hide();
+      } else {
+        $('.key-no-data', cssid).show();
+      };
 
       /**
        * Add an element to the current key, or update its contents if it exists.
@@ -190,12 +197,15 @@ function(_) {
       templates.line_key = _.template(' \
         <div id="key-<%= line_id %>" class="key-line" data-line-id="<%= line_id %>" style="border-top-color: <%= line_color %>;"> \
           <h2></h2> \
-          <label class="key-switch"> \
-            <input type="checkbox" class="key-switch-control" checked="checked" data-line-id="<%= line_id %>"> Show line \
-          </label> \
-          <a href="#" class="key-duplicate" data-line-id="<%= line_id %>">Duplicate</a> \
-          <a href="#" class="key-edit" data-line-id="<%= line_id %>">Edit</a> \
-          <a href="#" class="key-delete" data-line-id="<%= line_id %>">Delete</a> \
+          <p> \
+            <label class="key-switch"> \
+              <input type="checkbox" class="key-switch-control" checked="checked" data-line-id="<%= line_id %>"> Show line \
+            </label> \
+            <a href="#" class="key-duplicate" data-line-id="<%= line_id %>">Duplicate</a> \
+            <a href="#" class="key-edit" data-line-id="<%= line_id %>">Edit</a> \
+            <a href="#" class="key-delete" data-line-id="<%= line_id %>">Delete</a> \
+          </p> \
+          <p class="key-no-data">No data matches the constraints below.</p> \
           <div class="key-descriptions"> \
           </div> \
         </div> \

@@ -189,6 +189,9 @@ body {
   margin: 0 15px;
   min-width: 200px;
 }
+.key-no-data {
+  display: none;
+}
 
 /* Pop-up.*/
 

@@ -161,6 +161,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
                                 {id: formData.lineID, color: formData.color});
 
         $.modal.close();
+        console.log(newLineData);
 
         replaceLine(newLineData);
 
