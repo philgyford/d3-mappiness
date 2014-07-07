@@ -86,6 +86,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       };
     };
 
+
     /**
      * Remove's the line's data from line_data.
      * Doesn't automatically update the chart or key displays.
@@ -100,16 +101,20 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       };
     };
 
-    function replaceLineData(newLineData) {
+
+    /**
+     * Will replace a line in lines_data with a new set of data.
+     * Matched using the lines' IDs.
+     */
+    function replaceLine(newLineData) {
       for (var n in lines_data) {
         if (lines_data[n].id == newLineData.id) {
-          console.log(n, newLineData);
           lines_data[n] = newLineData;
           break;
         };
       };
-      console.log(lines_data);
     };
+
 
     /**
      * Initialises all the various events we listen for in the UI.
@@ -153,10 +158,9 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
         $.modal.close();
 
-        replaceLineData(newLineData);
-        // TODO:
-        // Update graph
-        // Update key
+        replaceLine(newLineData);
+
+        updateChart();
       });
 
     };
