@@ -23,15 +23,71 @@ function(_,            jquery_modal) {
       };
     };
 
+
     /**
-     * When the form is submitted, go through the settings and create a new
-     * set of constraints for this line and return them.
+     * When the form is submitted, go through the fields and create a new
+     * set of constraints for this line and return them and the line id.
      */
-    exports.makeConstraints = function() {
+    exports.processForm = function() {
       var constraints = {};
-      // TODO
-    
-      return constraints; 
+
+      constraints.feeling = $('input[name=le-feeling]:checked', '#line-edit').val();
+      if ( ! constraints.feeling in ['happy', 'relaxed', 'awake']) {
+        constraints.feeling = 'happy'; // Default.
+      };
+
+      // If the People radio button is 'Any', we do nothing here.
+      var people_radio = $('input[name=le-people]:checked', '#line-edit').val();
+
+      if (['alone', 'with'].indexOf(people_radio) >= 0) {
+        // Go through all the possible responses...
+        _.each(MAPPINESS_DATA_DICTIONARY.people, function(description, key) {
+          if (people_radio == 'with') {
+            // If the radio button is 'With...' then we record the constraint
+            // for each option if it's 1 or 0.
+            var value = parseInt($('#le-people-'+key).val());
+            if ([1, 0].indexOf(value) >= 0) {
+              constraints[key] = value; 
+            };
+          } else {
+            // If the radio button is 'Alone, or with strangers only' then
+            // we set ALL the people constraints to 0.
+            constraints[key] = 0;
+          };
+        });
+      };
+
+      // Add in_out and home_work values if they're valid.
+      
+      var inout_value = $('#le-place-inout', '#line-edit').val(); 
+      if (_.keys(MAPPINESS_DATA_DICTIONARY.in_out).indexOf(inout_value) >= 0) {
+        constraints.in_out = inout_value; 
+      };
+
+      var homework_value = $('#le-place-homework', '#line-edit').val(); 
+      if (_.keys(MAPPINESS_DATA_DICTIONARY.home_work).indexOf(homework_value) >= 0) {
+        constraints.home_work = homework_value; 
+      };
+
+      // Add notes string if there is one.
+      var notes_value = $('#le-notes', '#line-edit').val();
+      if (notes_value !== '') {
+        constraints.notes = notes_value; 
+      };
+
+      // Add any activities which aren't set to 'ignore'.
+      _.each(MAPPINESS_DATA_DICTIONARY.activities, function(description, key) {
+        var value = parseInt($('#le-activities-'+key).val());
+        if ([1, 0].indexOf(value) >= 0) {
+          constraints[key] = value; 
+        };
+      });
+
+      return {
+        constraints: constraints,
+        lineID: parseInt($('#le-line-id', '#line-edit').val()),
+        color: $('#le-color', '#line-edit').val()
+      };
     };
 
 
@@ -66,6 +122,8 @@ function(_,            jquery_modal) {
      */
     function initialize() {
       $('.line-edit-col').empty();
+
+      $('#line-edit-col-1').append(templates.line_edit_hidden({ }));
 
       $('#line-edit-col-1').append(templates.line_edit_feelings({
         feelings: {happy: 'Happy', relaxed: 'Relaxed', awake: 'Awake'}
@@ -141,6 +199,9 @@ function(_,            jquery_modal) {
 
       var c = line.constraints;
 
+      $('#le-line-id').val(line.id);
+      $('#le-color').val(line.color);
+
       if ('feeling' in c) {
         $('#le-feeling-'+c.feeling.value).prop('checked', true).change(); 
       };
@@ -201,12 +262,19 @@ function(_,            jquery_modal) {
     function makeTemplates() {
       var templates = {};
 
+      templates.line_edit_hidden = _.template(' \
+        <div> \
+          <input type="hidden" id="le-line-id" value=""> \
+          <input type="hidden" id="le-color" value=""> \
+        </div> \
+      ');
+
       templates.line_edit_feelings = _.template(' \
         <h3>Feelings</h3> \
         <p class="muted-labels"> \
           <% count = 1; %> \
           <% _.each(feelings, function(description, key) { %> \
-            <input type="radio" name="feeling" id="le-feeling-<%= key %>" value="<%= key %>"<% if (key == "happy") { print(""); } %>> \
+            <input type="radio" name="le-feeling" id="le-feeling-<%= key %>" value="<%= key %>"<% if (key == "happy") { print(""); } %>> \
             <label for="le-feeling-<%= key %>"> \
               <%= description %> \
             </label> \
@@ -241,7 +309,7 @@ function(_,            jquery_modal) {
               <li> \
                 <label class="le-select-label" for="le-people-<%= key %>"><%= description %></label> \
                 <span class="le-select-field"> \
-                  <select name="le-people-with" id="le-people-<%= key %>"> \
+                  <select name="le-people-<%= key %>" id="le-people-<%= key %>"> \
                     <option value="ignore">Ignore</option> \
                     <option value="1">Yes</option> \
                     <option value="0">No</option> \

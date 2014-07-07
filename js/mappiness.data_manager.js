@@ -28,23 +28,29 @@ function(d3) {
     };
 
     /**
-     * `constraints` is null, or an object with one or more of these keys:
+     * `original_constraints` is undefined, or an object with one or more of these
+     * keys:
      * 'feeling': One of 'happy', 'relaxed' or 'awake'.
      * [And/or any of the keys accepted by getFilteredData().]
+     *
+     * `existing_data` is undefined, or is an object like:
+     *   {id: 1234567890, color: '#ff3300'}
+     * These values will be used for the returned data.
      */
-    exports.getCleanedData = function(original_constraints) {
-      constraints = tidyConstraints(original_constraints);
-      var values = getFilteredData(constraints)
-      var color = getNextColor();
-      var id;
+    exports.getCleanedData = function(original_constraints, existing_data) {
+      var constraints = tidyConstraints(original_constraints);
+      var values = getFilteredData(constraints);
+      var color, id;
 
-      // No data matches these constraints, so we don't already have an ID
-      // for this line, so make one.
-      if (values.length == 0) {
+      if (typeof existing_data === 'undefined') {
+        color = getNextColor();
         id = makeID();
       } else {
-        // We have values, so use this line's already-given ID.
-        id = values[0].id;
+        color = existing_data.color;
+        id = existing_data.id;
+        values.forEach(function(d, i) {
+          values[i].id = id;
+        });
       };
 
       return {
@@ -94,7 +100,7 @@ function(d3) {
      * required fields.
      */
     var tidyConstraints = function(constraints) {
-      if (constraints == null) {
+      if (typeof constraints === 'undefined') {
         constraints = {};
       }
       // Set default.
@@ -280,13 +286,11 @@ function(d3) {
      * array will be more like:
      *  {accuracy_m: 200, awake: 0.417671, feeling: 'awake', value: 0.417671, ...}
      *  
+     *
      * `feeling` must be one of 'happy', 'relaxed' or 'awake'.
      */
     var getFeelingData = function(feeling) {
       var feeling_data = [];
-
-      // Give this line a unique-enough ID.
-      var id = makeID();
 
       data.forEach(function(d, n) {
         // Don't like having to use jQuery here, but seems simplest/best way
@@ -294,11 +298,11 @@ function(d3) {
         feeling_data[n] = $.extend({}, d);
         feeling_data[n]['feeling'] = feeling;
         feeling_data[n]['value'] = d[feeling]; 
-        feeling_data[n]['id'] = id;
       });
 
       return feeling_data; 
     };
+
 
     /**
      * Make the ID we use for a particular line.

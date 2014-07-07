@@ -100,6 +100,17 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       };
     };
 
+    function replaceLineData(newLineData) {
+      for (var n in lines_data) {
+        if (lines_data[n].id == newLineData.id) {
+          console.log(n, newLineData);
+          lines_data[n] = newLineData;
+          break;
+        };
+      };
+      console.log(lines_data);
+    };
+
     /**
      * Initialises all the various events we listen for in the UI.
      */
@@ -135,8 +146,14 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       $('#line-edit-buttons .button-submit').on('click', function(ev) {
         ev.preventDefault();
-        var newConstraints = ui.editor.makeConstraints();
+        var formData = ui.editor.processForm();
+        var newLineData = dataManager.getCleanedData(
+                                formData.constraints,
+                                {id: formData.lineID, color: formData.color});
+
         $.modal.close();
+
+        replaceLineData(newLineData);
         // TODO:
         // Update graph
         // Update key
