@@ -97,7 +97,7 @@ function(_) {
           $('.key-descriptions', cssid).append( template(content) );
         } else {
           // Element exists, so just update its html.
-          $('.key-descriptions .'+content.clss, cssid).css('backgroundColor', 'yellow').html( template(content) );
+          $('.key-descriptions .'+content.clss, cssid).html( template(content) );
         };
       };
 
