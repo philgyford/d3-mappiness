@@ -57,6 +57,11 @@ function(d3) {
     function exports(_selection) {
       _selection.each(function(data) {
 
+        // We might get lines that have no datapoints, due to the constraints
+        // the user has applied. We remove them or else we'll get errors
+        // when trying to plot them.
+        data = data.filter(function(d){ return d.values.length > 0; });
+
         // Select svg element if it exists.
         svg = d3.select(this)
                   .selectAll('svg')
