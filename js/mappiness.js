@@ -13,7 +13,6 @@ require.config({
 
 
 var MAPPINESS_LINE_COLORS = [
-  '#4D4D4D', // gray
   '#5DA5DA', // blue
   '#FAA43A', // orange
   '#60BD68', // green
@@ -21,7 +20,8 @@ var MAPPINESS_LINE_COLORS = [
   '#B2912F', // brown
   '#B276B2', // purple
   '#DECF3F', // yellow
-  '#F15854'  // red
+  '#F15854', // red
+  '#4D4D4D'  // gray
 ];
 
 // From http://blog.mappiness.org.uk/2011/05/23/data-dictionary/
