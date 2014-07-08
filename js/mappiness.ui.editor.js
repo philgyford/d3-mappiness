@@ -310,9 +310,9 @@ function(_,            jquery_modal) {
                 <label class="le-select-label" for="le-people-<%= key %>"><%= description %></label> \
                 <span class="le-select-field"> \
                   <select name="le-people-<%= key %>" id="le-people-<%= key %>"> \
-                    <option value="ignore">Ignore</option> \
-                    <option value="1">&nbsp;&nbsp;&nbsp;&nbsp;✓</option> \
-                    <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
+                    <option value="ignore">✓ or ✕</option> \
+                    <option value="1">✓</option> \
+                    <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
                   </select> \
                 </span> \
               </li> \
@@ -348,7 +348,7 @@ function(_,            jquery_modal) {
       templates.line_edit_notes = _.template(' \
         <h3><label for="le-notes">Notes containing:</label></h3> \
         <p> \
-          <input type="text" name="le-notes" id="le-notes" value="" placeholder="Anything or nothing"> \
+          <input type="text" name="le-notes" id="le-notes" value="" placeholder=""> \
         </p> \
         <hr class="le-notes-hr"> \
       ');
@@ -365,9 +365,9 @@ function(_,            jquery_modal) {
                     <label class="le-select-label" for="le-activities-<%= key %>"><%= description %></label> \
                     <span class="le-select-field"> \
                       <select name="le-activities" id="le-activities-<%= key %>"> \
-                        <option value="ignore">Ignore</option> \
-                        <option value="1">&nbsp;&nbsp;&nbsp;&nbsp;✓</option> \
-                        <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
+                        <option value="ignore">✓ or ✕</option> \
+                        <option value="1">✓</option> \
+                        <option value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✕</option> \
                       </select> \
                     </span> \
                   </li> \
