@@ -14,6 +14,7 @@ Load index.html in your browser.
 
 * Make key for lines prettier.
 * Hover over point, see its constraints.
+* Add 'About' page/popup.
 * Something that shows what dates are shown in focus area.
 * Demo site with dummy data.
 * Remove require cache-busting in mappiness.js.
