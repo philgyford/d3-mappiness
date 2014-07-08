@@ -74,8 +74,7 @@ p {
 }
 hr {
   border: 0;
-  border-bottom: 1px solid #eee;
-  margin: 1.5em 0;
+  margin: 1.5em 0 1em 0;
 }
 .hide {
   display: none;
@@ -207,7 +206,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 1em 30px 6em 30px;
+  padding: 2em 30px 6em 30px;
   width: 100%;
   height: 100%;
 }
@@ -225,6 +224,7 @@ body {
 .line-edit-col {
   float: left;
 }
+
 /* Defaults at really wide widths.
  * Activities list is split into two columns. */
 #line-edit     { width: 1130px; }
@@ -252,10 +252,13 @@ body {
 }
 #line-edit h2 {
   font-weight: normal;
+  display: none;
 }
 #line-edit h3 {
   color: #333;
-  margin: 1em 0 0.5em 0;
+  margin: 0 0 0.7em 0;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #eee;
 }
 #le-people-with-list {
   display: none;
