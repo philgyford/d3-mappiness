@@ -181,16 +181,61 @@ body {
 }
 
 /* KEY */
+#key {
+  font-size: 0.8125em;
+}
 .key-line {
   float: left;
-	border-top-width: 2px;
-  border-top-style: solid;
   margin: 0 15px;
-  min-width: 200px;
+  min-width: 220px;
 }
 .key-no-data {
   display: none;
 }
+.key-title {
+  width: 100%;
+	border-top-width: 2px;
+  border-top-style: solid;
+  padding-top: 0.3em;
+  margin: 0.2em 0 0 0;
+  display: inline-block;
+  color: #333;
+  font-weight: normal;
+}
+.key-subtitle {
+  border-bottom: 1px solid #eee;
+  margin: 1.2em 0 0.2em 0;
+  padding-bottom: 0.3em;
+  font-weight: bold;
+  color: #333;
+}
+.key-control {
+  color: #ccc;
+}
+.key-label {
+  display: inline-block;
+  width: 88%;
+}
+.key-field {
+  display: inline-block;
+  width: 10%;
+  text-align: right;
+}
+#key p {
+  margin-bottom: 0;
+}
+#key li,
+#key p {
+  line-height: 1.5em;
+}
+.key-controls a {
+  text-decoration: none;
+  color: #09c;
+}
+.key-controls a:hover {
+  text-decoration: underline;
+}
+
 
 /* Pop-up.*/
 

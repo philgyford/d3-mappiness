@@ -21,7 +21,7 @@ Load index.html in your browser.
 
 * Maybe:
   * Hover lines like on http://bl.ocks.org/gniemetz/4618602
-  * Rolling average. Configurable in UI?
+  * Moving average. Configurable in UI?
   * Points rather than dots? Gaps when there's no data?
   * Add map area filter?
   * Permalinks?

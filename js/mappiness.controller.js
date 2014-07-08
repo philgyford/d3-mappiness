@@ -48,7 +48,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:
-      lines_data.push(dataManager.getCleanedData({feeling: 'happy'}));
+      lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', with_partner:1, do_work: 1}));
 
       // Could add other starter lines too, eg:
       //lines_data.push(dataManager.getCleanedData({feeling: 'awake',
@@ -125,23 +125,23 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      */
     function initListeners() {
       // The switches to turn each line on/off.
-      $('#key').on('click', '.key-switch-control', function(ev) {
+      $('#key').on('click', '.key-show-control', function(ev) {
         chart.toggleLine($(this).data('line-id'));
       });
 
-      $('#key').on('click', '.key-duplicate', function(ev) {
+      $('#key').on('click', '.key-duplicate-control', function(ev) {
         ev.preventDefault();
         duplicateLine($(this).data('line-id'));
         updateChart();
       });
 
-      $('#key').on('click', '.key-delete', function(ev) {
+      $('#key').on('click', '.key-delete-control', function(ev) {
         ev.preventDefault();
         deleteLine($(this).data('line-id'));
         updateChart();
       });
 
-      $('#key').on('click', '.key-edit', function(ev) {
+      $('#key').on('click', '.key-edit-control', function(ev) {
         ev.preventDefault();
         ui.editor.open($(this).data('line-id'));
       });

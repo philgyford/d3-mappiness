@@ -83,12 +83,15 @@ function(_) {
        * Add an element to the current key, or update its contents if it exists.
        * content is an object containing:
        * clss: The class of the element(s) that will be added.
+       *       Should something like 'place-title', 'people-content'.
        * And one of:
        * title: Text to use for a title.
        * text: Text to use for this line.
        * rows: An array of objects with `description` and `value` elements.
        */
       var addToKey = function(content) {
+        var containerClass = '.key-descriptions-' + content.clss.split('-')[0];
+
         // Which template do we need?
         var template = templates.line_key_text;
 
@@ -98,12 +101,13 @@ function(_) {
           template = templates.line_key_rows; 
         };
 
-        if ($('.key-descriptions .'+content.clss, cssid).length == 0) {
+        if ($(containerClass+' .'+content.clss, cssid).length == 0) {
           // Element doesn't yet exist - create it.
-          $('.key-descriptions', cssid).append( template(content) );
+          $(containerClass, cssid).append( template(content) );
         } else {
           // Element exists, so just update its html.
-          $('.key-descriptions .'+content.clss, cssid).html( template(content) );
+          $(containerClass+' .'+content.clss, cssid).replaceWith(
+                                                          template(content) );
         };
       };
 
@@ -112,7 +116,7 @@ function(_) {
        * clss is the class name of the element to remove.
        */
       var removeFromKey = function(clss) {
-        $('.key-descriptions .'+clss, cssid).remove();
+        $('.'+clss, cssid).remove();
       };
 
       var cons = line.constraints;
@@ -122,19 +126,23 @@ function(_) {
       if (('in_out' in cons && cons.in_out)
           || 
           ('home_work' in cons && cons.home_work)) {
-          addToKey({clss: 'place', title: 'Place'});
+          addToKey({clss: 'place-title', title: 'Place'});
       } else {
-        removeFromKey('place')
+        removeFromKey('place-title')
       };
       if ('in_out' in cons && cons.in_out) {
-        addToKey({clss: 'in-out', text: cons.in_out.description});
+        addToKey({clss: 'place-inout',
+                  rows: [{description: cons.in_out.description,
+                          value: 1}]});
       } else {
-        removeFromKey('in-out'); 
+        removeFromKey('place-inout'); 
       };
       if ('home_work' in cons && cons.home_work) {
-        addToKey({clss: 'home-work',text: cons.home_work.description});
+        addToKey({clss: 'place-homework',
+                  rows: [{description: cons.home_work.description,
+                          value: 1}]});
       } else {
-        removeFromKey('home-work');
+        removeFromKey('place-homework');
       };
 
       if (_.keys(cons.people).length > 0) {
@@ -152,7 +160,7 @@ function(_) {
           // ALL of the people constraints are set and they're ALL 0.
           // That means we've chosen 'Alone'.
           addToKey({
-                clss: 'people',
+                clss: 'people-content',
                 rows: [
                   // Fake a constraint:
                   {description: 'Alone, or with strangers only', value: 1}
@@ -160,27 +168,27 @@ function(_) {
               });
         } else {
           // SOME people constraints are set.
-          addToKey({clss: 'people', rows: cons.people});
+          addToKey({clss: 'people-content', rows: cons.people});
         };
       } else {
         removeFromKey('people-title');
-        removeFromKey('people');
+        removeFromKey('people-content');
       };
     
       if (_.keys(cons.activities).length > 0) {
         addToKey({clss: 'activities-title', title: 'Activities'});
-        addToKey({clss: 'activities', rows: cons.activities});
+        addToKey({clss: 'activities-content', rows: cons.activities});
       } else {
         removeFromKey('activities-title');
-        removeFromKey('activities');
+        removeFromKey('activities-content');
       };
 
       if ('notes' in cons && cons.notes) {
         addToKey({clss: 'notes-title', title: 'Notes'});
-        addToKey({clss: 'notes', text: 'Containing “'+cons.notes.description +'”'}); 
+        addToKey({clss: 'notes-content', text: 'Containing “'+cons.notes.description +'”'}); 
       } else {
         removeFromKey('notes-title');
-        removeFromKey('notes');
+        removeFromKey('notes-content');
       };
     };
 
@@ -194,18 +202,31 @@ function(_) {
       // The outline structure for a line's key.
       // Requires line_id and line_color.
       templates.line_key = _.template(' \
-        <div id="key-<%= line_id %>" class="key-line" data-line-id="<%= line_id %>" style="border-top-color: <%= line_color %>;"> \
-          <h2></h2> \
-          <p> \
-            <label class="key-switch"> \
-              <input type="checkbox" class="key-switch-control" checked="checked" data-line-id="<%= line_id %>"> Show line \
+        <div id="key-<%= line_id %>" class="key-line" data-line-id="<%= line_id %>"> \
+          <p class="key-controls"> \
+            <label class="key-show"> \
+              <input type="checkbox" class="key-show-control" checked="checked" data-line-id="<%= line_id %>">Show \
             </label> \
-            <a href="#" class="key-duplicate" data-line-id="<%= line_id %>">Duplicate</a> \
-            <a href="#" class="key-edit" data-line-id="<%= line_id %>">Edit</a> \
-            <a href="#" class="key-delete" data-line-id="<%= line_id %>">Delete</a> \
+            <span class="key-duplicate key-control"> \
+              • \
+              <a href="#" class="key-duplicate-control" data-line-id="<%= line_id %>">Duplicate</a> \
+            </span> \
+            <span class="key-edit key-control"> \
+              • \
+              <a href="#" class="key-edit-control" data-line-id="<%= line_id %>">Edit</a> \
+            </span> \
+            <span class="key-delete key-control"> \
+              • \
+              <a href="#" class="key-delete-control" data-line-id="<%= line_id %>">Delete</a> \
+            </span> \
           </p> \
+          <h2 class="key-title" style="border-top-color: <%= line_color %>;"></h2> \
           <p class="key-no-data">No data matches the constraints below.</p> \
           <div class="key-descriptions"> \
+            <div class="key-descriptions-people"></div> \
+            <div class="key-descriptions-place"></div> \
+            <div class="key-descriptions-activities"></div> \
+            <div class="key-descriptions-notes"></div> \
           </div> \
         </div> \
       ');
@@ -213,7 +234,7 @@ function(_) {
       // Subtitle for a bit of the key.
       // Requires clss and title.
       templates.line_key_title = _.template(' \
-        <h3 class="<%= clss %>"><%= title %></h3> \
+        <h3 class="key-subtitle <%= clss %>"><%= title %></h3> \
       ');
 
       // A line of text in the key.
@@ -226,11 +247,11 @@ function(_) {
       // Requires clss and a rows array.
       // Each element of rows is an object with description and value elements.
       templates.line_key_rows = _.template(' \
-        <ul class="<%= clss %>"> \
+        <ul class="list-unstyled <%= clss %>"> \
           <% _.each(rows, function(row){ %> \
             <li> \
-              <span><%= row.description %></span> \
-              <span><% if (row.value == 1) { print("✓") } else if (row.value == 0) { print("✕") } else { print(row.value) } %></span> \
+              <span class="key-label"><%= row.description %></span> \
+              <span class="key-field"><% if (row.value == 1) { print("✓") } else if (row.value == 0) { print("✕") } else { print(row.value) } %></span> \
             </li> \
           <% }); %> \
         </ul> \
