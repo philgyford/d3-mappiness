@@ -40,9 +40,9 @@ function(_) {
       // If we've got the maximum lines we're allowed, hide the duplicate
       // option.
       if (lines.length == colorPool.length) {
-        $('.key-duplicate').hide();
+        hideControl('.key-duplicate', '#key');
       } else {
-        $('.key-duplicate').show();
+        showControl('.key-duplicate', '#key');
       };
     };
 
@@ -74,9 +74,11 @@ function(_) {
 
       
       if (line.values.length > 0) {
-        $('.key-no-data', cssid).hide();
+        hideControl('.key-no-data', cssid);
+        showControl('.key-show', cssid);
       } else {
-        $('.key-no-data', cssid).show();
+        showControl('.key-no-data', cssid);
+        hideControl('.key-show', cssid);
       };
 
       /**
@@ -192,6 +194,21 @@ function(_) {
       };
     };
 
+    function hideControl(selector, container) {
+      alterKey('hide', selector, container);
+    };
+
+    function showControl(selector, container) {
+      alterKey('show', selector, container);
+    };
+
+    function alterKey(action, selector, container) {
+      if (action == 'show') {
+        $(selector, container).show();
+      } else if (action == 'hide') {
+        $(selector, container).hide();
+      };
+    };
 
     /**
      * Populates the templates object with compiled Underscore HTML templates.
@@ -207,21 +224,21 @@ function(_) {
             <label class="key-show"> \
               <input type="checkbox" class="key-show-control" checked="checked" data-line-id="<%= line_id %>">Show \
             </label> \
-            <span class="key-duplicate key-control"> \
-              • \
-              <a href="#" class="key-duplicate-control" data-line-id="<%= line_id %>">Duplicate</a> \
+            <span class="key-delete key-control"> \
+              <span class="sep">•</span> \
+              <a href="#" class="key-delete-control" data-line-id="<%= line_id %>">Delete</a> \
             </span> \
             <span class="key-edit key-control"> \
-              • \
+              <span class="sep">•</span> \
               <a href="#" class="key-edit-control" data-line-id="<%= line_id %>">Edit</a> \
             </span> \
-            <span class="key-delete key-control"> \
-              • \
-              <a href="#" class="key-delete-control" data-line-id="<%= line_id %>">Delete</a> \
+            <span class="key-duplicate key-control"> \
+              <span class="sep">•</span> \
+              <a href="#" class="key-duplicate-control" data-line-id="<%= line_id %>">Duplicate</a> \
             </span> \
           </p> \
           <h2 class="key-title" style="border-top-color: <%= line_color %>;"></h2> \
-          <p class="key-no-data">No data matches the constraints below.</p> \
+          <p class="key-no-data">No data matches the constraints below</p> \
           <div class="key-descriptions"> \
             <div class="key-descriptions-people"></div> \
             <div class="key-descriptions-place"></div> \

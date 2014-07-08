@@ -255,7 +255,6 @@ function(_,            jquery_modal) {
       $('#line-edit-buttons').css('borderTopColor', line.color);
     };
 
-
     /**
      * Populates the templates object with compiled Underscore HTML templates.
      */

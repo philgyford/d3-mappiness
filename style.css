@@ -190,6 +190,8 @@ body {
   min-width: 220px;
 }
 .key-no-data {
+  margin-top: 0.3em;
+  color: #c00;
   display: none;
 }
 .key-title {
@@ -209,7 +211,7 @@ body {
   font-weight: bold;
   color: #333;
 }
-.key-control {
+.key-controls .sep {
   color: #ccc;
 }
 .key-label {
