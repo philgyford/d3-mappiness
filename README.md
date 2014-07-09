@@ -19,7 +19,6 @@ Load `index.html` in your browser and click "Edit"...
 * Something that shows what dates are shown in focus area.
 * Demo site with dummy data.
 * Remove require cache-busting in mappiness.js.
-
 * Maybe:
   * Hover lines like on http://bl.ocks.org/gniemetz/4618602
   * Moving average. Configurable in UI?
