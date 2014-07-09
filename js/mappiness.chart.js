@@ -173,20 +173,40 @@ function(d3) {
 
       //if (brush == undefined || brush.empty()) {
         // Get min and max of all the start times for all the lines.
-        focusXScale.domain([
-          d3.min(data, function(line) {
-            return d3.min(line.values, function(response) {
-              return response.start_time;
-            })
-          }),
-          d3.max(data, function(line) {
-            return d3.max(line.values, function(response) {
-              return response.start_time;
-            })
-          })
-        ]).range([0, focusWidth]);
+        
+        if (data.length == 0) {
+          // If we have no data (probably because none of the lines have
+          // constraints which generate any datapoints) we need to fake
+          // a domain so we don't get errors.
+          // So we go from 1 year ago to today.
+          var to = new Date(),
+              from = new Date();
+          from.setFullYear(from.getFullYear() - 1);
+          focusXScale.domain([from, to]);
+          contextXScale.domain([from, to]);
 
-        contextXScale.domain(focusXScale.domain()).range([0, contextWidth]);
+        } else {
+          // Standard: Use the min and max dates from all the lines.
+
+          focusXScale.domain([
+            d3.min(data, function(line) {
+              return d3.min(line.values, function(response) {
+                return response.start_time;
+              })
+            }),
+            d3.max(data, function(line) {
+              return d3.max(line.values, function(response) {
+                return response.start_time;
+              })
+            })
+          ]);
+
+          contextXScale.domain(focusXScale.domain());
+        };
+
+
+        focusXScale.range([0, focusWidth]);
+        contextXScale.range([0, contextWidth]);
 
         focusYScale.domain([0, 1]).range([focusHeight, 0]);
 
