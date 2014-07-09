@@ -1,6 +1,6 @@
 # Mappiness d3 chart
 
-In progress.
+*In progress.* Only tested in Chrome so far.
 
 Download your data as JSON from the [Mappiness app](http://www.mappiness.org.uk/). 
 
