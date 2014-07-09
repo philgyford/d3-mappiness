@@ -48,7 +48,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:
-      lines_data.push(dataManager.getCleanedData({feeling: 'happy', in_out: 'in', with_partner:1, do_work: 1}));
+      lines_data.push(dataManager.getCleanedData({feeling: 'happy'}));
 
       // Could add other starter lines too, eg:
       //lines_data.push(dataManager.getCleanedData({feeling: 'awake',
