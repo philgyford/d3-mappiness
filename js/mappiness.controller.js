@@ -31,13 +31,32 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       initListeners();
 
-      dataManager.loadJSON('mappiness.json');
+      var json = getJSON();
 
       dataManager.on('dataReady', function() {
         drawChart(); 
       });
 
     };
+
+    /**
+     * Gets the Mappiness JSON data and passes it to dataManager.
+     * If there is a local `mappiness.json` file, we use that.
+     * Otherwise, we fetch the remote one.
+     */
+    function getJSON() {
+      $.ajax({
+        url: 'mappiness.json',
+        type: 'HEAD'
+      })
+      .fail(function() {
+        dataManager.loadJSONP('https://mappiness.me/TODO/mappiness.json');
+      })
+      .done(function() {
+        dataManager.loadJSON('mappiness.json');
+      });
+    };
+
 
     /**
      * Does the initial generating of the chart, once we've loaded all the

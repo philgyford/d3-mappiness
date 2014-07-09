@@ -4,7 +4,6 @@ require.config({
       deps: ['jquery'],
       exports: 'jQuery.fn.modal'
     }
-
   },
 
   // For development only.

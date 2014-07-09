@@ -1,6 +1,28 @@
-
-define(['d3'],
-function(d3) {
+/**
+ * Fetches and cleans and filters the data from a Mappiness JSON file.
+ *
+ *
+ * Usage:
+ *
+ * var dataManager = mappiness_dataManager();
+ * dataManager.colorPool([ ...array of colors... ]);
+ * dataManager.constraintsDescriptions( ...object of descriptios... );
+ *
+ * // Then EITHER:
+ * dataManager.loadJSONP(' ...URL to .json file... ');
+ * // OR:
+ * dataManager.loadJSON(' ... path to local .json file... ');
+ *
+ * dataManager.on('dataReady', function() {
+ *   // eg:
+ *   var line_data = dataManager.getCleanedData({feeling: 'happy'});
+ *   // Do something with the data.
+ * });
+ *
+ * NOTE: jQuery is currently ONLY used in loadJSONP().
+ */
+define(['d3', 'jquery'],
+function(d3,   $) {
   return function() {
     var exports = {},
         dispatch = d3.dispatch('dataReady', 'dataLoading'),
@@ -10,22 +32,45 @@ function(d3) {
         colorPool = [ '#f00', '#0f0', '#00f' ],
         colorsInUse = [];
 
+
+    /**
+     * Loads data from a local JSON file.
+     * Does the dataLoading event while data is loading.
+     */
     exports.loadJSON = function(filepath) {
+
       var load = d3.json(filepath); 
 
       load.on('progress', function() { dispatch.dataLoading(d3.event.loaded); });
 
       load.get(function(error, response) {
-
-        response.forEach(function(d) {
-          cleanData(d);
-        });
-
-        data = response;
-
-        dispatch.dataReady(response);
+        processJSON(response);
       });
     };
+
+
+    /**
+     * Loads data from a remote JSON file using JSONP.
+     * We use jQuery for this because using the d3.jsonp plugin seemed to
+     * require a callback in the global scope.
+     *
+     * Does NOT do the dataLoading event while data is loading.
+     * (I can't figure out how to add a 'progress' event to $.ajax when loading
+     * jsonp.)
+     */
+    exports.loadJSONP = function(url) {
+      $.ajax({
+        url: url,
+        dataType: 'jsonp'
+      })
+      .fail(function(response){
+        console.log('TODO ERROR', response); 
+      })
+      .done(function(json){
+        processJSON(json);
+      });
+    };
+
 
     /**
      * `original_constraints` is undefined, or an object with one or more of these
@@ -94,6 +139,24 @@ function(d3) {
       };
       return color;
     };
+
+
+    /**
+     * Takes the Mappiness JSON file's contents (an array of objects) and
+     * cleans it, puts it in the `data` variable, and sigals that the data is
+     * ready.
+     */
+    var processJSON = function(json) {
+
+      json.forEach(function(d) {
+        cleanData(d);
+      });
+
+      data = json;
+
+      dispatch.dataReady(json);
+    };
+
 
     /**
      * Ensures the submitted constraints are the correct format and have any
