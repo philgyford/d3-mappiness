@@ -4,15 +4,16 @@ In progress.
 
 Download your data as JSON from the [Mappiness app](http://www.mappiness.org.uk/). 
 
-Check out this code and run it on a webserver.
+Check out this code and put your Mappiness JSON file with it (at the same level
+as `index.html`).
 
-Put your Mappiness JSON file in the d3-mappiness directory with the checked-out files.
+Put the code on a webserver (it won't run locally from a `file://` URL).
 
 Load index.html in your browser.
 
+
 ## TO DO
 
-* Make key for lines prettier.
 * Hover over point, see its constraints.
 * Add 'About' page/popup.
 * Something that shows what dates are shown in focus area.
