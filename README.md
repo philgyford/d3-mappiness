@@ -9,7 +9,7 @@ as `index.html`).
 
 Put the code on a webserver (it won't run locally from a `file://` URL).
 
-Load index.html in your browser.
+Load index.html in your browser and click "Edit"...
 
 
 ## TO DO
