@@ -82,6 +82,7 @@ hr {
 .list-unstyled {
   list-style-type: none;
 }
+.disabled,
 .text-muted {
   color: #999;
 }

@@ -32,9 +32,11 @@ function(_) {
 
       // If there's only one line left, remove the UI to delete it.
       if (lines.length == 1) {
-        $('.key-delete').hide();
+        hideControl('.key-delete', '#key');
+        hideControl('.key-show', '#key');
       } else {
-        $('.key-delete').show();
+        showControl('.key-delete', '#key');
+        showControl('.key-show', '#key');
       };
 
       // If we've got the maximum lines we're allowed, hide the duplicate
@@ -194,21 +196,40 @@ function(_) {
       };
     };
 
+    /**
+     * Disable one of the control links/checkboxes at the top of a line's key.
+     * Both `selector` and `container` are like '.classname' or '#id'.
+     */
     function hideControl(selector, container) {
-      alterKey('hide', selector, container);
+      $(selector+' a', container).each(function(){
+        // There's a link(s) in here; change to a span.disabled.
+        $(this).addClass('disabled').changeElementType('span');
+      });
+
+      $(selector+' input[type=checkbox]', container).each(function(){
+        // There's a checkbox in here. Disable it and the surrounding span.
+        $(this).prop('disabled', true);
+        $(this).parent().addClass('disabled');
+      });
     };
 
+    /**
+     * Enable one of the control links/checkboxes at the top of a line's key.
+     * Both `selector` and `container` are like '.classname' or '#id'.
+     */
     function showControl(selector, container) {
-      alterKey('show', selector, container);
+      $(selector+' span.disabled', container).each(function(){
+        // There's span.disabled(s) in here; change to links.
+        $(this).removeClass('disabled').changeElementType('a');
+      });
+
+      $(selector+' input[type=checkbox]', container).each(function(){
+        // There's a checkbox in here. Enable it and the surrounding span.
+        $(this).prop('disabled', false);
+        $(this).parent().removeClass('disabled');
+      });
     };
 
-    function alterKey(action, selector, container) {
-      if (action == 'show') {
-        $(selector, container).show();
-      } else if (action == 'hide') {
-        $(selector, container).hide();
-      };
-    };
 
     /**
      * Populates the templates object with compiled Underscore HTML templates.
@@ -294,4 +315,3 @@ function(_) {
     return exports;
   };
 });
-
