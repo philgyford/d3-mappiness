@@ -32,4 +32,4 @@ Load `index.html` in your browser and click "Edit"...
 * So much of the work is in getting the data in the right format (even when the source data is already decent), the interactions, the HTML/CSS/JS in the UI (not the chart).
 * Ease of putting the brush in, vs difficulty of tweaking edge cases (adding/removing lines to chart which change the domain, ensuring the brush doesn't end up off the edge, etc).
 * Balancing doing things "the right way" with "good enough". eg, JS templates would be nice, but it added either 40KB+ to page load, and further slowness to compile on the front end, or another dependency to compile the templates on the command line.
-*
+* All the edge cases. Hiding/showing things on the key, the brush, lines when constraints mean there are no data, etc.
