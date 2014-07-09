@@ -17,7 +17,8 @@ Load `index.html` in your browser and click "Edit"...
 * Hover over point, see its constraints.
 * Add 'About' page/popup.
 * Something that shows what dates are shown in focus area.
-* Demo site with dummy data.
+* Allow user to enter their secret code to use their data, a la
+  http://blog.mappiness.org.uk/2011/05/23/api-guide/
 * Remove require cache-busting in mappiness.js.
 * Maybe:
   * Hover lines like on http://bl.ocks.org/gniemetz/4618602
