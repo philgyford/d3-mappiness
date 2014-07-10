@@ -72,13 +72,17 @@ input, option, select {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 p, li, dt, dd {
-  line-height: 1.2em;
+  line-height: 1.4em;
 }
-p {
-  margin-bottom: 0.5em;
+p, li {
+  margin-bottom: 1em;
+}
+ol li {
+  margin-left: 2em;
 }
 hr {
-  border: 0;
+  border: none;
+  border-bottom: 1px solid #eee;
   margin: 1.5em 0 1em 0;
 }
 .hide {
@@ -93,6 +97,18 @@ hr {
 }
 input[type=text] {
   padding: 0.2em 5px 0.3em 5px;
+}
+code {
+  background: #f6f6f6;
+}
+.align-center {
+  text-align: center;
+}
+.align-center * {
+  text-align: left;
+}
+.nobr {
+  white-space: nowrap;
 }
 
 /***************************************************************************
@@ -147,7 +163,7 @@ input[type=text] {
  * LOADING SPINNER.
  * via https://github.com/lukehaas/css-loaders
  */
-.loader {
+#loader {
   font-size: 10px;
   margin: 5em auto;
   text-indent: -9999em;
@@ -164,7 +180,7 @@ input[type=text] {
   -webkit-animation: load3 1.4s infinite linear;
   animation: load3 1.4s infinite linear;
 }
-.loader:before {
+#loader:before {
   width: 50%;
   height: 50%;
   background: #ccc;
@@ -174,7 +190,7 @@ input[type=text] {
   left: 0;
   content: '';
 }
-.loader:after {
+#loader:after {
   background: #fff;
   width: 75%;
   height: 75%;
@@ -221,9 +237,41 @@ body {
 #chart {
   margin: 1em 0 1.5em 0;
 }
+.title {
+  font-size: 1.5em;
+  color: #999;
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+.subtitle {
+  margin-bottom: 1em;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5em;
+}
 
 /***************************************************************************
-/* CHART
+ * IMPORTER FORM.
+ */
+#importer {
+  display: none;
+  max-width: 35em;
+  min-width: 26em;
+  width: 80%;
+  margin: 2em auto 0 auto;
+}
+@media only screen and (max-width: 480px) {
+  #importer {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+#importer-secret {
+  width: 12em;
+}
+
+/***************************************************************************
+ * CHART
  */
 .axes {
   color: #aaa;
@@ -362,7 +410,6 @@ body {
 #le-activities-list ul { float: left; margin: 0 30px 0 0; }
 #le-activities-list ul.last { margin-right: 0; }
 #le-activities-list li { width: 330px; }
-.le-notes-hr { display: none; }
 
 /* At more sensible desktop widths.
  * Collapse activities into a single column. */
@@ -377,17 +424,15 @@ body {
   /* Collapse columns. */
   #line-edit     { width: 420px; }
   .line-edit-col { float: none; }
-  .le-notes-hr { display: block; }
 }
-#line-edit h2 {
-  font-weight: normal;
-  display: none;
-}
-#line-edit h3 {
-  color: #333;
+#line-edit .subtitle {
   margin: 0 0 0.7em 0;
-  padding-bottom: 0.5em;
-  border-bottom: 1px solid #eee;
+}
+#line-edit hr {
+  border-width: 0;
+}
+#line-edit li {
+  margin-bottom: 0;
 }
 #le-people-with-list {
   display: none;

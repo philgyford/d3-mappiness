@@ -3,8 +3,8 @@
  * Includes the duplicate/edit/delete/show controls.
  * (Although their event listeners are in controller.
  */
-define(['underscore'],
-function(_) {
+define(['underscore', 'jquery'],
+function(_,            $) {
   return function() {
     var exports = {},
         // Can be set with exports.colorPool().

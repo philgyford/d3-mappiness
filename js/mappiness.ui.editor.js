@@ -1,5 +1,5 @@
-define(['underscore', 'jquery.modal'],
-function(_,            jquery_modal) {
+define(['underscore', 'jquery', 'jquery.modal'],
+function(_,            $,        jquery_modal) {
   return function() {
     var exports = {},
         // Will be an object containing textual descriptions of constraints.
@@ -269,7 +269,7 @@ function(_,            jquery_modal) {
       ');
 
       templates.line_edit_feelings = _.template(' \
-        <h3>Feelings</h3> \
+        <h2 class="subtitle">Feelings</h2 class="subtitle"> \
         <p class="muted-labels"> \
           <% count = 1; %> \
           <% _.each(feelings, function(description, key) { %> \
@@ -286,7 +286,7 @@ function(_,            jquery_modal) {
 
       templates.line_edit_people = _.template(' \
         <div id="le-people"> \
-          <h3>People</h3> \
+          <h2 class="subtitle">People</h2 class="subtitle"> \
           <p class="muted-labels"> \
             <input type="radio" name="le-people" id="le-people-ignore" value="ignore"> \
             <label for="le-people-ignore"> \
@@ -322,7 +322,7 @@ function(_,            jquery_modal) {
       ');
 
       templates.line_edit_place = _.template(' \
-        <h3>Place</h3> \
+        <h2 class="subtitle">Place</h2 class="subtitle"> \
         <p> \
           <select name="le-place-inout" id="le-place-inout"> \
             <option value="ignore"><%= _.values(in_out).join(" / ") %></option> \
@@ -345,7 +345,7 @@ function(_,            jquery_modal) {
       ');
 
       templates.line_edit_notes = _.template(' \
-        <h3><label for="le-notes">Notes containing:</label></h3> \
+        <h2 class="subtitle"><label for="le-notes">Notes containing:</label></h2 class="subtitle"> \
         <p> \
           <input type="text" name="le-notes" id="le-notes" value="" placeholder=""> \
         </p> \
@@ -354,7 +354,7 @@ function(_,            jquery_modal) {
 
       templates.line_edit_activities = _.template(' \
         <div id="le-activities"> \
-          <h3>Activities</h3> \
+          <h2 class="subtitle">Activities</h2 class="subtitle"> \
           <div id="le-activities-list"> \
             <ul class="list-unstyled muted-labels"> \
               <% count = 1; %> \
@@ -379,13 +379,6 @@ function(_,            jquery_modal) {
               <% }); %> \
             </ul> \
           </div> \
-        </div> \
-      ');
-
-      templates.line_edit_buttons = _.template(' \
-        <div id="le-buttons"> \
-          <button type="button" class="btn btn-default">Cancel</button> \
-          <button type="submit" class="btn btn-default">Submit</button> \
         </div> \
       ');
 

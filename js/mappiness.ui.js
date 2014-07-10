@@ -1,8 +1,8 @@
 /**
  * For handling all the dynamic forms etc.
  */
-define(['./mappiness.ui.key', './mappiness.ui.editor'],
-function(  mappiness_ui_key,     mappiness_ui_editor) {
+define(['./mappiness.ui.general', './mappiness.ui.key', './mappiness.ui.editor'],
+function(  mappiness_ui_general,     mappiness_ui_key,     mappiness_ui_editor) {
   return function() {
     var exports = {};
 
@@ -10,6 +10,7 @@ function(  mappiness_ui_key,     mappiness_ui_editor) {
 
     exports.key = mappiness_ui_key();
     exports.editor = mappiness_ui_editor();
+    exports.general = mappiness_ui_general();
 
     /**
      * When the lines on the chart change, we need to reflect that in the UI.

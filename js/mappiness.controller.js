@@ -50,7 +50,8 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         type: 'HEAD'
       })
       .fail(function() {
-        dataManager.loadJSONP('https://mappiness.me/TODO/mappiness.json');
+        ui.general.showImportForm();
+        //dataManager.loadJSONP('https://mappiness.me/TODO/mappiness.json');
       })
       .done(function() {
         dataManager.loadJSON('mappiness.json');
@@ -63,7 +64,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      * data.
      */
     function drawChart() {
-      $('.loader').hide();
+      ui.general.hideLoader();
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:

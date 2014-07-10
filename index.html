@@ -6,18 +6,46 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-	<h1>Mappiness chart with D3.js</h1>
+	<h1 class="title">Mappiness chart</h1>
 
-	<div class="loader">Loading…</div>
- 
+	<div id="loader">Loading…</div>
+
 	<div id="loaded">
 		<div id="chart"></div>
 		<div id="key"></div>
-    </div>
+  </div>
+
+  <form id="importer">
+    <h2 class="subtitle">Explore your Mappiness data</h2>
+
+    <p>This website allows you to explore your data from the <a href="http://www.mappiness.org.uk/">Mappiness iPhone app</a>.</p>
+
+    <hr>
+
+    <p>You will need your Mappiness data download link. To&nbsp;find&nbsp;it…</p>
+    <ol>
+      <li>Open the app on your phone, and go to “My&nbsp;happiness”.</li>
+      <li>Tap the download icon at top&nbsp;right.</li>
+      <li>If “data download” is turned off, turn it&nbsp;on.</li>
+      <li>Your data download link will look something like this: <code>https://mappiness.me/3kkq.pk7d.23wb</code></li>
+      <li>
+        <label for="importer-secret">Enter your link here and submit:</label>
+        <span class="nobr">
+          <input type="text" name="secret" value="" maxlength="14" id="importer-secret">
+          <button class="button button-submit" type="submit">Submit</button>
+        </span>
+      </li>
+    </ol>
+
+    <hr>
+
+    <p>Note: This site does not save your data anywhere. Your data is only loaded within your own browser and forgotten once you leave this&nbsp;page.</p>
+
+  </form>
+
 
 	<form id="line-edit" class="modal">
     <div id="line-edit-body">	
-      <h2>Select the criteria for this line</h2>
 
       <div id="line-edit-col-1" class="line-edit-col">
       </div>
