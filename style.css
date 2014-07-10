@@ -165,7 +165,7 @@ code {
  * LOADING SPINNER.
  * via https://github.com/lukehaas/css-loaders
  */
-#loader {
+#loader-spinner {
   font-size: 10px;
   margin: 5em auto;
   text-indent: -9999em;
@@ -182,7 +182,7 @@ code {
   -webkit-animation: load3 1.4s infinite linear;
   animation: load3 1.4s infinite linear;
 }
-#loader:before {
+#loader-spinner:before {
   width: 50%;
   height: 50%;
   background: #ccc;
@@ -192,7 +192,7 @@ code {
   left: 0;
   content: '';
 }
-#loader:after {
+#loader-spinner:after {
   background: #fff;
   width: 75%;
   height: 75%;
@@ -224,6 +224,13 @@ code {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+#loader-slow {
+  display: none;
+  margin: 2em auto 0 auto;
+  width: 24em;
+  text-align: center;
+  color: #999;
 }
 
 /***************************************************************************
