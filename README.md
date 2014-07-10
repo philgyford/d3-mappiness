@@ -16,12 +16,12 @@ Load `index.html` in your browser and click "Edit"...
 
 * Allow user to enter their secret code to use their data, a la
   http://blog.mappiness.org.uk/2011/05/23/api-guide/
-  * Genericise modal use so we can...
-  * If local file isn't there, open a pop-up form for user to enter their code.
-  * Then fetch remote file.
+  * Handle not fetching the JSON, or getting an error if URL is invalid.
   * Add some dummy data for people to try it anyway. Generate on the fly?
+  * Fix scrollbar when loading. CSS Loader?
 * Hover over point, see its constraints.
 * Add 'About' page/popup.
+* Make keys wrap better.
 * Something that shows what dates are shown in focus area.
 * Remove require cache-busting in mappiness.js.
 * Maybe:

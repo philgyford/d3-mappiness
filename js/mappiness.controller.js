@@ -162,19 +162,19 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         chart.toggleLine($(this).data('line-id'));
       });
 
-      $('#key').on('click', '.key-duplicate-control', function(ev) {
+      $('#key').on('click', 'a.key-duplicate-control', function(ev) {
         ev.preventDefault();
         duplicateLine($(this).data('line-id'));
         updateChart();
       });
 
-      $('#key').on('click', '.key-delete-control', function(ev) {
+      $('#key').on('click', 'a.key-delete-control', function(ev) {
         ev.preventDefault();
         deleteLine($(this).data('line-id'));
         updateChart();
       });
 
-      $('#key').on('click', '.key-edit-control', function(ev) {
+      $('#key').on('click', 'a.key-edit-control', function(ev) {
         ev.preventDefault();
         ui.editor.open($(this).data('line-id'));
       });
