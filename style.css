@@ -1,12 +1,11 @@
-/* html5doctor.com Reset v1.6.1 - http://cssreset.com */
+/***************************************************************************
+ * html5doctor.com Reset v1.6.1 - http://cssreset.com 
+ */
 html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}nav ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:transparent}ins{background-color:#ff9;color:#000;text-decoration:none}mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}del{text-decoration:line-through}abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}table{border-collapse:collapse;border-spacing:0}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}input,select{vertical-align:middle}
 
-*, *:before, *:after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
-/* Clearfix */
+/***************************************************************************
+/* CLEARFIX
+ */
 .cf:before,
 .cf:after {
     content: " ";
@@ -19,6 +18,7 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
     *zoom: 1;
 }
 
+/***************************************************************************
 /* jQuery Modal */
 /* https://github.com/kylefox/jquery-modal */
 .modal {
@@ -59,9 +59,14 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
   border-radius: 8px;
 }
 
-/**
- * Generic elements.
+/***************************************************************************
+ * GENERIC ELEMENTS.
  */
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
 input, option, select {
   font-size: 1em;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -89,6 +94,10 @@ hr {
 input[type=text] {
   padding: 0.2em 5px 0.3em 5px;
 }
+
+/***************************************************************************
+ * BUTTONS.
+ */
 .button {
   display: inline-block;
   text-align center;
@@ -134,8 +143,8 @@ input[type=text] {
   margin-right: 20px;
 }
 
-/**
- * Loading spinner.
+/***************************************************************************
+ * LOADING SPINNER.
  * via https://github.com/lukehaas/css-loaders
  */
 .loader {
@@ -199,7 +208,9 @@ input[type=text] {
   }
 }
 
-
+/***************************************************************************
+ * GENERAL STRUCTURE.
+ */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 1em 20px;
@@ -211,7 +222,9 @@ body {
   margin: 1em 0 1.5em 0;
 }
 
-/* CHART */
+/***************************************************************************
+/* CHART
+ */
 .axes {
   color: #aaa;
   font-size: 11px;
@@ -246,7 +259,9 @@ body {
   shape-rendering: crispEdges;
 }
 
-/* KEY */
+/***************************************************************************
+/* KEY
+ */
 #key {
   font-size: 0.8125em;
 }
@@ -305,8 +320,9 @@ body {
 }
 
 
-/* Pop-up.*/
-
+/***************************************************************************
+/* LINE-EDITING POP-UP FORM.
+ */
 #line-edit {
   height: 80%;
   position: relative;
