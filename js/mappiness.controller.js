@@ -51,7 +51,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       })
       .fail(function() {
         ui.general.showImportForm();
-        //dataManager.loadJSONP('https://mappiness.me/TODO/mappiness.json');
       })
       .done(function() {
         dataManager.loadJSON('mappiness.json');
@@ -65,6 +64,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      */
     function drawChart() {
       ui.general.hideLoader();
+      ui.general.hideImportForm();
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:
@@ -144,6 +144,19 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      * Initialises all the various events we listen for in the UI.
      */
     function initListeners() {
+
+      // Import form.
+
+      $('#importer').on('submit', function(ev) {
+        ev.preventDefault();
+        var downloadCode = ui.general.processImportForm();
+        if (downloadCode !== false) {
+          dataManager.loadJSONP('https://mappiness.me/' + downloadCode + '/mappiness.json') 
+        };
+      });
+
+      // Key.
+
       // The switches to turn each line on/off.
       $('#key').on('click', '.key-show-control', function(ev) {
         chart.toggleLine($(this).data('line-id'));
@@ -173,7 +186,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         $.modal.close();
       });
 
-      $('#line-edit-buttons .button-submit').on('click', function(ev) {
+      $('#line-edit').on('submit', function(ev) {
         ev.preventDefault();
         var formData = ui.editor.processForm();
         var newLineData = dataManager.getCleanedData(

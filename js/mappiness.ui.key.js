@@ -201,16 +201,23 @@ function(_,            $) {
      * Both `selector` and `container` are like '.classname' or '#id'.
      */
     function hideControl(selector, container) {
-      $(selector+' a', container).each(function(){
+      if ($(selector+' a', container).length > 0) {
         // There's a link(s) in here; change to a span.disabled.
-        $(this).addClass('disabled').changeElementType('span');
-      });
+        $(selector+' a', container).each(function(){
+          $(this).addClass('disabled').changeElementType('span');
+        });
 
-      $(selector+' input[type=checkbox]', container).each(function(){
+      } else if ($(selector+' input[type=checkbox]', container).length) {
         // There's a checkbox in here. Disable it and the surrounding span.
-        $(this).prop('disabled', true);
-        $(this).parent().addClass('disabled');
-      });
+        $(selector+' input[type=checkbox]', container).each(function(){
+          $(this).prop('disabled', true);
+          $(this).parent().addClass('disabled');
+        });
+
+      } else {
+        // Something else, like .key-no-data. Just hide it.
+        $(selector, container).hide();
+      };
     };
 
     /**
@@ -218,16 +225,23 @@ function(_,            $) {
      * Both `selector` and `container` are like '.classname' or '#id'.
      */
     function showControl(selector, container) {
-      $(selector+' span.disabled', container).each(function(){
+      if ($(selector+' span.disabled', container).length > 0) {
         // There's span.disabled(s) in here; change to links.
-        $(this).removeClass('disabled').changeElementType('a');
-      });
+        $(selector+' span.disabled', container).each(function(){
+          $(this).removeClass('disabled').changeElementType('a');
+        });
 
-      $(selector+' input[type=checkbox]', container).each(function(){
+      } else if ($(selector+' input[type=checkbox]', container).length > 0) {
         // There's a checkbox in here. Enable it and the surrounding span.
-        $(this).prop('disabled', false);
-        $(this).parent().removeClass('disabled');
-      });
+        $(selector+' input[type=checkbox]', container).each(function(){
+          $(this).prop('disabled', false);
+          $(this).parent().removeClass('disabled');
+        });
+
+      } else {
+        // Something else, like .key-no-data. Just show it.
+        $(selector, container).show();
+      };
     };
 
 
@@ -259,7 +273,7 @@ function(_,            $) {
             </span> \
           </p> \
           <h2 class="key-title" style="border-top-color: <%= line_color %>;"></h2> \
-          <p class="key-no-data">No data matches the constraints below</p> \
+          <p class="key-no-data text-error">No data matches the constraints below</p> \
           <div class="key-descriptions"> \
             <div class="key-descriptions-people"></div> \
             <div class="key-descriptions-place"></div> \

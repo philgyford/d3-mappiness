@@ -72,7 +72,7 @@ input, option, select {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 p, li, dt, dd {
-  line-height: 1.4em;
+  line-height: 1.5em;
 }
 p, li {
   margin-bottom: 1em;
@@ -94,6 +94,9 @@ hr {
 .disabled,
 .text-muted {
   color: #999;
+}
+.text-error {
+  color: #c00;
 }
 input[type=text] {
   padding: 0.2em 5px 0.3em 5px;
@@ -129,10 +132,9 @@ code {
   background: #666;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-.button:hover,
-.button:focus {
+.button:hover {
   text-decoration: none;
-  background: #333;
+  background: #f00;
 }
 .button:active {
   outline: 0;
@@ -269,6 +271,9 @@ body {
 #importer-secret {
   width: 12em;
 }
+#importer .text-error {
+  display: none;
+}
 
 /***************************************************************************
  * CHART
@@ -320,7 +325,6 @@ body {
 }
 .key-no-data {
   margin-top: 0.3em;
-  color: #c00;
   display: none;
 }
 .key-title {
@@ -352,12 +356,9 @@ body {
   width: 10%;
   text-align: right;
 }
-#key p {
+#key p,
+#key li {
   margin-bottom: 0;
-}
-#key li,
-#key p {
-  line-height: 1.5em;
 }
 .key-controls a {
   text-decoration: none;

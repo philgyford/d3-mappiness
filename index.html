@@ -15,7 +15,7 @@
 		<div id="key"></div>
   </div>
 
-  <form id="importer">
+  <form id="importer" method="get" action="#">
     <h2 class="subtitle">Explore your Mappiness data</h2>
 
     <p>This website allows you to explore your data from the <a href="http://www.mappiness.org.uk/">Mappiness iPhone app</a>.</p>
@@ -29,11 +29,12 @@
       <li>If “data download” is turned off, turn it&nbsp;on.</li>
       <li>Your data download link will look something like this: <code>https://mappiness.me/3kkq.pk7d.23wb</code></li>
       <li>
-        <label for="importer-secret">Enter your link here and submit:</label>
+        <label for="importer-url">Enter your link here and submit:</label>
         <span class="nobr">
-          <input type="text" name="secret" value="" maxlength="14" id="importer-secret">
+          <input type="text" name="url" value="" maxlength="50" id="importer-url">
           <button class="button button-submit" type="submit">Submit</button>
         </span>
+        <p class="text-error">That doesn’t seem to be a valid download link</p>
       </li>
     </ol>
 
@@ -44,7 +45,7 @@
   </form>
 
 
-	<form id="line-edit" class="modal">
+	<form id="line-edit" class="modal" method="get" action="#">
     <div id="line-edit-body">	
 
       <div id="line-edit-col-1" class="line-edit-col">
