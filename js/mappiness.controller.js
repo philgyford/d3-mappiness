@@ -63,7 +63,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      * data.
      */
     function drawChart() {
-      $('#wait').hide();
+      $('.loader').hide();
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:
