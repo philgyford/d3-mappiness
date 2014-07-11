@@ -33,14 +33,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       var json = getJSON();
 
-      dataManager.on('dataReady', function() {
-        drawChart(); 
-      });
-
-      // We only expect this if fetching remote JSONP.
-      dataManager.on('dataError', function(msgCode) {
-        ui.general.importFormError(msgCode);
-      });
 
     };
 
@@ -146,59 +138,55 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
 
     /**
-     * Initialises all the various events we listen for in the UI.
+     * Various components send events when something happens that the
+     * controller needs to act on. Start listening for them...
      */
     function initListeners() {
 
+      dataManager.on('dataReady', function() {
+        drawChart(); 
+      });
+
+      // We only expect this if fetching remote JSONP.
+      dataManager.on('dataError', function(msgCode) {
+        ui.general.importFormError(msgCode);
+      });
+
+
       // Import form.
 
-      $('#importer').on('submit', function(ev) {
-        ev.preventDefault();
-        var downloadCode = ui.general.importFormProcess();
+      ui.general.on('importSubmit', function(downloadCode) {
         if (downloadCode !== false) {
           dataManager.loadJSONP('https://mappiness.me/' + downloadCode + '/mappiness.json') 
         }; // Else the form will already be showing an error message.
       });
 
-      // Key.
 
       // The switches to turn each line on/off.
-      $('#key').on('click', '.key-show-control', function(ev) {
-        chart.toggleLine($(this).data('line-id'));
+      ui.key.on('keyShowLine', function(line_id) {
+        chart.toggleLine(line_id);
       });
 
-      $('#key').on('click', 'a.key-duplicate-control', function(ev) {
-        ev.preventDefault();
-        duplicateLine($(this).data('line-id'));
+      ui.key.on('keyDuplicateLine', function(line_id) {
+        duplicateLine(line_id);
         updateChart();
       });
 
-      $('#key').on('click', 'a.key-delete-control', function(ev) {
-        ev.preventDefault();
-        deleteLine($(this).data('line-id'));
+      ui.key.on('keyDeleteLine', function(line_id) {
+        deleteLine(line_id);
         updateChart();
       });
 
-      $('#key').on('click', 'a.key-edit-control', function(ev) {
-        ev.preventDefault();
-        ui.editor.open($(this).data('line-id'));
+      ui.key.on('keyEditLine', function(line_id) {
+        ui.editor.open(line_id);
       });
       
-      // Edit form button events.
       
-      $('#line-edit-buttons .button-cancel').on('click', function(ev) {
-        ev.preventDefault();
-        $.modal.close();
-      });
-
-      $('#line-edit').on('submit', function(ev) {
-        ev.preventDefault();
-        var formData = ui.editor.processForm();
+      ui.editor.on('editorSubmit', function(formData) {
         var newLineData = dataManager.getCleanedData(
                                 formData.constraints,
                                 {id: formData.lineID, color: formData.color});
-
-        $.modal.close();
+        ui.editor.close();
 
         replaceLine(newLineData);
 

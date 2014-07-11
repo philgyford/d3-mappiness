@@ -1,12 +1,39 @@
-define(['underscore', 'jquery', 'jquery.modal'],
-function(_,            $,        jquery_modal) {
+/**
+ * For drawing and handling everything related to the line-editing pop-up form.
+ * d3 is only used for its d3.dispatch events.
+ */
+define(['underscore', 'jquery', 'jquery.modal', 'd3'],
+function(_,            $,        jquery_modal,   d3) {
   return function() {
     var exports = {},
+        dispatch = d3.dispatch('editorSubmit'),
         // Will be an object containing textual descriptions of constraints.
         // Should be set by constraintsDescriptions();
         constraintsDescriptions = {},
         lines = [],
         templates = makeTemplates();
+
+    initListeners();
+
+    /**
+     * Listens for jQuery events and turns them into events that the controller
+     * listens for.
+     */
+    function initListeners() {
+      // OK, this one isn't listened for by the controller because we can do it
+      // all within this object.
+      $('#line-edit-buttons .button-cancel').on('click', function(ev) {
+        ev.preventDefault();
+        exports.close();
+      });
+
+      $('#line-edit').on('submit', function(ev) {
+        ev.preventDefault();
+        var formData = processForm();
+        dispatch.editorSubmit( formData );
+      });
+    };
+
 
     /**
      * Open the editor for a particular line.
@@ -24,11 +51,16 @@ function(_,            $,        jquery_modal) {
     };
 
 
+    exports.close = function() {
+      $.modal.close();
+    };
+
+
     /**
      * When the form is submitted, go through the fields and create a new
      * set of constraints for this line and return them and the line id.
      */
-    exports.processForm = function() {
+    function processForm() {
       var constraints = {};
 
       constraints.feeling = $('input[name=le-feeling]:checked', '#line-edit').val();
@@ -398,6 +430,8 @@ function(_,            $,        jquery_modal) {
       lines = val;
       return this;
     };
+
+    d3.rebind(exports, dispatch, 'on');
 
     return exports;
   };

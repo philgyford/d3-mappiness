@@ -17,6 +17,8 @@ Load `index.html`.
 
 ## TO DO
 
+* If you delete lines so that only one is left, but that line is set to not
+  'Show', then it should be made to show.
 * Add some dummy data for people to try it anyway. Generate on the fly?
 * Fix scrollbar when loading remote data. CSS Loader?
 * Hover over point, see its constraints.

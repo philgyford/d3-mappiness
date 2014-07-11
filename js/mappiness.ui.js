@@ -6,8 +6,6 @@ function(  mappiness_ui_general,     mappiness_ui_key,     mappiness_ui_editor) 
   return function() {
     var exports = {};
 
-    //d3.rebind(exports, dispatch, "on");
-
     exports.key = mappiness_ui_key();
     exports.editor = mappiness_ui_editor();
     exports.general = mappiness_ui_general();

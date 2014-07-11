@@ -1,7 +1,14 @@
-define(['jquery', 'jquery.modal'],
-function($,        jquery_modal) {
+/**
+ * General UI stuff not related to the Key or Editor.
+ * ie, stuff that appears on first load, or is always present.
+ * eg, import form.
+ * d3 is only used for its d3.dispatch events.
+ */
+define(['jquery', 'jquery.modal', 'd3'],
+function($,        jquery_modal,   d3) {
   return function() {
     var exports = {},
+        dispatch = d3.dispatch('importSubmit'),
         // Will be a JS timeout object:
         loaderTimeout,
         importFormErrors = {
@@ -10,6 +17,21 @@ function($,        jquery_modal) {
           bad_secret: "Mappiness didn't recognise your data code. Please check it.",
           ajax_error: "There was a problem while fetching your data. Maybe try again?"
         };
+
+    initListeners();
+
+    /**
+     * Listens for jQuery events and turns them into events that the controller
+     * listens for.
+     */
+    function initListeners() {
+      $('#importer').on('submit', function(ev) {
+        ev.preventDefault();
+        var downloadCode = importFormProcess();
+        dispatch.importSubmit( downloadCode );
+      });
+    };
+
 
     exports.importFormShow = function() {
       exports.loaderHide(); 
@@ -52,7 +74,7 @@ function($,        jquery_modal) {
      * Or returns false if we couldn't extract one (and displays the error
      * message to the user).
      */
-    exports.importFormProcess = function() {
+    function importFormProcess() {
       importFormErrorHide();
       // A url would be like 'https://mappiness.me/3kkq.pk7d.23wb'.
       var submitted_code = $('#importer-code').val();
@@ -85,6 +107,8 @@ function($,        jquery_modal) {
     function importFormErrorHide() {
       $('#importer-error').hide();
     };
+
+    d3.rebind(exports, dispatch, 'on');
 
     return exports;
   };

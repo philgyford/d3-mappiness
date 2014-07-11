@@ -1,16 +1,46 @@
 /**
  * For drawing the keys showing information about lines on the chart.
  * Includes the duplicate/edit/delete/show controls.
- * (Although their event listeners are in controller.
+ * d3 is only used for its d3.dispatch events.
  */
-define(['underscore', 'jquery'],
-function(_,            $) {
+define(['underscore', 'jquery', 'd3'],
+function(_,            $,        d3) {
   return function() {
     var exports = {},
+        dispatch = d3.dispatch('keyShowLine', 'keyDuplicateLine',
+                                'keyDeleteLine', 'keyEditLine'),
+        templates = makeTemplates(),
         // Can be set with exports.colorPool().
         colorPool = ['#f00', '#0f0', '#00f'],
-        lines = [],
-        templates = makeTemplates();
+        lines = [];
+
+    initListeners();
+
+    /**
+     * Listens for jQuery events and turns them into events that the controller
+     * listens for.
+     */
+    function initListeners() {
+      $('#key').on('click', '.key-show-control', function(ev) {
+        dispatch.keyShowLine($(this).data('line-id'));
+      });
+
+      $('#key').on('click', 'a.key-duplicate-control', function(ev) {
+        ev.preventDefault();
+        dispatch.keyDuplicateLine($(this).data('line-id'));
+      });
+
+      $('#key').on('click', 'a.key-delete-control', function(ev) {
+        ev.preventDefault();
+        dispatch.keyDeleteLine($(this).data('line-id'));
+      });
+
+      $('#key').on('click', 'a.key-edit-control', function(ev) {
+        ev.preventDefault();
+        dispatch.keyEditLine($(this).data('line-id'));
+      });
+    };
+
 
     /**
      * Displays the summaries/key for all the lines.
@@ -325,6 +355,8 @@ function(_,            $) {
       lines = val;
       return this;
     };
+
+    d3.rebind(exports, dispatch, 'on');
 
     return exports;
   };
