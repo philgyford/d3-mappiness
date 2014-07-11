@@ -25,7 +25,7 @@ define(['d3', 'jquery'],
 function(d3,   $) {
   return function() {
     var exports = {},
-        dispatch = d3.dispatch('dataReady', 'dataLoading'),
+        dispatch = d3.dispatch('dataReady', 'dataLoading', 'dataError'),
         data,
         // Should be set by constraintsDescriptions();
         constraintsDescriptions = {},
@@ -64,10 +64,15 @@ function(d3,   $) {
         dataType: 'jsonp'
       })
       .fail(function(response){
-        console.log('TODO ERROR', response); 
+        dispatch.dataError('ajax_error');
       })
       .done(function(json){
-        processJSON(json);
+        if ('error' in json) {
+          // json.error is probably 'bad_secret'.
+          dispatch.dataError(json.error);
+        } else {
+          processJSON(json);
+        };
       });
     };
 

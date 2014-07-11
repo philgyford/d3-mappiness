@@ -37,6 +37,11 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         drawChart(); 
       });
 
+      // We only expect this if fetching remote JSONP.
+      dataManager.on('dataError', function(msgCode) {
+        ui.general.importFormError(msgCode);
+      });
+
     };
 
     /**
@@ -50,7 +55,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         type: 'HEAD'
       })
       .fail(function() {
-        ui.general.showImportForm();
+        ui.general.importFormShow();
       })
       .done(function() {
         dataManager.loadJSON('mappiness.json');
@@ -63,8 +68,8 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      * data.
      */
     function drawChart() {
-      ui.general.hideLoader();
-      ui.general.hideImportForm();
+      ui.general.loaderHide();
+      ui.general.importFormHide();
       $('#loaded').fadeIn(500);
 
       // Add one line to kick things off:
@@ -149,10 +154,10 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       $('#importer').on('submit', function(ev) {
         ev.preventDefault();
-        var downloadCode = ui.general.processImportForm();
+        var downloadCode = ui.general.importFormProcess();
         if (downloadCode !== false) {
           dataManager.loadJSONP('https://mappiness.me/' + downloadCode + '/mappiness.json') 
-        };
+        }; // Else the form will already be showing an error message.
       });
 
       // Key.

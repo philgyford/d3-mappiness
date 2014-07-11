@@ -14,11 +14,8 @@ Load `index.html` in your browser and click "Edit"...
 
 ## TO DO
 
-* Allow user to enter their secret code to use their data, a la
-  http://blog.mappiness.org.uk/2011/05/23/api-guide/
-  * Handle not fetching the JSON, or getting an error if URL is invalid.
-  * Add some dummy data for people to try it anyway. Generate on the fly?
-  * Fix scrollbar when loading. CSS Loader?
+* Add some dummy data for people to try it anyway. Generate on the fly?
+* Fix scrollbar when loading remote data. CSS Loader?
 * Hover over point, see its constraints.
 * Add 'About' page/popup.
 * Make keys wrap better.

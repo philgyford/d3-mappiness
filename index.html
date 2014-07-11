@@ -25,25 +25,30 @@
 
     <hr>
 
-    <p>You will need your Mappiness data download link. To&nbsp;find&nbsp;it…</p>
+    <p id="importer-error" class="text-error"></p>
+
+    <p>You will need your Mappiness data secret code. To&nbsp;find&nbsp;it…</p>
     <ol>
       <li>Open the app on your phone, and go to “My&nbsp;happiness”.</li>
       <li>Tap the download icon at top&nbsp;right.</li>
       <li>If “data download” is turned off, turn it&nbsp;on.</li>
-      <li>Your data download link will look something like this: <code>https://mappiness.me/3kkq.pk7d.23wb</code></li>
       <li>
-        <label for="importer-url">Enter your link here and submit:</label>
+          Your data download link will look something like this: <code>https://mappiness.me/3kkq.pk7d.23wb</code><br>
+          The secret code in this example is <code>3kkq.pk7d.23wb</code>
+      </li>
+      <li>
+        <label for="importer-code">Enter <em>your</em> code here and submit:</label>
         <span class="nobr">
-          <input type="text" name="url" value="" maxlength="50" id="importer-url">
+          <input type="text" name="code" value="" maxlength="50" id="importer-code">
           <button class="button button-submit" type="submit">Submit</button>
         </span>
-        <p class="text-error">That doesn’t seem to be a valid download link</p>
+        <p class="text-error">That doesn’t seem to be a valid secret code</p>
       </li>
     </ol>
 
     <hr>
 
-    <p>Note: This site does not save your data anywhere. Your data is only loaded within your own browser and forgotten once you leave this&nbsp;page.</p>
+    <p class="text-muted">Note: This site does not save your data anywhere. Your data is only loaded within your own browser and forgotten once you leave this&nbsp;page.</p>
 
   </form>
 
