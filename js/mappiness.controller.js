@@ -32,8 +32,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       initListeners();
 
       var json = getJSON();
-
-
     };
 
     /**
