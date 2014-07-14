@@ -397,7 +397,8 @@ function(d3,   _) {
       var dots = dotsG.selectAll('.dot')
                           .data(function(d) { return d.values; });
 
-      dots.enter().append('circle').attr('class', 'dot');
+      dots.enter().append('circle')
+                    .attr('class', 'dot');
 
       dots.data(function(d) { return d.values; },
                 function(d) { return d.start_time; })

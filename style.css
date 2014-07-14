@@ -319,6 +319,10 @@ body {
   shape-rendering: crispEdges;
 }
 
+.dot {
+  opacity: 0.00000001;
+}
+
 div.tooltip {   
   position: absolute;           
   width: 200px;                  
