@@ -6,12 +6,12 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
     var exports = {},
         container,
         data,
-        chart,
         // Each element will correspond to one line on the chart, containing
         // all its data.
         lines_data = [],
+        chart       = mappiness_chart(),
         dataManager = mappiness_dataManager(),
-        ui = mappiness_ui();
+        ui          = mappiness_ui();
 
     /**
      * Call this to kick things off.
@@ -69,7 +69,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       //lines_data.push(dataManager.getCleanedData({feeling: 'awake',
       //                in_out: 'in', home_work: 'home', with_children: 1}));
 
-      chart = mappiness_chart().width( $('#chart').width() );
+      chart.width( $('#chart').width() );
 
       container = d3.select('#chart');
 
@@ -149,6 +149,13 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       dataManager.on('dataError', function(msgCode) {
         ui.general.importFormError(msgCode);
       });
+
+      // Chart
+      // We draw these tooltips in the chart object itself now,
+      // but these hooks are here in case we want to do something in ui
+      // instead.
+      chart.on('tooltipOn', function(d) { });
+      chart.on('tooltipOff', function(d) { });
 
 
       // Import form.

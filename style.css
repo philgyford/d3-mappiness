@@ -319,6 +319,16 @@ body {
   shape-rendering: crispEdges;
 }
 
+div.tooltip {   
+  position: absolute;           
+  width: 200px;                  
+  padding: 0.5em 10px;             
+  border: 1px solid #eee;
+  font-size: 0.8125em;
+  pointer-events: none;         
+  background: #fff;
+}
+
 /***************************************************************************
 /* KEY
  */

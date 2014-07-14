@@ -2,10 +2,13 @@
  * The top, main chart is referred to by `focus`.
  * The bottom, brush chart is referred to by `context`.
  */
-define(['d3'],
-function(d3) {
+define(['d3', 'underscore'],
+function(d3,   _) {
   return function(){
-    var // Total width and height for both charts:
+    var dispatch = d3.dispatch('tooltipOn', 'tooltipOff'),
+        templates = makeTemplates(),
+
+        // Total width and height for both charts:
         width = 960,
         height = 350,
         margin = {top: 10, right: 10, bottom: 20, left: 30},
@@ -17,13 +20,14 @@ function(d3) {
         contextWidth,
         contextHeight,
 
-        // Elements that will be declared later:
+        // Elements that will be defined later:
         svg,
         focusG,
         focusAxesG,
         contextG,
         contextAxesG,
         brush,
+        tooltip,
 
         xValue = function(d) { return d[0]; },
         yValue = function(d) { return d[1]; },
@@ -126,7 +130,7 @@ function(d3) {
 
       renderLines('focus');
 
-      renderToolTips();
+      renderTooltips();
     };
 
 
@@ -177,6 +181,10 @@ function(d3) {
       contextG.attr('transform',
                 'translate(' + contextMargin.left +','+ contextMargin.top + ')');
 
+      // Make the tooltip div, but hidden.
+      tooltip = d3.select('body').append('div')
+                    .attr('class', 'tooltip')
+                    .style('opacity', 0);
     };
 
 
@@ -373,7 +381,7 @@ function(d3) {
     /**
      *
      */
-    function renderToolTips() {
+    function renderTooltips() {
       // Add a container for each line to hold all of its dots.
       var dotsG = focusG.selectAll('g.dots')
                           .data(function(d) { return d; },
@@ -393,12 +401,71 @@ function(d3) {
 
       dots.data(function(d) { return d.values; },
                 function(d) { return d.start_time; })
-            .transition()
             .attr('r', 5)
             .attr('cx', function(d) { return X(d); })
-            .attr('cy', function(d) { return focusY(d); });
+            .attr('cy', function(d) { return focusY(d); })
+            // These events will then be caught in the controller.
+            .on('mouseover', function(d) {
+              // Sends an event the controller can here, if needed.
+              dispatch.tooltipOn(d);
+              tooltipOn(d);
+            })
+            .on('mouseout', function(d) {
+              // Sends an event the controller can here, if needed.
+              dispatch.tooltipOff(d);
+              tooltipOff(d);
+            });
     };
 
+    function tooltipOn(d) {
+      console.log('on', d); 
+
+      tooltip.style('opacity', 1)
+                .html(tooltipContent(d))  
+                .style('left', (d3.event.pageX + 10) + 'px')     
+                .style('top', (d3.event.pageY) + 'px');    
+    };
+
+    function tooltipOff(d) {
+      tooltip.style('opacity', 0);
+    };
+
+    function tooltipContent(d) {
+      // https://github.com/mbostock/d3/wiki/Time-Formatting
+      var formatTime = d3.time.format('%H:%M %a %e %b %Y');
+
+      // Go from 0.082341 to 8.
+      var formatFeeling = function(f) {
+        return Math.round(f*100);
+      };
+
+      var tooltipData = {
+        start_time: formatTime(d.start_time),
+        happy:   formatFeeling(d.happy),
+        relaxed: formatFeeling(d.relaxed),
+        awake:   formatFeeling(d.awake),
+        people: [],
+        activities: []
+      };
+
+      d3.keys(MAPPINESS_DATA_DICTIONARY.people).forEach(function(key) {
+        if (d[key] == 1) {
+          tooltipData.people.push(MAPPINESS_DATA_DICTIONARY.people[key]);
+        };
+      })
+      if (tooltipData.people.length == 0) {
+        tooltipData.people.push('Alone or with strangers only');
+      };
+
+      d3.keys(MAPPINESS_DATA_DICTIONARY.activities).forEach(function(key) {
+        if (d[key] == 1) {
+          tooltipData.activities.push(MAPPINESS_DATA_DICTIONARY.activities[key]);
+        };
+      });
+
+      console.log(tooltipData);
+      return templates.tooltip(tooltipData);
+    };
 
     /**
      * Return the string used for a line's CSS ID.
@@ -418,6 +485,32 @@ function(d3) {
     };
     function contextY(d) {
       return contextYScale(d.value);
+    };
+
+    /**
+     * Populates the templates object with compiled Underscore HTML templates.
+     */
+    function makeTemplates() {
+      var templates = {};
+
+      templates.tooltip = _.template(' \
+        <%= start_time %><br> \
+        Happy: <%= happy %><br> \
+        Relaxed: <%= relaxed %><br> \
+        Awake: <%= awake %> \
+        <ul> \
+          <% _.each(people, function(p){ %> \
+            <li><%= p %></li> \
+          <% }); %> \
+        </ul> \
+        <ul> \
+          <% _.each(activities, function(a){ %> \
+            <li><%= a %></li> \
+          <% }); %> \
+        </ul> \
+      ');
+
+      return templates;
     };
 
     /**
@@ -478,7 +571,7 @@ function(d3) {
       return chart;
     };
 
-    //d3.rebind(exports, dispatch, "on");
+    d3.rebind(exports, dispatch, "on");
 
     return exports;
   };
