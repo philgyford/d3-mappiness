@@ -125,6 +125,8 @@ function(d3) {
       brushed();
 
       renderLines('focus');
+
+      renderToolTips();
     };
 
 
@@ -348,12 +350,55 @@ function(d3) {
       };
     };
 
+    /**
+     * What happens when the brush in the context area is moved / changed.
+     */
     function brushed() {
       focusXScale.domain(brush.empty() ? contextXScale.domain() : brush.extent());
+
+      // Redraw lines.
       focusG.selectAll('path.line.feeling')
                 .attr('d', function(d) { return focusLine(d.values); });
+
+      // Redraw x-axis.
       focusG.select(".x.axis").call(focusXAxis);
+
+      // Move the dots on the points.
+      focusG.selectAll('.dot')
+              .attr('cx', function(d) { return X(d); })
+              .attr('cy', function(d) { return focusY(d); });
     };
+
+
+    /**
+     *
+     */
+    function renderToolTips() {
+      // Add a container for each line to hold all of its dots.
+      var dotsG = focusG.selectAll('g.dots')
+                          .data(function(d) { return d; },
+                                function(d) { return d.id; });
+
+      dotsG.enter().append('g')
+                          .attr('class', 'dots')
+                          .attr('id', function(d) { return 'dots-'+d.id; });
+
+      dotsG.exit().remove();
+
+      // Within each container, add a dot for every point on the line.
+      var dots = dotsG.selectAll('.dot')
+                          .data(function(d) { return d.values; });
+
+      dots.enter().append('circle').attr('class', 'dot');
+
+      dots.data(function(d) { return d.values; },
+                function(d) { return d.start_time; })
+            .transition()
+            .attr('r', 5)
+            .attr('cx', function(d) { return X(d); })
+            .attr('cy', function(d) { return focusY(d); });
+    };
+
 
     /**
      * Return the string used for a line's CSS ID.
@@ -382,12 +427,12 @@ function(d3) {
     exports.toggleLine = function(line_id) {
       // Do it for each chart:
       ['context', 'focus'].forEach(function(chart) {
-        var selector = 'path#' + lineCSSID(line_id, chart);
+        var line_selector = 'path#' + lineCSSID(line_id, chart);
 
-        if (d3.select(selector).style('opacity') == 0) {
-          d3.select(selector).transition().style('opacity', 1);
+        if (d3.select(line_selector).style('opacity') == 0) {
+          d3.select(line_selector).transition().style('opacity', 1);
         } else {
-          d3.select(selector).transition().style('opacity', 0);
+          d3.select(line_selector).transition().style('opacity', 0);
         };
       });
     };
