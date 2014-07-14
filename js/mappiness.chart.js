@@ -137,14 +137,19 @@ function(d3) {
                       .append('g')
                         .attr('class', 'focus');
 
-      contextG = svg.append('g')
-                        .attr('class', 'context');
-
       focusAxesG = focusG.append('g')
                         .attr('class', 'axes');
 
-      contextAxesG = contextG.append('g')
-                        .attr('class', 'axes');
+      if ( ! contextG) {
+        // In an ideal world I would understand why we have to make sure
+        // contextG isn't already defined. But I've spent an hour or two on
+        // this and I'm still no wiser.
+        // Without that we get an extra g.context whenever we duplicate a line.
+        contextG = svg.append('g')
+                          .attr('class', 'context');
+        contextAxesG = contextG.append('g')
+                          .attr('class', 'axes');
+      };
 
       // If g.focus already exists, we need to explicitly select it:
       focusG = svg.select('g.focus');
@@ -155,11 +160,15 @@ function(d3) {
 
       // When we add `clip-path:url(#clip)` to the lines in the main chart,
       // this stops them extending beyond the chart area.
-      focusG.append('clipPath')
-              .attr('id', 'clip')
-              .append('rect')
-                .attr('width', focusWidth)
-                .attr('height', focusHeight);
+      var clip = focusG.select('#clip');
+      // Stops us adding extra #clips when we update the chart:
+      if (clip.empty()) {
+        focusG.append('clipPath')
+                .attr('id', 'clip')
+                .append('rect')
+                  .attr('width', focusWidth)
+                  .attr('height', focusHeight);
+      };
 
       focusG.attr('transform',
                   'translate(' + focusMargin.left +','+ focusMargin.top + ')');
@@ -383,6 +392,16 @@ function(d3) {
       });
     };
 
+    /**
+     * Make a line visible (in both context and focus charts).
+     * line_id is the numeric ID of the line.
+     */
+    exports.showLine = function(line_id) {
+      ['context', 'focus'].forEach(function(chart) {
+        var selector = 'path#' + lineCSSID(line_id, chart);
+        d3.select(selector).transition().style('opacity', 1);
+      });
+    };
 
     exports.margin = function(_) {
       if (!arguments.length) return margin;

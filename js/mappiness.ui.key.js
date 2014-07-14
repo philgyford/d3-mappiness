@@ -61,9 +61,11 @@ function(_,            $,        d3) {
       });
 
       // If there's only one line left, remove the UI to delete it.
+      // And make sure it's 'shown'.
       if (lines.length == 1) {
         hideControl('.key-delete', '#key');
         hideControl('.key-show', '#key');
+        $('.key-show-control').prop('checked', true);
       } else {
         showControl('.key-delete', '#key');
         showControl('.key-show', '#key');

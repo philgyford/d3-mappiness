@@ -173,6 +173,10 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       ui.key.on('keyDeleteLine', function(line_id) {
         deleteLine(line_id);
         updateChart();
+        // If there is now only one line left, ensure it's visible.
+        if (lines_data.length == 1) {
+          chart.showLine(lines_data[0].id);
+        };
       });
 
       ui.key.on('keyEditLine', function(line_id) {
