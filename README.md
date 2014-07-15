@@ -24,12 +24,11 @@ Load `index.html`.
 * Maybe:
   * Fix scrollbar when loading remote data. CSS Loader?
   * Give tooltips knowledge of their line: at the moment they don't know the
-  color or feeling their line has, so can't indicate that in the tooltip.
-  * Hover lines like on http://bl.ocks.org/gniemetz/4618602
+    color or feeling their line has, so can't indicate that in the tooltip.
+  * Hover lines like on http://bl.ocks.org/gniemetz/4618602 ?
   * Moving average. Configurable in UI?
   * Points rather than dots? Gaps when there's no data?
   * Add map area filter?
-  * Permalinks?
 
 
 ## For writeup
