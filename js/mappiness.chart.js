@@ -1,6 +1,7 @@
 /**
  * The top, main chart is referred to by `focus`.
  * The bottom, brush chart is referred to by `context`.
+ * Underscore is currently ONLY used for the template for the tooltip.
  */
 define(['d3', 'underscore'],
 function(d3,   _) {
@@ -423,8 +424,8 @@ function(d3,   _) {
 
       tooltip.style('opacity', 1)
                 .html(tooltipContent(d))  
-                .style('left', (d3.event.pageX + 10) + 'px')     
-                .style('top', (d3.event.pageY) + 'px');    
+                .style('left', (d3.event.pageX + 12) + 'px')     
+                .style('top', (d3.event.pageY - 4) + 'px');    
     };
 
     function tooltipOff(d) {
@@ -499,13 +500,13 @@ function(d3,   _) {
       templates.tooltip = _.template(' \
         <h1><%= start_time %></h1> \
         <p> \
-          <span class="label">Happy:</span> <%= happy %><br> \
-          <span class="label">Relaxed:</span> <%= relaxed %><br> \
-          <span class="label">Awake:</span> <%= awake %> \
+          <span class="label">Happy:</span><span class="field"><%= happy %></span><br> \
+          <span class="label">Relaxed:</span><span class="field"><%= relaxed %></span><br> \
+          <span class="label">Awake:</span><span class="field"><%= awake %></span> \
         </p> \
         <% if (people.length > 0) { %> \
           <h2>People</h2> \
-          <ul> \
+          <ul class="list-unstyled"> \
             <% _.each(people, function(p){ %> \
               <li><%= p %></li> \
             <% }); %> \
@@ -518,7 +519,7 @@ function(d3,   _) {
         </p> \
         <% if (activities.length > 0) { %> \
           <h2>Activities</h2> \
-          <ul> \
+          <ul class="list-unstyled"> \
             <% _.each(activities, function(a){ %> \
               <li><%= a %></li> \
             <% }); %> \

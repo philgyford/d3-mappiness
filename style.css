@@ -319,22 +319,39 @@ body {
   shape-rendering: crispEdges;
 }
 
+/* Tooltips */
 .dot {
   fill: transparent;
 }
 .dot:hover {
   stroke: #ccc;
 }
-
-div.tooltip {   
+.tooltip {   
   position: absolute;           
   width: 200px;                  
-  padding: 0.5em 10px;             
-  border: 1px solid #eee;
+  padding: 0.5em 10px 0 10px;             
+  border: 1px solid #ddd;
   font-size: 0.8125em;
   pointer-events: none;         
   background: #fff;
 }
+.tooltip h1,
+.tooltip h2 {
+  line-height: 1.5em;
+}
+.tooltip h1 {
+  margin-bottom: 0.5em;
+}
+.tooltip .label {
+  width: 4.3em;
+  display: inline-block;
+}
+.tooltip .field {
+  width: 1.7em;
+  text-align: right;
+  display: inline-block;
+}
+
 
 /***************************************************************************
 /* KEY
