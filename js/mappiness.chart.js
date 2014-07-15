@@ -445,8 +445,11 @@ function(d3,   _) {
         happy:   formatFeeling(d.happy),
         relaxed: formatFeeling(d.relaxed),
         awake:   formatFeeling(d.awake),
+        in_out:    MAPPINESS_DATA_DICTIONARY.in_out[d.in_out],
+        home_work: MAPPINESS_DATA_DICTIONARY.home_work[d.home_work],
         people: [],
-        activities: []
+        activities: [],
+        notes: ('notes' in d && d.notes != null) ? d.notes : ''
       };
 
       d3.keys(MAPPINESS_DATA_DICTIONARY.people).forEach(function(key) {
@@ -464,7 +467,6 @@ function(d3,   _) {
         };
       });
 
-      console.log(tooltipData);
       return templates.tooltip(tooltipData);
     };
 
@@ -495,20 +497,37 @@ function(d3,   _) {
       var templates = {};
 
       templates.tooltip = _.template(' \
-        <%= start_time %><br> \
-        Happy: <%= happy %><br> \
-        Relaxed: <%= relaxed %><br> \
-        Awake: <%= awake %> \
-        <ul> \
-          <% _.each(people, function(p){ %> \
-            <li><%= p %></li> \
-          <% }); %> \
-        </ul> \
-        <ul> \
-          <% _.each(activities, function(a){ %> \
-            <li><%= a %></li> \
-          <% }); %> \
-        </ul> \
+        <h1><%= start_time %></h1> \
+        <p> \
+          <span class="label">Happy:</span> <%= happy %><br> \
+          <span class="label">Relaxed:</span> <%= relaxed %><br> \
+          <span class="label">Awake:</span> <%= awake %> \
+        </p> \
+        <% if (people.length > 0) { %> \
+          <h2>People</h2> \
+          <ul> \
+            <% _.each(people, function(p){ %> \
+              <li><%= p %></li> \
+            <% }); %> \
+          </ul> \
+        <% }; %> \
+        <h2>Place</h2> \
+        <p> \
+          <%= in_out %><br> \
+          <%= home_work %> \
+        </p> \
+        <% if (activities.length > 0) { %> \
+          <h2>Activities</h2> \
+          <ul> \
+            <% _.each(activities, function(a){ %> \
+              <li><%= a %></li> \
+            <% }); %> \
+          </ul> \
+        <% }; %> \
+        <% if (notes != "") { %> \
+          <h2>Notes</h2> \
+          <p><%= notes %></p> \
+        <% }; %> \
       ');
 
       return templates;
