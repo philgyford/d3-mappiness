@@ -324,11 +324,12 @@ body {
   fill: transparent;
 }
 .dot:hover {
-  stroke: #ccc;
+  stroke: #000;
 }
-.tooltip {   
+.tooltip {
+  white-space: nowrap;
   position: absolute;           
-  width: 200px;                  
+  min-width: 150px;                  
   padding: 0.5em 10px 0 10px;             
   border: 1px solid #ddd;
   font-size: 0.8125em;
@@ -342,6 +343,12 @@ body {
 .tooltip h1 {
   margin-bottom: 0.5em;
 }
+.tooltip li {
+  margin-bottom: 0;
+}
+.tooltip ul {
+  margin-bottom: 1em;
+}
 .tooltip .label {
   width: 4.3em;
   display: inline-block;
@@ -350,6 +357,9 @@ body {
   width: 1.7em;
   text-align: right;
   display: inline-block;
+}
+.tooltip .notes {
+  white-space: normal;
 }
 
 

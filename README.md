@@ -17,16 +17,15 @@ Load `index.html`.
 
 ## TO DO
 
-* Keep tooltip on screen at right/bottom edges.
 * Add some dummy data for people to try it anyway. Generate on the fly?
-* Fix scrollbar when loading remote data. CSS Loader?
-* Give tooltips knowledge of their line: at the moment they don't know the
-  color or feeling their line has, so can't indicate that in the tooltip.
 * Add 'About' page/popup.
 * Make keys wrap better.
 * Something that shows what dates are shown in focus area.
 * Remove require cache-busting in mappiness.js.
 * Maybe:
+  * Fix scrollbar when loading remote data. CSS Loader?
+  * Give tooltips knowledge of their line: at the moment they don't know the
+  color or feeling their line has, so can't indicate that in the tooltip.
   * Hover lines like on http://bl.ocks.org/gniemetz/4618602
   * Moving average. Configurable in UI?
   * Points rather than dots? Gaps when there's no data?

@@ -420,12 +420,30 @@ function(d3,   _) {
     };
 
     function tooltipOn(d) {
-      console.log('on', d); 
+      tooltip.style('opacity', 1).html(tooltipContent(d));
 
-      tooltip.style('opacity', 1)
-                .html(tooltipContent(d))  
-                .style('left', (d3.event.pageX + 12) + 'px')     
-                .style('top', (d3.event.pageY - 4) + 'px');    
+      var tooltipWidth = parseInt(tooltip.style('width'), 10);
+      var tooltipHeight = parseInt(tooltip.style('height'), 10);
+      var windowWidth = window.innerWidth;
+      var windowHeight = window.innerHeight;
+
+      // Default positions, a bit to the right of the cursor:
+      var left = d3.event.pageX + 12;
+      var top = d3.event.pageY - 4;
+
+      if ((d3.event.pageX + tooltipWidth) > (windowWidth - 20)) {
+        // Tooltip would extend off the right edge of page, so put it on the
+        // left of the cursor.
+        left = d3.event.pageX - tooltipWidth - 12;
+      };
+      if ((d3.event.pageY + tooltipHeight) > windowHeight) {
+        // Tooltip would extend off the bottom of page, so move it up so it
+        // stays on.
+        top = d3.event.pageY - (d3.event.pageY + (tooltipHeight - windowHeight)) - 4;
+      };
+
+      tooltip.style('left', left + 'px')     
+              .style('top', top + 'px');    
     };
 
     function tooltipOff(d) {
@@ -527,7 +545,7 @@ function(d3,   _) {
         <% }; %> \
         <% if (notes != "") { %> \
           <h2>Notes</h2> \
-          <p><%= notes %></p> \
+          <p class="notes"><%= notes %></p> \
         <% }; %> \
       ');
 
