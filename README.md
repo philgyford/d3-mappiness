@@ -19,7 +19,6 @@ Load `index.html`.
 
 * Add some dummy data for people to try it anyway. Generate on the fly?
 * Add 'About' page/popup.
-* Make keys wrap better.
 * Something that shows what dates are shown in focus area.
 * Remove require cache-busting in mappiness.js.
 * Maybe:
