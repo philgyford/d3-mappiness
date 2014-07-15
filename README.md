@@ -17,9 +17,11 @@ Load `index.html`.
 
 ## TO DO
 
+* Keep tooltip on screen at right/bottom edges.
 * Add some dummy data for people to try it anyway. Generate on the fly?
 * Fix scrollbar when loading remote data. CSS Loader?
-* Hover over point, see its constraints.
+* Give tooltips knowledge of their line: at the moment they don't know the
+  color or feeling their line has, so can't indicate that in the tooltip.
 * Add 'About' page/popup.
 * Make keys wrap better.
 * Something that shows what dates are shown in focus area.
