@@ -365,7 +365,7 @@ function(d3,   $) {
         // to clone an object?
         feeling_data[n] = $.extend({}, d);
         feeling_data[n]['feeling'] = feeling;
-        feeling_data[n]['value'] = d[feeling]; 
+        feeling_data[n]['value'] = d[feeling];
       });
 
       return feeling_data; 
