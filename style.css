@@ -374,6 +374,17 @@ body {
   margin: 0 15px 3em 15px;
   width: 240px;
 }
+
+/* So they line up with left of the 'Show' checkbox. */
+.key-no-data,
+.key-title,
+.key-subtitle,
+.key-line ul,
+.notes-content {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
 .key-no-data {
   margin-top: 0.3em;
   display: none;
@@ -382,7 +393,8 @@ body {
   width: 100%;
 	border-top-width: 2px;
   border-top-style: solid;
-  padding: 0.3em 0 0.4em 0;
+  padding-top: 0.3em;
+  padding-bottom: 0.4em;
   border-bottom: 1px solid #eee;
   margin: 0.2em 0 0 0;
   display: inline-block;
