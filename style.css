@@ -371,8 +371,8 @@ body {
 }
 .key-line {
   float: left;
-  margin: 0 15px;
-  min-width: 220px;
+  margin: 0 15px 3em 15px;
+  width: 240px;
 }
 .key-no-data {
   margin-top: 0.3em;
@@ -382,11 +382,12 @@ body {
   width: 100%;
 	border-top-width: 2px;
   border-top-style: solid;
-  padding-top: 0.3em;
+  padding: 0.3em 0 0.4em 0;
+  border-bottom: 1px solid #eee;
   margin: 0.2em 0 0 0;
   display: inline-block;
   color: #333;
-  font-weight: normal;
+  font-weight: bold;
 }
 .key-subtitle {
   border-bottom: 1px solid #eee;

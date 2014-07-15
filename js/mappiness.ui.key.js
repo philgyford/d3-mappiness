@@ -78,6 +78,45 @@ function(_,            $,        d3) {
       } else {
         showControl('.key-duplicate', '#key');
       };
+
+      makeThemLineUpNormallyInRowsWhyIsThisSoHard();
+    };
+
+
+    /**
+     * Gives all the keys in a row the same height, so that the next row
+     * will position themselves neatly in place underneath.
+     * Can't think of another good way to do this without adding and removing
+     * special 'clear' divs between keys depending on the width.
+     * Or fixing the width of the page.
+     */
+    function makeThemLineUpNormallyInRowsWhyIsThisSoHard() {
+      // The heights of each key in a single row.
+      var heights = [],
+          // The top position of keys in the current row.
+          currentTop = false,
+          // The 0-based index of the key at the start of the current row.
+          startOfLineIdx = 0;
+
+      $('.key-line').each(function(idx){
+        var keyTop = $(this).position().top;
+
+        if (currentTop !== false && currentTop !== keyTop) {
+          // This key is at the start of a new row.
+          // So give all keys in the previous row the height of the tallest
+          // key in the row.
+          $('.key-line').slice(startOfLineIdx,idx).height(_.max(heights));          
+          heights = [];
+          startOfLineIdx = idx;
+        } else if ((idx+1) == $('.key-line').length && heights.length > 0) {
+          // The last element on the final row.
+          // So give all keys in the final row the height of the tallest in it.
+          $('.key-line').slice(startOfLineIdx,idx).height(_.max(heights));          
+        };
+        
+        heights.push($(this).height());
+        currentTop = keyTop;
+      });
     };
 
 

@@ -66,10 +66,14 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
       lines_data.push(dataManager.getCleanedData({feeling: 'happy'}));
 
       // Could add other starter lines too, eg:
-      //lines_data.push(dataManager.getCleanedData({feeling: 'awake',
+      // lines_data.push(dataManager.getCleanedData({feeling: 'awake',
       //                in_out: 'in', home_work: 'home', with_children: 1}));
 
       chart.width( $('#chart').width() );
+
+      // We don't want to this change when the window's resized because it'll
+      // mess up all the rows of keys.
+      $('#key').width( $('#chart').width() );
 
       container = d3.select('#chart');
 
