@@ -320,7 +320,10 @@ body {
 }
 
 .dot {
-  opacity: 0.00000001;
+  fill: transparent;
+}
+.dot:hover {
+  stroke: #ccc;
 }
 
 div.tooltip {   
