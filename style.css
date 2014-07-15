@@ -330,18 +330,24 @@ body {
   white-space: nowrap;
   position: absolute;           
   min-width: 150px;                  
-  padding: 0.5em 10px 0 10px;             
+  padding: 1em 12px 0.2em 12px;             
   border: 1px solid #ddd;
   font-size: 0.8125em;
   pointer-events: none;         
   background: #fff;
 }
 .tooltip h1,
-.tooltip h2 {
-  line-height: 1.5em;
+.tooltip h2,
+.tooltip ul,
+.tooltip p {
+  padding-left: 3px;
+  padding-right: 3px;
 }
-.tooltip h1 {
-  margin-bottom: 0.5em;
+.tooltip h1,
+.tooltip h2 {
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 0.2em;
 }
 .tooltip li {
   margin-bottom: 0;

@@ -431,7 +431,8 @@ function(d3,   _) {
       var left = d3.event.pageX + 12;
       var top = d3.event.pageY - 4;
 
-      if ((d3.event.pageX + tooltipWidth) > (windowWidth - 20)) {
+      // -30 so it's not right up against edge, and more to allow for scrollbar
+      if ((d3.event.pageX + tooltipWidth) > (windowWidth - 30)) {
         // Tooltip would extend off the right edge of page, so put it on the
         // left of the cursor.
         left = d3.event.pageX - tooltipWidth - 12;
