@@ -403,9 +403,6 @@ function(d3,   _) {
       dots.data(function(d) { return d.values; },
                 function(d) { return d.start_time; })
             .attr('r', 5)
-            .attr('cx', function(d) { return X(d); })
-            .attr('cy', function(d) { return focusY(d); })
-            // These events will then be caught in the controller.
             .on('mouseover', function(d) {
               // Sends an event the controller can here, if needed.
               dispatch.tooltipOn(d);
@@ -415,7 +412,10 @@ function(d3,   _) {
               // Sends an event the controller can here, if needed.
               dispatch.tooltipOff(d);
               tooltipOff(d);
-            });
+            })
+            .transition()
+            .attr('cx', function(d) { return X(d); })
+            .attr('cy', function(d) { return focusY(d); });
     };
 
     function tooltipOn(d) {
