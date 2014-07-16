@@ -288,14 +288,20 @@ function(d3,   _) {
     };
 
     /**
-     * Adds a horizontal line half way up the chart.
+     * Adds horizontal lines half-way up chart and at top.
      */
     function renderFocusGrid() {
       focusAxesG.selectAll('path.line.grid')
-                  .data([[
-                          [focusXScale.domain()[0], 0.5],
-                          [focusXScale.domain()[1], 0.5]
-                        ]])
+                  .data([
+                          [
+                            [focusXScale.domain()[0], 0.5],
+                            [focusXScale.domain()[1], 0.5]
+                          ],
+                          [
+                            [focusXScale.domain()[0], 1.0],
+                            [focusXScale.domain()[1], 1.0] 
+                          ]
+                        ])
                   .enter().append('path')
                     .attr('class', 'line grid')
                     .attr('d', d3.svg.line()
