@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
   <head>
     <meta charset="utf-8">
     <title>Mappiness chart</title>
+    <script>
+      // Replace .no-js with .js
+      (function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)
+    </script>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -10,6 +14,14 @@
     <h1 class="title">Mappiness chart</h1>
     <p class="links"><a href="about.html" class="links-about">About</a></p>
   </header>
+
+  <div id="no-js-content">
+    <p>This site lets users of the <a href="http://www.mappiness.org.uk/">Mappiness</a> iPhone app analyse their data.</p>
+
+    <p>It requires JavaScript.</p>
+
+    <p><a href="about.html">Read more.</a></p>
+  </div>
 
 	<div id="loader">
     <div id="loader-spinner">Loading…</div>

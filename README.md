@@ -18,9 +18,7 @@ Load `index.html`.
 ## TO DO
 
 * Add some dummy data for people to try it anyway. Generate on the fly?
-* Add 'About' page/popup.
 * Something that shows what dates are shown in focus area.
-* Add no-js content.
 * Remove require cache-busting in mappiness.js.
 * Maybe:
   * Fix scrollbar when loading remote data. CSS Loader?

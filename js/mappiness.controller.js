@@ -17,7 +17,6 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
      * Call this to kick things off.
      */
     exports.init = function(spec) {
-
       if (spec) {
         if ('lineColors' in spec) {
           dataManager.colorPool(spec.lineColors);
