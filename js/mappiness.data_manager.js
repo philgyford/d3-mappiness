@@ -21,11 +21,12 @@
  *
  * NOTE: jQuery is currently ONLY used in loadJSONP().
  */
-define(['d3', 'jquery'],
-function(d3,   $) {
+define(['d3', './mappiness.data_generator', 'jquery'],
+function(d3,     mappiness_dataGenerator,    $) {
   return function() {
     var exports = {},
         dispatch = d3.dispatch('dataReady', 'dataLoading', 'dataError'),
+        dataGenerator = mappiness_dataGenerator(),
         data,
         // Should be set by constraintsDescriptions();
         constraintsDescriptions = {},
@@ -76,6 +77,18 @@ function(d3,   $) {
       });
     };
 
+    
+    /**
+     * Generates a randomised set of fake data, puts it in the `data` variable,
+     * and signals that the data is ready.
+     * Should be a drop-in random replacement for loadJSON() or loadJSONP().
+     */
+    exports.loadRandomJSON = function() {
+      json = dataGenerator.getJSON();
+    
+      processJSON(json);
+    };
+
 
     /**
      * `original_constraints` is undefined, or an object with one or more of these
@@ -111,6 +124,7 @@ function(d3,   $) {
         values: values
       };
     };
+
 
     /**
      * Call this to remove a color from the list of colors currently in use.
@@ -161,6 +175,7 @@ function(d3,   $) {
 
       dispatch.dataReady(json);
     };
+
 
 
     /**

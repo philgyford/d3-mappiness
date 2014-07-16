@@ -30,8 +30,9 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
 
       initListeners();
 
-      var json = getJSON();
+      getJSON();
     };
+
 
     /**
      * Gets the Mappiness JSON data and passes it to dataManager.
@@ -47,7 +48,10 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         ui.general.importFormShow();
       })
       .done(function() {
-        dataManager.loadJSON('mappiness.json');
+        // TODO: Put these back!
+        //dataManager.loadJSON('mappiness.json');
+
+        dataManager.loadRandomJSON();
       });
     };
 
