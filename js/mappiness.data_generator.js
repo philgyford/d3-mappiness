@@ -75,6 +75,11 @@ function(d3) {
       response.in_out = place.in_out;
       response.home_work = place.home_work;
 
+      var people = generatePeople(place);
+      for (p in people) {
+        response[p] = people[p];
+      };
+
       if (previousResponse === undefined) {
         
       } else {
@@ -86,6 +91,11 @@ function(d3) {
     };
 
 
+    /**
+     * Generates the in_out and home_work aspects of a response.
+     * `d` is a Date object.
+     * Returns an object with in_out and home_work keys.
+     */
     function generatePlace(d) {
       var day = d.getDay(),
           hours = d.getHours(),
@@ -152,6 +162,44 @@ function(d3) {
         in_out: in_out,
         home_work: home_work
       };
+    };
+
+    function generatePeople(place) {
+      var peopleSource = MAPPINESS_DATA_DICTIONARY.people,
+          people = {};
+
+      for (p in peopleSource) {
+        if (p == 'with_peers') {
+          // If at work, probably with peers.
+          if (place.home_work == 'work' && Math.random() < 0.9) {
+            people[p] = 1;
+          } else {
+            people[p] = 0;  
+          };
+
+        } else if (p == 'with_clients') {
+          // If at work, maybe with clients.
+          if (place.home_work == 'work' && Math.random() < 0.2) {
+            people[p] = 1;
+          } else {
+            people[p] = 0;  
+          };
+        
+        } else if (place.home_work == 'work') {
+          // Assuming you're not with friends, kids, etc at work.
+          people[p] = 0;
+
+        } else {
+          // Otherwise, just random.
+          if (Math.random() < 0.2) {
+            people[p] = 1;
+          } else{
+            people[p] = 0; 
+          };
+        };
+      };
+
+      return people;
     };
 
     /**
