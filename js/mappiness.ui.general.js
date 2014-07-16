@@ -49,7 +49,7 @@ function($,        jquery_modal,   d3) {
                       clickClose: false
                   });
 
-      $('#about-content').load('about.html .content');
+      $('#about-body').load('about.html');
     };
 
     exports.aboutClose = function() {

@@ -114,11 +114,7 @@ hr {
   margin: 1.5em 0 1em 0;
 }
 a {
-  text-decoration: none;
   color: #09c;
-}
-a:hover {
-  text-decoration: underline;
 }
 .hide {
   display: none;
@@ -454,6 +450,12 @@ body {
   font-weight: bold;
   color: #333;
 }
+.key-controls a {
+  text-decoration: none;
+}
+.key-controls a:hover {
+  text-decoration: underline;
+}
 .key-controls .sep {
   color: #ccc;
 }
@@ -475,7 +477,9 @@ body {
 /***************************************************************************
  * ABOUT POP-UP
  */
-#about {
+#about h1 {
+  font-size: 1.5em;
+  margin-bottom: 1em;
 }
 
 /***************************************************************************
