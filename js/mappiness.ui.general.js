@@ -8,7 +8,7 @@ define(['jquery', 'jquery.modal', 'd3'],
 function($,        jquery_modal,   d3) {
   return function() {
     var exports = {},
-        dispatch = d3.dispatch('importSubmit'),
+        dispatch = d3.dispatch('importSubmit', 'aboutOpen'),
         // Will be a JS timeout object:
         loaderTimeout,
         importFormErrors = {
@@ -30,6 +30,30 @@ function($,        jquery_modal,   d3) {
         var downloadCode = importFormProcess();
         dispatch.importSubmit( downloadCode );
       });
+
+      // OK, these don't get sent to the controller.
+      $('header .links-about').on('click', function(ev) {
+        ev.preventDefault();
+        exports.aboutOpen();
+      });
+
+      $('#about-buttons .button-submit').on('click', function(ev) {
+        ev.preventDefault();
+        exports.aboutClose();
+      });
+    };
+
+    exports.aboutOpen = function() {
+      $('#about').modal({
+                      showClose: false,
+                      clickClose: false
+                  });
+
+      $('#about-content').load('about.html .content');
+    };
+
+    exports.aboutClose = function() {
+      $.modal.close(); 
     };
 
 

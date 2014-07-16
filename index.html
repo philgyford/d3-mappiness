@@ -2,11 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Mappiness chart with D3.js</title>
+    <title>Mappiness chart</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-	<h1 class="title">Mappiness chart</h1>
+  <header>
+    <h1 class="title">Mappiness chart</h1>
+    <p class="links"><a href="about.html" class="links-about">About</a></p>
+  </header>
 
 	<div id="loader">
     <div id="loader-spinner">Loading…</div>
@@ -53,8 +56,23 @@
   </form>
 
 
+  <section id="about" class="modal">
+    <div id="about-body" class="modal-body">
+      <header>
+        <h1>About</h1>
+      </header>
+
+      <div id="about-content">
+      </div>
+    </div>
+    <div id="about-buttons" class="button-group modal-buttons">
+      <button class="button button-submit" type="button">Close</button>
+    </div>
+  </section>
+
+
 	<form id="line-edit" class="modal" method="get" action="#">
-    <div id="line-edit-body">	
+    <div id="line-edit-body" class="modal-body">	
 
       <div id="line-edit-col-1" class="line-edit-col">
       </div>
@@ -62,7 +80,7 @@
       <div id="line-edit-col-2" class="line-edit-col last">
       </div>
     </div>
-    <div id="line-edit-buttons" class="button-group">
+    <div id="line-edit-buttons" class="button-group modal-buttons">
       <button class="button button-cancel" type="button">Cancel</button>
       <button class="button button-submit" type="submit">Submit</button>
     </div>
