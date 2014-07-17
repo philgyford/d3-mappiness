@@ -75,12 +75,15 @@ function(d3) {
       response.in_out = place.in_out;
       response.home_work = place.home_work;
 
-      var people = generatePeople(place);
+      var people = generatePeople(d, place);
       for (p in people) {
         response[p] = people[p];
       };
 
       var activities = generateActivities(d, response);
+      for (a in activities) {
+        response[a] = activities[a];
+      };
       // Feelings
 
 
@@ -172,43 +175,62 @@ function(d3) {
      * Returns an object with keys like `with_peers`, `with_partner` etc and
      * values of 1 or 0.
      */
-    function generatePeople(place) {
+    function generatePeople(d, place) {
       var people = {};
 
+      // Set the default of 0 for everything first:
       for (p in MAPPINESS_DATA_DICTIONARY.people) {
-        if (p == 'with_peers') {
-          // If at work, probably with peers.
-          if (place.home_work == 'work' && Math.random() < 0.9) {
-            people[p] = 1;
-          } else {
-            people[p] = 0;  
-          };
+        people[p] = 0;
+      };
 
-        } else if (p == 'with_clients') {
-          // If at work, maybe with clients.
-          if (place.home_work == 'work' && Math.random() < 0.2) {
-            people[p] = 1;
-          } else {
-            people[p] = 0;  
+      if (Math.random() < 0.9) {
+        // Because all the below will usually result in being with people, give
+        // an overall chance of just not being with anyone.
+
+        if (place.home_work == 'work' ||
+            (place.home_work == 'other' && isWorkingHours(d))) {
+          if (Math.random() < 0.9) {
+            people.with_peers = 1;
+          };
+          if (Math.random() < 0.2) {
+            people.with_clients = 1;
+          };
+          if (Math.random() < 0.1) {
+            people.with_others = 1;
           };
         
-        } else if (place.home_work == 'work') {
-          // Assuming you're not with friends, kids, etc at work.
-          people[p] = 0;
-
-        } else if (p == 'with_partner') {
-          // Slightly more chance of this, a lucky life.
-          if (Math.random() < 0.3) {
-            people[p] = 1;
-          } else {
-            people[p] = 0; 
+        } else if (place.home_work == 'home') {
+          if (Math.random() < 0.6) {
+            people.with_partner = 1;
           };
-        } else { 
-          // Otherwise, just random.
+          if (Math.random() < 0.6) {
+            people.with_children = 1;
+          };
           if (Math.random() < 0.2) {
-            people[p] = 1;
-          } else{
-            people[p] = 0; 
+            people.with_relatives = 1;
+          };
+          if (Math.random() < 0.1) {
+            people.with_friends = 1;
+          };
+          if (Math.random() < 0.1) {
+            people.with_others = 1;
+          };
+
+        } else { // home_work == 'other', but not working hours.
+          if (Math.random() < 0.4) {
+            people.with_partner = 1;
+          };
+          if (Math.random() < 0.4) {
+            people.with_children = 1;
+          };
+          if (Math.random() < 0.2) {
+            people.with_relatives = 1;
+          };
+          if (Math.random() < 0.3) {
+            people.with_friends = 1;
+          };
+          if (Math.random() < 0.2) {
+            people.with_others = 1;
           };
         };
       };
