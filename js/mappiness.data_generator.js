@@ -80,6 +80,10 @@ function(d3) {
         response[p] = people[p];
       };
 
+      var activities = generateActivities(d, response);
+      // Feelings
+
+
       if (previousResponse === undefined) {
         
       } else {
@@ -97,13 +101,11 @@ function(d3) {
      * Returns an object with in_out and home_work keys.
      */
     function generatePlace(d) {
-      var day = d.getDay(),
-          hours = d.getHours(),
-          in_out,
+      var in_out,
           home_work;
 
-      if (day > 0 && day < 6 && hours >= 9 && hours <= 17) {
-        // Mon-Fri, 9-6, at work, maybe.
+      if (isWorkingHours(d)) {
+        // At work, maybe.
         var chance = Math.random();
         if (chance < 0.8) {
           home_work = 'work'; 
@@ -112,8 +114,7 @@ function(d3) {
         } else {
           home_work = 'other';
         };
-      } else if (day == 0 || day == 7) {
-        // Weekend.
+      } else if (isWeekend(d)) {
         if (Math.random() < 0.6) {
           home_work = 'home';
         } else {
@@ -128,7 +129,7 @@ function(d3) {
         };
       };
 
-      if (hours <= 7 || hours >= 23) {
+      if (isSleepTime(d)) {
         // You should be in bed! No camping apparently.
         in_out = 'in';
 
@@ -164,11 +165,17 @@ function(d3) {
       };
     };
 
+    /**
+     * Generates all the 1/0 values for people for a response.
+     * `place` is the results of generatePlace(), an object with in_out and
+     * home_work keys.
+     * Returns an object with keys like `with_peers`, `with_partner` etc and
+     * values of 1 or 0.
+     */
     function generatePeople(place) {
-      var peopleSource = MAPPINESS_DATA_DICTIONARY.people,
-          people = {};
+      var people = {};
 
-      for (p in peopleSource) {
+      for (p in MAPPINESS_DATA_DICTIONARY.people) {
         if (p == 'with_peers') {
           // If at work, probably with peers.
           if (place.home_work == 'work' && Math.random() < 0.9) {
@@ -189,7 +196,14 @@ function(d3) {
           // Assuming you're not with friends, kids, etc at work.
           people[p] = 0;
 
-        } else {
+        } else if (p == 'with_partner') {
+          // Slightly more chance of this, a lucky life.
+          if (Math.random() < 0.3) {
+            people[p] = 1;
+          } else {
+            people[p] = 0; 
+          };
+        } else { 
           // Otherwise, just random.
           if (Math.random() < 0.2) {
             people[p] = 1;
@@ -200,6 +214,203 @@ function(d3) {
       };
 
       return people;
+    };
+
+    /**
+     * Generates all the activities for a response.
+     * `d` is a Date object.
+     * `response` is the response so far, including in_out, home_work,
+     * and all the people.
+     * Returns an object with keys like 'do_work', 'do_meet' etc and 1 or 0 for
+     * each value.
+     */
+    function generateActivities(d, response) {
+      var activities = {};
+
+      // Set the default of 0 for everything first:
+      for (a in MAPPINESS_DATA_DICTIONARY.activities) {
+        activities[a] = 0;
+      };
+
+      if (response.home_work == 'work') {
+        // Worky things!
+        if (Math.random() < 0.9) { activities.do_work = 1; };
+
+        // Some other probably mutually-exclusive things:
+          
+        if (response.with_clients == 1) {
+          if      (Math.random() < 0.8)  { activities.do_meet = 1; }
+          else if (Math.random() < 0.2)  { activities.do_chat = 1; };
+
+        } else if (response.with_peers == 1) {
+          if      (Math.random() < 0.4)  { activities.do_meet = 1; }
+          else if (Math.random() < 0.1)  { activities.do_chat = 1; };
+
+        } else {
+          if      (Math.random() < 0.2)  { activities.do_admin = 1; }
+          else if (Math.random() < 0.1)  { activities.do_net = 1; }
+          else if (Math.random() < 0.05) { activities.do_compgame = 1; }
+          else if (Math.random() < 0.1)  { activities.do_other = 1; };
+        };
+
+      } else if (response.home_work == 'home') {
+        // Caring.
+        if (response.with_children == 1) {
+          if (Math.random() < 0.2) { activities.do_childcare = 1; };
+        };
+        if (response.with_relative == 1) {
+          if (Math.random() < 0.1) { activities.do_care = 1; };
+        };
+        // Chatting.
+        if (response.with_partner == 1 || response.with_friends == 1
+            || response.with_relatives == 1 || response.with_children == 1
+            || response.with_others == 1) {
+          if (Math.random() < 0.3) { activities.do_chat = 1; };
+        };
+
+        // Other stuff. I'm sure the chances of things here could be mucb
+        // better. Especially given how rarely we'll get to things near the
+        // end.
+        if      (Math.random() < 0.2) { activities.do_tv = 1; } 
+        else if (Math.random() < 0.1) { activities.do_music = 1; } 
+        else if (Math.random() < 0.1) { activities.do_read = 1; } 
+        else if (Math.random() < 0.1) { activities.do_chores = 1; } 
+        else if (Math.random() < 0.1) { activities.do_rest = 1; } 
+        else if (Math.random() < 0.1) { activities.do_cook = 1; } 
+        else if (Math.random() < 0.1) { activities.do_wash = 1; } 
+        else if (Math.random() < 0.1) { activities.do_admin = 1; } 
+        else if (Math.random() < 0.1) { activities.do_msg = 1; } 
+        else if (Math.random() < 0.1) { activities.do_net = 1; } 
+        else if (Math.random() < 0.1) { activities.do_speech = 1; } 
+        else if (Math.random() < 0.1) { activities.do_gardening = 1; } 
+        else if (Math.random() < 0.1) { activities.do_compgame = 1; } 
+        else if (Math.random() < 0.1) { activities.do_game = 1; } 
+        else if (Math.random() < 0.1) { activities.do_art = 1; } 
+        else if (Math.random() < 0.1) { activities.do_pet = 1; } 
+        else if (Math.random() < 0.1) { activities.do_sport = 1; } 
+        else if (Math.random() < 0.1) { activities.do_work = 1; }
+        else if (Math.random() < 0.1) { activities.do_bet = 1; } 
+        else if (Math.random() < 0.1) { activities.do_sick = 1; };
+
+      } else {
+        // Not at home or work.
+        
+        if (response.in_out == 'vehicle' && Math.random() < 0.7) { 
+          activities.do_travel = 1;
+        }; 
+
+        // With people:
+        if ((response.with_partner == 1 || response.with_relatives == 1
+                    || response.with_peers == 1 || response.with_clients == 1
+                    || response.with_friends == 1)
+                && Math.random() < 0.3) {
+          activities.do_chat = 1;
+        };
+
+        // More mutually-exclusive activities:
+
+        // Working:
+        if (activities.do_chat == 0
+            && isWorkingHours(d)
+            && (response.with_clients == 1 || response.with_peers == 1)
+            && Math.random() < 0.4) {
+          activities.do_meet = 1;
+        
+        // Indoors:
+        } else if (response.in_out == 'in' && Math.random() < 0.1) {
+          activities.do_tv = 1;
+        } else if (response.in_out == 'in' && Math.random() < 0.1) {
+          activities.do_theatre = 1;
+        } else if (response.in_out == 'in' && Math.random() < 0.1) {
+          activities.do_museum = 1;
+
+        // Outdoors:
+        } else if (response.in_out == 'out' && Math.random() < 0.1) {
+          activities.do_walk = 1;
+        } else if (response.in_out == 'out' && Math.random() < 0.1) {
+          activities.do_gardening = 1;
+        } 
+
+        // Anywhere, with anyone:
+        else if (Math.random() < 0.1) { activities.do_work = 1; } 
+        else if (Math.random() < 0.1) { activities.do_shop = 1; } 
+        else if (Math.random() < 0.1) { activities.do_wait = 1; } 
+        else if (Math.random() < 0.1) { activities.do_pet = 1; } 
+        else if (Math.random() < 0.1) { activities.do_msg = 1; } 
+        else if (Math.random() < 0.1) { activities.do_net = 1; } 
+        else if (Math.random() < 0.1) { activities.do_music = 1; } 
+        else if (Math.random() < 0.1) { activities.do_speech = 1; } 
+        else if (Math.random() < 0.1) { activities.do_read = 1; } 
+        else if (Math.random() < 0.1) { activities.do_match = 1; } 
+        else if (Math.random() < 0.1) { activities.do_sport = 1; } 
+        else if (Math.random() < 0.1) { activities.do_compgame = 1; } 
+        else if (Math.random() < 0.1) { activities.do_game = 1; } 
+        else if (Math.random() < 0.1) { activities.do_bet = 1; } 
+        else if (Math.random() < 0.1) { activities.do_art = 1; } 
+      
+      };
+
+      // Eating and drink could happen in any location, but is more time
+      // dependent.
+      var h = d.getHours();
+
+      // Drinking.
+      if (h <= 17) {
+        if (Math.random() < 0.08) { activities.do_caffeine = 1; };
+      };
+      if (response.home_work !== 'work' && activities.do_caffeine !== 1) {
+        if (h >= 12 && h <= 17) {
+          if (Math.random() < 0.05) { activities.do_booze = 1; };
+        } else if (h >= 18) {
+          if (Math.random() < 0.2) { activities.do_booze = 1; };
+        };
+      };
+      if ((h >= 6 && h <= 8) || (h >= 12 && h <= 14) || (h >= 19 && h <= 21)) {
+        if (Math.random() < 0.5) { activities.do_eat = 1; };
+      };
+
+      // Ensure there's at least one activity checked.
+
+      var doingSomething = false;
+      for (a in activities) {
+        if (activities[a] == 1) {
+          doingSomething = true;
+        };
+      };
+      if (doingSomething == false) { activities.do_other = 1; };
+
+      return activities; 
+    };
+
+    
+    function isWorkingHours(d) {
+      var day = d.getDay(),
+          hours = d.getHours();
+
+      if (day > 0 && day < 6 && hours >= 9 && hours <= 17) {
+        return true;
+      } else {
+        return false;
+      };
+    };
+
+    function isWeekend(d) {
+      var day = d.getDay();
+      if (day == 0 || day == 7) {
+        return true;
+      } else {
+        return false;
+      };
+    };
+
+    function isSleepTime(d) {
+      var hours = d.getHours();
+    
+      if (hours <= 7 || hours >= 23) {
+        return true;
+      } else {
+        return false;
+      };
     };
 
     /**
