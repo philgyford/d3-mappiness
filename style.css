@@ -303,6 +303,10 @@ body {
   right: 30px;
   font-size: 0.8125em;
 }
+/* About page main content: */
+.content {
+  max-width: 32em;
+}
 
 /***************************************************************************
  * IMPORTER FORM.
