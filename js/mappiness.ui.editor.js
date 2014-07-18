@@ -1,6 +1,5 @@
 /**
  * For drawing and handling everything related to the line-editing pop-up form.
- * d3 is only used for its d3.dispatch events.
  */
 define(['jquery', 'jquery.modal', './mappiness.templates', 'd3'],
 function($,        jquery_modal,     mappiness_templates,   d3) {
