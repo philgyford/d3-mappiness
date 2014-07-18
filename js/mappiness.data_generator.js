@@ -17,7 +17,7 @@ function(d3) {
   return function() {
     var exports = {},
         // How far back from today do we generate responses for?
-        days = 20,
+        days = 60,
         responsesPerDay = 2,
         // We'll only generate responses between these hours:
         startHour = 8,
@@ -40,7 +40,7 @@ function(d3) {
         var hours = [];
         while (hours.length < responsesPerDay) {
           // Random hour between startHour and endHour.
-          var hour = Math.floor(Math.random() * ((endHour+1) - startHour) + startHour);
+          var hour = Math.floor(randomBetween(startHour, endHour+1));
           // Ensure we don't have duplicate hours per day.
           if (hours.indexOf(hour) < 0) {
             hours.push(hour);
@@ -86,6 +86,9 @@ function(d3) {
       };
 
       var feelings = generateFeelings(response, previousResponse);
+      response.happy   = feelings.happy;
+      response.relaxed = feelings.relaxed;
+      response.awake   = feelings.awake;
 
       console.log(response);
       return response;
@@ -406,13 +409,105 @@ function(d3) {
      * home_work).
      * `previousResponse` is either undefined, or is, er, the set of response
      * data before this one.
+     *
+     * NOTE: This is just one entirely made-up persona of how one person might
+     * feel about particular activities or situations. I'm not suggesting
+     * everyone feels like this, or I feel like this, or anyone should feel
+     * like this. It's an off-the-top-of-my-head imagining of some factors that
+     * will create some not-random changes to the data which will make it more
+     * interesting.
      */
     function generateFeelings(response, previousResponse) {
-      var feelings = {};
+      // Base feelings that may get adjusted...
+      var feelings = {
+        happy:   randomBetween(0.25, 0.75),
+        relaxed: randomBetween(0.25, 0.75),
+        awake:   randomBetween(0.25, 0.75)
+      };
+
+      // Alter for people and activities.
+
+      // Any of these keys in response being 1 will add the adjustment.
+      var happyWeightings = {
+        with_partner:    0.1,
+        with_children:   0.1,
+        with_clients:   -0.1,
+        with_friends:    0.15,
+        do_work:        -0.1,
+        do_meeting:     -0.1, // Probably as well as do_work.
+        do_cook:         0.05,
+        do_chores:      -0.1,
+        do_admin:       -0.05,
+        do_sick:        -0.3,
+        do_chat:         0.15,
+        do_tv:           0.05,
+        do_theatre:      0.05,
+        do_museum:       0.05,
+        do_match:        0.1,
+        do_sport:        0.1,
+        do_gardening:    0.1,
+        do_birdwatch:    0.1,
+        do_art:          0.1,
+        do_sing:         0.1
+      };
+
+      var relaxedWeightings = {
+        with_peers:     -0.03,
+        with_clients:   -0.1,
+        do_meeting:     -0.1,
+        do_wait:        -0.05,
+        do_sick:        -0.1,
+        do_childcare:   -0.15,
+        do_care:        -0.15,
+        do_pray:         0.1,
+        do_alchohol:     0.1,
+        do_tv:           0.05,
+        do_gardening:    0.05,
+        do_art:          0.05,
+        do_sing:         0.05
+      };
+
+      var awakeWeightings = {
+        do_rest:        -0.1,
+        do_sick:        -0.25,
+        do_sport:        0.15,
+        do_birdwatch:    0.05
+      };
+
+      for (k in response) {
+        if (response[k] == 1) {
+          if (k in happyWeightings) {
+            feelings.happy += happyWeightings[k]; 
+          };
+          if (k in relaxedWeightings) {
+            feelings.relaxed += relaxedWeightings[k]; 
+          };
+          if (k in awakeWeightings) {
+            feelings.awake += awakeWeightings[k]; 
+          };
+        };
+      };
+
+      // Alter for time of day.
+      
+
+      // Alter for previous response.
+
+
+      // Alter for in/out, home/work.
+
+
+      // Clamp.
 
       return feelings;
     };
     
+    /**
+     * Returns a random float between min and max.
+     */
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    };
 
     /**
      * Is a datetime within what we're calling working hours?
