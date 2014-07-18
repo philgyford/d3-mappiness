@@ -17,6 +17,7 @@ Load `index.html`.
 
 ## TO DO
 
+* Fix chart hover points still being hoverable when the line is filtered.
 * Something that shows what dates are shown in focus area.
 * Remove require cache-busting in mappiness.js.
 * Maybe:
