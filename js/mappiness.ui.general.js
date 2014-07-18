@@ -30,12 +30,14 @@ function($,        jquery_modal,   d3) {
         ev.preventDefault();
         var downloadCode = importFormProcess();
         dispatch.importSubmit( downloadCode );
+        setPageTitle('Mappiness chart using your data');
       });
 
       // The user wants to try some random data.
       $('#importer-random').on('click', function(ev) {
         ev.preventDefault();
         dispatch.importRandom();
+        setPageTitle('Mappiness chart using random data');
       });
 
       // OK, these don't get sent to the controller.
@@ -64,7 +66,6 @@ function($,        jquery_modal,   d3) {
     exports.aboutClose = function() {
       $.modal.close(); 
     };
-
 
     exports.importFormShow = function() {
       exports.loaderHide(); 
@@ -99,6 +100,9 @@ function($,        jquery_modal,   d3) {
       importFormErrorShow(msgCode);
     };
 
+    function setPageTitle(str) {
+      $('#site-title').text(str); 
+    };
 
     /**
      * The form should just have a secret code in it.
