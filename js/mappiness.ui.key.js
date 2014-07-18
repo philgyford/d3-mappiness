@@ -3,13 +3,13 @@
  * Includes the duplicate/edit/delete/show controls.
  * d3 is only used for its d3.dispatch events.
  */
-define(['underscore', 'jquery', 'd3'],
-function(_,            $,        d3) {
+define(['underscore', 'jquery', './mappiness.templates', 'd3'],
+function(_,            $,          mappiness_templates,   d3) {
   return function() {
     var exports = {},
         dispatch = d3.dispatch('keyShowLine', 'keyDuplicateLine',
                                 'keyDeleteLine', 'keyEditLine'),
-        templates = makeTemplates(),
+        templates = mappiness_templates().templates(),
         // Can be set with exports.colorPool().
         colorPool = ['#f00', '#0f0', '#00f'],
         lines = [];
@@ -315,73 +315,6 @@ function(_,            $,        d3) {
       };
     };
 
-
-    /**
-     * Populates the templates object with compiled Underscore HTML templates.
-     */
-    function makeTemplates() {
-      var templates = {};
-
-      // The outline structure for a line's key.
-      // Requires line_id and line_color.
-      templates.line_key = _.template(' \
-        <div id="key-<%= line_id %>" class="key-line" data-line-id="<%= line_id %>"> \
-          <p class="key-controls"> \
-            <label class="key-show"> \
-              <input type="checkbox" class="key-show-control" checked="checked" data-line-id="<%= line_id %>">Show \
-            </label> \
-            <span class="key-delete key-control"> \
-              <span class="sep">•</span> \
-              <a href="#" class="key-delete-control" data-line-id="<%= line_id %>">Delete</a> \
-            </span> \
-            <span class="key-edit key-control"> \
-              <span class="sep">•</span> \
-              <a href="#" class="key-edit-control" data-line-id="<%= line_id %>">Edit</a> \
-            </span> \
-            <span class="key-duplicate key-control"> \
-              <span class="sep">•</span> \
-              <a href="#" class="key-duplicate-control" data-line-id="<%= line_id %>">Duplicate</a> \
-            </span> \
-          </p> \
-          <h2 class="key-title" style="border-top-color: <%= line_color %>;"></h2> \
-          <p class="key-no-data text-error">No data matches the constraints below</p> \
-          <div class="key-descriptions"> \
-            <div class="key-descriptions-people"></div> \
-            <div class="key-descriptions-place"></div> \
-            <div class="key-descriptions-activities"></div> \
-            <div class="key-descriptions-notes"></div> \
-          </div> \
-        </div> \
-      ');
-
-      // Subtitle for a bit of the key.
-      // Requires clss and title.
-      templates.line_key_title = _.template(' \
-        <h3 class="key-subtitle <%= clss %>"><%= title %></h3> \
-      ');
-
-      // A line of text in the key.
-      // Requires clss and text.
-      templates.line_key_text = _.template(' \
-        <p class="<%= clss %>"><%= text %></p> \
-      ');
-
-      // One or more rows in the key.
-      // Requires clss and a rows array.
-      // Each element of rows is an object with description and value elements.
-      templates.line_key_rows = _.template(' \
-        <ul class="list-unstyled <%= clss %>"> \
-          <% _.each(rows, function(row){ %> \
-            <li> \
-              <span class="key-label"><%= row.description %></span> \
-              <span class="key-field"><% if (row.value == 1) { print("✓") } else if (row.value == 0) { print("✕") } else { print(row.value) } %></span> \
-            </li> \
-          <% }); %> \
-        </ul> \
-      ');
-
-      return templates;
-    };
     
     /* Getters/setters */
 

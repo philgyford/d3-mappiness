@@ -3,11 +3,11 @@
  * The bottom, brush chart is referred to by `context`.
  * Underscore is currently ONLY used for the template for the tooltip.
  */
-define(['d3', 'underscore'],
-function(d3,   _) {
+define(['d3', './mappiness.templates'],
+function(d3,     mappiness_templates) {
   return function(){
     var dispatch = d3.dispatch('tooltipOn', 'tooltipOff'),
-        templates = makeTemplates(),
+        templates = mappiness_templates().templates(),
 
         // Total width and height for both charts:
         width = 960,
@@ -514,49 +514,6 @@ function(d3,   _) {
     };
     function contextY(d) {
       return contextYScale(d.value);
-    };
-
-    /**
-     * Populates the templates object with compiled Underscore HTML templates.
-     */
-    function makeTemplates() {
-      var templates = {};
-
-      templates.tooltip = _.template(' \
-        <h1><%= start_time %></h1> \
-        <p> \
-          <span class="label">Happy:</span><span class="field"><%= happy %></span><br> \
-          <span class="label">Relaxed:</span><span class="field"><%= relaxed %></span><br> \
-          <span class="label">Awake:</span><span class="field"><%= awake %></span> \
-        </p> \
-        <% if (people.length > 0) { %> \
-          <h2>People</h2> \
-          <ul class="list-unstyled"> \
-            <% _.each(people, function(p){ %> \
-              <li><%= p %></li> \
-            <% }); %> \
-          </ul> \
-        <% }; %> \
-        <h2>Place</h2> \
-        <p> \
-          <%= in_out %><br> \
-          <%= home_work %> \
-        </p> \
-        <% if (activities.length > 0) { %> \
-          <h2>Activities</h2> \
-          <ul class="list-unstyled"> \
-            <% _.each(activities, function(a){ %> \
-              <li><%= a %></li> \
-            <% }); %> \
-          </ul> \
-        <% }; %> \
-        <% if (notes != "") { %> \
-          <h2>Notes</h2> \
-          <p class="notes"><%= notes %></p> \
-        <% }; %> \
-      ');
-
-      return templates;
     };
 
     /**
