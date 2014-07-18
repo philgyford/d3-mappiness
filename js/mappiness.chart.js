@@ -423,6 +423,8 @@ function(d3,     mappiness_templates) {
             .transition()
             .attr('cx', function(d) { return X(d); })
             .attr('cy', function(d) { return focusY(d); });
+
+      dots.exit().remove();
     };
 
     /**
