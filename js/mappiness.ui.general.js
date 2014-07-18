@@ -61,6 +61,11 @@ function($,        jquery_modal,   d3) {
                   });
 
       $('#about-body').load('about.html');
+
+      $(window).resize(function(){
+        // Keep the edit window centered.
+        $.modal.resize(); 
+      });
     };
 
     exports.aboutClose = function() {
