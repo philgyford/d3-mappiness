@@ -17,7 +17,6 @@ Load `index.html`.
 
 ## TO DO
 
-* Add some dummy data for people to try it anyway. Generate on the fly?
 * Something that shows what dates are shown in focus area.
 * Remove require cache-busting in mappiness.js.
 * Maybe:
