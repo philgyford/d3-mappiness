@@ -84,14 +84,8 @@ function(d3) {
       for (a in activities) {
         response[a] = activities[a];
       };
-      // Feelings
 
-
-      if (previousResponse === undefined) {
-        
-      } else {
-      
-      };
+      var feelings = generateFeelings(response, previousResponse);
 
       console.log(response);
       return response;
@@ -404,7 +398,27 @@ function(d3) {
       return activities; 
     };
 
+
+    /**
+     * Returns an object with keys of `happy`, `relaxed` and `awake`, each with
+     * a value from 0 to 1.
+     * `response` is all the response data so far (people, activities, in_out,
+     * home_work).
+     * `previousResponse` is either undefined, or is, er, the set of response
+     * data before this one.
+     */
+    function generateFeelings(response, previousResponse) {
+      var feelings = {};
+
+      return feelings;
+    };
     
+
+    /**
+     * Is a datetime within what we're calling working hours?
+     * `d` is a Date object.
+     * Returns boolean.
+     */
     function isWorkingHours(d) {
       var day = d.getDay(),
           hours = d.getHours();
@@ -416,6 +430,11 @@ function(d3) {
       };
     };
 
+    /**
+     * Is a datetime on a Saturday or Sunday? 
+     * `d` is a Date object.
+     * Returns boolean.
+     */
     function isWeekend(d) {
       var day = d.getDay();
       if (day == 0 || day == 7) {
@@ -425,6 +444,11 @@ function(d3) {
       };
     };
 
+    /**
+     * Is a datetime during what we're calling hours you're asleep? 
+     * `d` is a Date object.
+     * Returns boolean.
+     */
     function isSleepTime(d) {
       var hours = d.getHours();
     
