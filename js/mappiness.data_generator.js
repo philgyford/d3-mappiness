@@ -17,7 +17,7 @@ function(d3) {
   return function() {
     var exports = {},
         // How far back from today do we generate responses for?
-        days = 60,
+        days = 365,
         responsesPerDay = 2,
         // We'll only generate responses between these hours:
         startHour = 8,
@@ -85,7 +85,7 @@ function(d3) {
         response[a] = activities[a];
       };
 
-      var feelings = generateFeelings(response, previousResponse);
+      var feelings = generateFeelings(d, response, previousResponse);
       response.happy   = feelings.happy;
       response.relaxed = feelings.relaxed;
       response.awake   = feelings.awake;
@@ -417,12 +417,24 @@ function(d3) {
      * will create some not-random changes to the data which will make it more
      * interesting.
      */
-    function generateFeelings(response, previousResponse) {
+    function generateFeelings(d, response, previousResponse) {
       // Base feelings that may get adjusted...
+      // We use three random numbers per feeling so that the total is weighted
+      // towards the centre of the range.
+      // The different feelings have different amounts of adjustments later, so
+      // we start with different possible totals here.
       var feelings = {
-        happy:   randomBetween(0.25, 0.75),
-        relaxed: randomBetween(0.25, 0.75),
-        awake:   randomBetween(0.25, 0.75)
+        happy:   randomBetween(0.05, 0.25) +
+                 randomBetween(0.05, 0.25) +
+                 randomBetween(0.05, 0.25),
+
+        relaxed: randomBetween(0.00, 0.35) +
+                 randomBetween(0.05, 0.40) +
+                 randomBetween(0.00, 0.30),
+
+        awake:   randomBetween(0.00, 0.35) +
+                 randomBetween(0.05, 0.40) +
+                 randomBetween(0.00, 0.30)
       };
 
       // Alter for people and activities.
@@ -489,6 +501,11 @@ function(d3) {
       };
 
       // Alter for time of day.
+      if (d.getHours() < 7 || d.getHours > 22) {
+        feelings.awake -= 0.1; 
+      } else if (d.getHours() < 8 || d.getHours > 21) {
+        feelings.awake -= 0.05; 
+      };
       
 
       // Alter for previous response.
@@ -496,6 +513,7 @@ function(d3) {
 
       // Alter for in/out, home/work.
 
+      // Adjust relaxed based on happy?
 
       // Clamp.
 
