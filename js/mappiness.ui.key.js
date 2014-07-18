@@ -277,6 +277,9 @@ function($,        d3,     mappiness_templates) {
           $(this).addClass('disabled').changeElementType('span');
         });
 
+      } else if ($(selector+' span.disabled', container).length > 0) {
+        // A link that's already disabled. Do nothing.
+
       } else if ($(selector+' input[type=checkbox]', container).length) {
         // There's a checkbox in here. Disable it and the surrounding span.
         $(selector+' input[type=checkbox]', container).each(function(){
