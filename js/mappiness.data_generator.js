@@ -90,7 +90,6 @@ function(d3) {
       response.relaxed = feelings.relaxed;
       response.awake   = feelings.awake;
 
-      console.log(response);
       return response;
     };
 
@@ -501,21 +500,52 @@ function(d3) {
       };
 
       // Alter for time of day.
+      // Sleepier at start and end of day.
       if (d.getHours() < 7 || d.getHours > 22) {
         feelings.awake -= 0.1; 
       } else if (d.getHours() < 8 || d.getHours > 21) {
         feelings.awake -= 0.05; 
       };
       
-
       // Alter for previous response.
-
+      // Sometimes, feelings just hang around don't they.
+      if (previousResponse != undefined) {
+        if (previousResponse.happy < feelings.happy) {
+          feelings.happy -= 0.05; 
+        } else if (previousResponse.happy > feelings.happy) {
+          feelings.happy += 0.05; 
+        };
+      };
 
       // Alter for in/out, home/work.
+      if (response.in_out == 'out') {
+        // S/he likes outside.
+        feelings.happy += 0.05;
+        feelings.relaxed += 0.05;
+        feelings.awake += 0.05;
+      };
+      if (response.home_work == 'home') {
+        feelings.relaxed += 0.05;
+      } else if (response.home_work == 'work') {
+        feelings.relaxed -= 0.05;
+      };
 
       // Adjust relaxed based on happy?
+      // No - they seem to vaguely follow each other anyway.
 
       // Clamp.
+      // If a feeling is above 1 or below 0, ensure it's randomly within
+      // bounds.
+      for (f in feelings) {
+        if (feelings[f] >= 1) {
+          var difference = feelings[f] - 1;
+          feelings[f] -= randomBetween( (difference + 0.01), (difference + 0.04) );
+
+        } else if (feelings[f] <= 0) {
+          var difference = Math.abs(feelings[f]);
+          feelings[f] += randomBetween( (difference + 0.01), (difference + 0.03) );
+        };
+      };
 
       return feelings;
     };
