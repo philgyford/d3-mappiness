@@ -385,7 +385,8 @@ function(d3,     mappiness_templates) {
 
 
     /**
-     *
+     * Draws the invisible circles on each point which, when hovered over,
+     * show the tooltip with info about that point.
      */
     function renderTooltips() {
       // Add a container for each line to hold all of its dots.
@@ -424,6 +425,10 @@ function(d3,     mappiness_templates) {
             .attr('cy', function(d) { return focusY(d); });
     };
 
+    /**
+     * Called when the user hovers over one of the invisible circles on
+     * a point.
+     */
     function tooltipOn(d) {
       tooltip.style('opacity', 1).html(tooltipContent(d));
 
@@ -452,10 +457,17 @@ function(d3,     mappiness_templates) {
               .style('top', top + 'px');    
     };
 
+    /**
+     * Called when the user hovers out of one of the circles.
+     */
     function tooltipOff(d) {
       tooltip.style('opacity', 0);
     };
 
+    /**
+     * Generates the content for an individual tooltip.
+     * The HTML is in mappiness.templates.
+     */
     function tooltipContent(d) {
       // https://github.com/mbostock/d3/wiki/Time-Formatting
       var formatTime = d3.time.format('%H:%M %a %e %b %Y');
