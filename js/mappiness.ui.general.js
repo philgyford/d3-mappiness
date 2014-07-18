@@ -8,7 +8,7 @@ define(['jquery', 'jquery.modal', 'd3'],
 function($,        jquery_modal,   d3) {
   return function() {
     var exports = {},
-        dispatch = d3.dispatch('importSubmit', 'aboutOpen'),
+        dispatch = d3.dispatch('importSubmit', 'aboutOpen', 'importRandom'),
         // Will be a JS timeout object:
         loaderTimeout,
         importFormErrors = {
@@ -25,10 +25,17 @@ function($,        jquery_modal,   d3) {
      * listens for.
      */
     function initListeners() {
+      // The user is submitting their secret code.
       $('#importer').on('submit', function(ev) {
         ev.preventDefault();
         var downloadCode = importFormProcess();
         dispatch.importSubmit( downloadCode );
+      });
+
+      // The user wants to try some random data.
+      $('#importer-random').on('click', function(ev) {
+        ev.preventDefault();
+        dispatch.importRandom();
       });
 
       // OK, these don't get sent to the controller.
@@ -37,10 +44,12 @@ function($,        jquery_modal,   d3) {
         exports.aboutOpen();
       });
 
+      // Closing the 'About' modal.
       $('#about-buttons .button-submit').on('click', function(ev) {
         ev.preventDefault();
         exports.aboutClose();
       });
+
     };
 
     exports.aboutOpen = function() {

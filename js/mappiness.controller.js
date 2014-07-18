@@ -48,10 +48,7 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         ui.general.importFormShow();
       })
       .done(function() {
-        // TODO: Put these back!
-        //dataManager.loadJSON('mappiness.json');
-
-        dataManager.loadRandomJSON();
+        dataManager.loadJSON('mappiness.json');
       });
     };
 
@@ -171,6 +168,11 @@ function($, d3, mappiness_chart, mappiness_dataManager, mappiness_ui) {
         if (downloadCode !== false) {
           dataManager.loadJSONP('https://mappiness.me/' + downloadCode + '/mappiness.json') 
         }; // Else the form will already be showing an error message.
+      });
+
+      // The user wants to try some random data.
+      ui.general.on('importRandom', function() {
+        dataManager.loadRandomJSON();
       });
 
 
