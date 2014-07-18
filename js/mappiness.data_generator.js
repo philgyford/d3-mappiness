@@ -1,16 +1,15 @@
-/*
+/**
+ * Generates a JSON-style array of objects emulating Mapiness's JSON file.
  *
  * NOTE: Doesn't generate ALL of the data found in Mappiness's JSON.
  * Only the fields that the rest of the code needs.
  *
- * Arrays of activities and people that won't be used.
- * Each point value is based on the previous:
- *  * Randomly, will this be a big, med or small jump? Different chances.
- *  * +/- a random value depending on big/med/small.
- *  * Somehow decreasingly likely to reach close to the max/min values.
- * Have n periods when the user will be extra happy/sad, when values will get
- *   positive/negative boosts. Maybe these could have different locations?
- * Weighting for Awake value, depending on time of day.
+ * The data isn't entirely random, but is weighted to try and make a relatively
+ * believable persona. Everyone is different and this "person" is just one
+ * example. They're less keen on work and meetings than they are on being at
+ * home; They tend to eat at regular times and feel a little more tired first
+ * thing in the morning and last thing at night; They don't go on holiday or
+ * suffer from periods of depression. That kind of thing.
  */
 define(['d3'],
 function(d3) {
