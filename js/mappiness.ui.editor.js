@@ -2,8 +2,8 @@
  * For drawing and handling everything related to the line-editing pop-up form.
  * d3 is only used for its d3.dispatch events.
  */
-define(['underscore', 'jquery', 'jquery.modal', './mappiness.templates', 'd3'],
-function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
+define(['jquery', 'jquery.modal', './mappiness.templates', 'd3'],
+function($,        jquery_modal,     mappiness_templates,   d3) {
   return function() {
     var exports = {},
         dispatch = d3.dispatch('editorSubmit'),
@@ -73,31 +73,31 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
 
       if (['alone', 'with'].indexOf(people_radio) >= 0) {
         // Go through all the possible responses...
-        _.each(MAPPINESS_DATA_DICTIONARY.people, function(description, key) {
+        for (p in MAPPINESS_DATA_DICTIONARY.people) {
           if (people_radio == 'with') {
             // If the radio button is 'With...' then we record the constraint
             // for each option if it's 1 or 0.
-            var value = parseInt($('#le-people-'+key).val());
+            var value = parseInt($('#le-people-'+p).val());
             if ([1, 0].indexOf(value) >= 0) {
-              constraints[key] = value; 
+              constraints[p] = value; 
             };
           } else {
             // If the radio button is 'Alone, or with strangers only' then
             // we set ALL the people constraints to 0.
-            constraints[key] = 0;
+            constraints[p] = 0;
           };
-        });
+        };
       };
 
       // Add in_out and home_work values if they're valid.
       
       var inout_value = $('#le-place-inout', '#line-edit').val(); 
-      if (_.keys(MAPPINESS_DATA_DICTIONARY.in_out).indexOf(inout_value) >= 0) {
+      if (d3.keys(MAPPINESS_DATA_DICTIONARY.in_out).indexOf(inout_value) >= 0) {
         constraints.in_out = inout_value; 
       };
 
       var homework_value = $('#le-place-homework', '#line-edit').val(); 
-      if (_.keys(MAPPINESS_DATA_DICTIONARY.home_work).indexOf(homework_value) >= 0) {
+      if (d3.keys(MAPPINESS_DATA_DICTIONARY.home_work).indexOf(homework_value) >= 0) {
         constraints.home_work = homework_value; 
       };
 
@@ -108,12 +108,12 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
       };
 
       // Add any activities which aren't set to 'ignore'.
-      _.each(MAPPINESS_DATA_DICTIONARY.activities, function(description, key) {
-        var value = parseInt($('#le-activities-'+key).val());
+      for (a in MAPPINESS_DATA_DICTIONARY.activities) {
+        var value = parseInt($('#le-activities-'+a).val());
         if ([1, 0].indexOf(value) >= 0) {
-          constraints[key] = value; 
+          constraints[a] = value; 
         };
-      });
+      };
 
       return {
         constraints: constraints,
@@ -127,7 +127,13 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
      * Prepares the edit form for a particular line.
      */
     function prepare(line_id) {
-      var line = _.find(lines, function(ln){ return ln.id == line_id; });
+      var line;
+      lines.forEach(function(ln) {
+        if (ln.id == line_id) {
+          line = ln;
+        };
+      });
+
       if (line) {
         setupForLine(line);
         return true;
@@ -240,12 +246,13 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
 
       if ('people' in c) {
         // How many possible people constraints are there?
-        var total_people_constraints = _.keys(MAPPINESS_DATA_DICTIONARY.people).length;
+        var total_people_constraints = d3.keys(
+                                      MAPPINESS_DATA_DICTIONARY.people).length;
 
         // How many of the constraints we have are 0?
-        var num_zero_people_constraints = _.filter(
-            _.values(c.people), function(v){ return v.value == 0; }
-          ).length;
+        var num_zero_people_constraints = d3.values(c.people).filter(
+            function(v){ return v.value == 0; }
+        ).length;
 
         if (num_zero_people_constraints == total_people_constraints) {
           // ALL of the people constraints are set and they're ALL 0.
@@ -256,9 +263,10 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
           // SOME people constraints are set.
           $('#le-people-with').prop('checked', true).change();
 
-          _.each(c.people, function(constraint, name) {
-            $('#le-people-'+name).val(constraint.value.toString()).change();
-          });
+          for (p in c.people) {
+            $('#le-people-'+p).val(c.people[p].value.toString()).change();
+          
+          };
         };
       
       } else {
@@ -279,9 +287,9 @@ function(_,            $,        jquery_modal,     mappiness_templates,   d3) {
       };
 
       if ('activities' in c) {
-        _.each(c.activities, function(constraint, name) {
-          $('#le-activities-'+name).val(constraint.value.toString()).change();
-        });
+        for (a in c.activities) {
+          $('#le-activities-'+a).val(c.activities[a].value.toString()).change();
+        };
       };
 
       $('#line-edit-buttons').css('borderTopColor', line.color);

@@ -1,10 +1,9 @@
 /**
  * For drawing the keys showing information about lines on the chart.
  * Includes the duplicate/edit/delete/show controls.
- * d3 is only used for its d3.dispatch events.
  */
-define(['underscore', 'jquery', './mappiness.templates', 'd3'],
-function(_,            $,          mappiness_templates,   d3) {
+define(['jquery', 'd3', './mappiness.templates'],
+function($,        d3,     mappiness_templates) {
   return function() {
     var exports = {},
         dispatch = d3.dispatch('keyShowLine', 'keyDuplicateLine',
@@ -105,13 +104,13 @@ function(_,            $,          mappiness_templates,   d3) {
           // This key is at the start of a new row.
           // So give all keys in the previous row the height of the tallest
           // key in the row.
-          $('.key-line').slice(startOfLineIdx,idx).height(_.max(heights));          
+          $('.key-line').slice(startOfLineIdx,idx).height(d3.max(heights));          
           heights = [];
           startOfLineIdx = idx;
         } else if ((idx+1) == $('.key-line').length && heights.length > 0) {
           // The last element on the final row.
           // So give all keys in the final row the height of the tallest in it.
-          $('.key-line').slice(startOfLineIdx,idx).height(_.max(heights));          
+          $('.key-line').slice(startOfLineIdx,idx).height(d3.max(heights));          
         };
         
         heights.push($(this).height());
@@ -220,16 +219,16 @@ function(_,            $,          mappiness_templates,   d3) {
         removeFromKey('place-homework');
       };
 
-      if (_.keys(cons.people).length > 0) {
+      if (d3.keys(cons.people).length > 0) {
         addToKey({clss: 'people-title', title: 'People'});
 
         // How many possible people constraints are there?
-        var total_people_constraints = _.keys(MAPPINESS_DATA_DICTIONARY.people).length;
+        var total_people_constraints = d3.keys(MAPPINESS_DATA_DICTIONARY.people).length;
         
         // How many of the constraints we have are 0?
-        var num_zero_people_constraints = _.filter(
-            _.values(cons.people), function(v){ return v.value == 0; }
-          ).length;
+        var num_zero_people_constraints = d3.values(cons.people).filter(
+            function(v){ return v.value == 0; }
+        ).length;
 
         if (num_zero_people_constraints == total_people_constraints) {
           // ALL of the people constraints are set and they're ALL 0.
@@ -250,7 +249,7 @@ function(_,            $,          mappiness_templates,   d3) {
         removeFromKey('people-content');
       };
     
-      if (_.keys(cons.activities).length > 0) {
+      if (d3.keys(cons.activities).length > 0) {
         addToKey({clss: 'activities-title', title: 'Activities'});
         addToKey({clss: 'activities-content', rows: cons.activities});
       } else {

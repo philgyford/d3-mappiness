@@ -1,7 +1,6 @@
 /**
  * The top, main chart is referred to by `focus`.
  * The bottom, brush chart is referred to by `context`.
- * Underscore is currently ONLY used for the template for the tooltip.
  */
 define(['d3', './mappiness.templates'],
 function(d3,     mappiness_templates) {
