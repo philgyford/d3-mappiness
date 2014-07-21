@@ -395,11 +395,17 @@ function(d3,     mappiness_dataGenerator,    $) {
       return Math.floor(Math.random() * 100000000000);
     };
 
-    // Do any tidying up of the data we need.
+    /**
+     * Do any tidying up of the data we need.
+     */
     var cleanData = function(d) {
       // Change the string date/times into Date objects.
-      d.beep_time = new Date(d.beep_time);
-      d.start_time = new Date(d.start_time);
+      // Those times will be like "2013-07-21 15:12:58 +0100".
+      // We did just do `new Date(d.start_time)` but that generated 'Invalid
+      // Date' in IE10.
+      var timeFormat = d3.time.format('%Y-%m-%d %H:%M:%S %Z');
+      d.beep_time = timeFormat.parse(d.beep_time);
+      d.start_time = timeFormat.parse(d.start_time);
       return d;
     };
 
