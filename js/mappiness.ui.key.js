@@ -13,6 +13,26 @@ function($,        d3,     mappiness_templates) {
         colorPool = ['#f00', '#0f0', '#00f'],
         lines = [];
 
+    /**
+     * I know this is the wrong place for this, but I don't know what the right
+     * place is.
+     *
+     * changeElementType jQuery plugin.
+     * Changes the type of an element and retains all its attributes.
+     * eg: $('b').changeElementType('i');
+     */
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+          attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+          return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+
     initListeners();
 
     /**
@@ -337,24 +357,3 @@ function($,        d3,     mappiness_templates) {
     return exports;
   };
 });
-
-
-/**
- * changeElementType jQuery plugin.
- * Changes the type of an element and retains all its attributes.
- * eg: $('b').changeElementType('i');
- */
-(function($) {
-    $.fn.changeElementType = function(newType) {
-        var attrs = {};
-
-        $.each(this[0].attributes, function(idx, attr) {
-            attrs[attr.nodeName] = attr.nodeValue;
-        });
-
-        this.replaceWith(function() {
-            return $("<" + newType + "/>", attrs).append($(this).contents());
-        });
-    };
-})(jQuery);
-
