@@ -271,43 +271,62 @@ function(d3) {
         };
 
       } else if (response.home_work == 'home') {
-        // Caring.
-        if (response.with_children == 1) {
-          if (Math.random() < 0.2) { activities.do_childcare = 1; };
-        };
-        if (response.with_relative == 1) {
-          if (Math.random() < 0.1) { activities.do_care = 1; };
-        };
-        // Chatting.
-        if (response.with_partner == 1 || response.with_friends == 1
-            || response.with_relatives == 1 || response.with_children == 1
-            || response.with_others == 1) {
-          if (Math.random() < 0.3) { activities.do_chat = 1; };
-        };
 
-        // Other stuff. I'm sure the chances of things here could be mucb
-        // better. Especially given how rarely we'll get to things near the
-        // end.
-        if      (Math.random() < 0.2) { activities.do_tv = 1; } 
-        else if (Math.random() < 0.1) { activities.do_music = 1; } 
-        else if (Math.random() < 0.1) { activities.do_read = 1; } 
-        else if (Math.random() < 0.1) { activities.do_chores = 1; } 
-        else if (Math.random() < 0.1) { activities.do_rest = 1; } 
-        else if (Math.random() < 0.1) { activities.do_cook = 1; } 
-        else if (Math.random() < 0.1) { activities.do_wash = 1; } 
-        else if (Math.random() < 0.1) { activities.do_admin = 1; } 
-        else if (Math.random() < 0.1) { activities.do_msg = 1; } 
-        else if (Math.random() < 0.1) { activities.do_net = 1; } 
-        else if (Math.random() < 0.1) { activities.do_speech = 1; } 
-        else if (Math.random() < 0.1) { activities.do_gardening = 1; } 
-        else if (Math.random() < 0.1) { activities.do_compgame = 1; } 
-        else if (Math.random() < 0.1) { activities.do_game = 1; } 
-        else if (Math.random() < 0.1) { activities.do_art = 1; } 
-        else if (Math.random() < 0.1) { activities.do_pet = 1; } 
-        else if (Math.random() < 0.1) { activities.do_sport = 1; } 
-        else if (Math.random() < 0.1) { activities.do_work = 1; }
-        else if (Math.random() < 0.1) { activities.do_bet = 1; } 
-        else if (Math.random() < 0.1) { activities.do_sick = 1; };
+        if (response.with_children == 1 && Math.random() < 0.2) {
+          activities.do_childcare = 1;
+
+        } else if (response.with_relative == 1 && Math.random() < 0.2) {
+          activities.do_care = 1;
+
+        } else {
+
+          if (
+            (response.with_partner == 1 || response.with_friends == 1
+            || response.with_relatives == 1 || response.with_children == 1
+            || response.with_others == 1)
+            && Math.random() < 0.2) {
+            activities.do_chat = 1;
+          };
+
+          if (activities.do_chat == 0 || Math.random() < 0.3) {
+            // If not chatting, you'll be doing one/more of the activities
+            // below. If you are chatting, you still might do some.
+
+            // A list of possible things, and combinations of things.
+            // More instances of a thing (or combination) mean it's more likely
+            // to happen.
+            var doings = [
+              ['do_tv'], ['do_tv'], ['do_tv', 'do_msg'], ['do_tv', 'do_net'],
+              ['do_tv', 'do_msg'], ['do_tv', 'do_msg', 'do_net'],
+              ['do_tv', 'do_eat'],
+              ['do_music'],
+              ['do_read'], ['do_read'], ['do_read', 'do_music'],
+              ['do_chores'], ['do_chores', 'do_music'],
+              ['do_rest'],
+              ['do_cook'], ['do_cook'], ['do_cook', 'do_speech'],
+              ['do_cook', 'do_music'],
+              ['do_wash'], ['do_wash'],
+              ['do_admin'], ['do_admin', 'do_music'],
+              ['do_msg'],
+              ['do_net'],
+              ['do_speech'],
+              ['do_gardening'],
+              ['do_compgame'],
+              ['do_game'],
+              ['do_art'],
+              ['do_pet'],
+              ['do_sport'],
+              ['do_work'], ['do_work', 'do_music'],
+              ['do_sick']
+            ];
+
+            var choice = doings[ randomIntegerBetween(0, doings.length) ];
+            for (var n=0; n < choice.length; n++) {
+              activities[choice[n]] = 1; 
+            };
+          };
+
+        };
 
       } else {
         // Not at home or work.
@@ -332,39 +351,62 @@ function(d3) {
             && (response.with_clients == 1 || response.with_peers == 1)
             && Math.random() < 0.4) {
           activities.do_meet = 1;
-        
-        // Indoors:
-        } else if (response.in_out == 'in' && Math.random() < 0.1) {
-          activities.do_tv = 1;
-        } else if (response.in_out == 'in' && Math.random() < 0.1) {
-          activities.do_theatre = 1;
-        } else if (response.in_out == 'in' && Math.random() < 0.1) {
-          activities.do_museum = 1;
 
-        // Outdoors:
-        } else if (response.in_out == 'out' && Math.random() < 0.1) {
-          activities.do_walk = 1;
-        } else if (response.in_out == 'out' && Math.random() < 0.1) {
-          activities.do_gardening = 1;
-        } 
-
-        // Anywhere, with anyone:
-        else if (Math.random() < 0.1) { activities.do_work = 1; } 
-        else if (Math.random() < 0.1) { activities.do_shop = 1; } 
-        else if (Math.random() < 0.1) { activities.do_wait = 1; } 
-        else if (Math.random() < 0.1) { activities.do_pet = 1; } 
-        else if (Math.random() < 0.1) { activities.do_msg = 1; } 
-        else if (Math.random() < 0.1) { activities.do_net = 1; } 
-        else if (Math.random() < 0.1) { activities.do_music = 1; } 
-        else if (Math.random() < 0.1) { activities.do_speech = 1; } 
-        else if (Math.random() < 0.1) { activities.do_read = 1; } 
-        else if (Math.random() < 0.1) { activities.do_match = 1; } 
-        else if (Math.random() < 0.1) { activities.do_sport = 1; } 
-        else if (Math.random() < 0.1) { activities.do_compgame = 1; } 
-        else if (Math.random() < 0.1) { activities.do_game = 1; } 
-        else if (Math.random() < 0.1) { activities.do_bet = 1; } 
-        else if (Math.random() < 0.1) { activities.do_art = 1; } 
-      
+        } else {
+          if (response.in_out == 'in') {
+            var doings = [
+              ['do_tv'], ['do_tv', 'do_msg'],
+              ['do_theatre'],
+              ['do_museum'],
+              ['do_work'],
+              ['do_shop'], ['do_shop', 'do_msg'],
+              ['do_wait', 'do_msg'],
+              ['do_pet'],
+              ['do_msg'],
+              ['do_net'],
+              ['do_music'],
+              ['do_speech'],
+              ['do_read'],
+              ['do_match'],
+              ['do_sport'],
+              ['do_compgame'],
+              ['do_game'],
+              ['do_bet'],
+              ['do_art'],
+              ['do_other']
+            ];
+          
+          
+          } else if (response.in_out == 'out') {
+            var doings = [
+              ['do_walk'], ['do_walk'],
+              ['do_gardening'],
+              ['do_match'],
+              ['do_sport'],
+              ['do_wait'], ['do_wait', 'do_msg'],
+              ['do_pet'],
+              ['do_shop'], ['do_shop'], ['do_shop', 'do_msg'],
+              ['do_read'],
+              ['do_net'],
+              ['do_other']
+            ];
+          
+          } else { // In a vehicle.
+            var doings = [
+              ['do_music'], ['do_music'],
+              ['do_other'],
+              ['do_read'], ['do_read'],
+              ['do_msg'], ['do_msg'],
+              ['do_net'],
+              ['do_compgame'], ['do_compgame']
+            ];
+          };
+ 
+          var choice = doings[ randomIntegerBetween(0, doings.length) ];
+          for (var n=0; n < choice.length; n++) {
+            activities[choice[n]] = 1; 
+          };
+        };
       };
 
       // Eating and drink could happen in any location, but is more time
@@ -554,6 +596,13 @@ function(d3) {
      */
     function randomBetween(min, max) {
       return Math.random() * (max - min) + min;
+    };
+
+    /**
+     * Returns a random integer between min and max.
+     */
+    function randomIntegerBetween(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
     };
 
     /**
