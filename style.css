@@ -198,9 +198,16 @@ code {
 .no-js #loader {
   display: none;
 }
+#loader {
+  width: 5em;
+  height: 5em;
+  overflow: hidden;
+  margin: 5em auto;
+  position: relative;
+}
 #loader-spinner {
   font-size: 10px;
-  margin: 5em auto;
+  margin: 0 auto;
   text-indent: -9999em;
   width: 5em;
   height: 5em;
