@@ -1,7 +1,5 @@
 # Mappiness chart
 
-Only tested in Chrome so far.
-
 For charting data from the [Mappiness app](http://www.mappiness.org.uk/) (or
 using semi-randomly-generated example data).
 
@@ -20,5 +18,7 @@ Put the code on a webserver (it won't load the JSON file if run locally from a
 
 Load `index.html`.
 
-
+**NOTE:** You may want to ensure the JavaScript files aren't cached while
+developing. In `js/mappiness.js`, uncomment the `urlArgs` line used by
+require.js to do this.
 
