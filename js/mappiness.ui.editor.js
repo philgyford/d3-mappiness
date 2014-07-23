@@ -144,16 +144,6 @@ function($,        jquery_modal,     mappiness_templates,   d3) {
 
 
     /**
-     * Adjust height of scrollable form body.
-     */
-    function resize() {
-      $('#line-edit-body').height(
-            $('#line-edit').height() - $('#line-edit-buttons').outerHeight()
-          );
-    };
-
-
-    /**
      * Updates the contents of the edit form with all the correct inputs.
      * No form fields will be selected etc.
      */
@@ -180,14 +170,6 @@ function($,        jquery_modal,     mappiness_templates,   d3) {
       $('#line-edit-col-2').append(templates.line_edit_activities({
         activities: constraintsDescriptions.activities
       }));
-
-      // Resizing...
-      
-      $(window).resize(function(){
-        // Keep the edit window centered.
-        $.modal.resize(); 
-        resize();
-      });
 
       // Set up custom events when changing certain fields.
 
@@ -221,8 +203,26 @@ function($,        jquery_modal,     mappiness_templates,   d3) {
           };
         };
       });
+      
+      // Resizing...
+
+      setModalBodyHeight();
+      
+      $(window).resize(function(){
+        // Keep the edit window centered.
+        $.modal.resize(); 
+        setModalBodyHeight();
+      });
+
+    };
 
 
+    function setModalBodyHeight() {
+      var h = $('#line-edit').outerHeight()
+              - $('#line-edit-buttons').outerHeight()
+              - parseInt($('#line-edit-body').css('padding-top'))
+              - parseInt($('#line-edit-body').css('padding-bottom'));
+      $('#line-edit-body').height(h);
     };
 
 

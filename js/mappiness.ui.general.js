@@ -61,10 +61,12 @@ function($,        jquery_modal,   d3) {
                   });
 
       $('#about-body').load('about.html');
+      setModalBodyHeight();
 
       $(window).resize(function(){
         // Keep the edit window centered.
         $.modal.resize(); 
+        setModalBodyHeight();
       });
     };
 
@@ -107,6 +109,14 @@ function($,        jquery_modal,   d3) {
 
     function setPageTitle(str) {
       $('#site-title').text(str); 
+    };
+
+    function setModalBodyHeight() {
+      var h = $('#about').outerHeight()
+              - $('#about-buttons').outerHeight()
+              - parseInt($('#about-body').css('padding-top'))
+              - parseInt($('#about-body').css('padding-bottom'));
+      $('#about-body').height(h);
     };
 
     /**

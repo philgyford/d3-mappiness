@@ -68,11 +68,10 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
 .modal-body {
   overflow-y: auto;
   overflow-x: hidden;
-  margin-bottom: 70px;
   position: absolute;
   top: 0;
   left: 0;
-  padding: 2em 30px 6em 30px;
+  padding: 1.5em 30px;
   width: 100%;
   height: 100%;
 }
@@ -447,6 +446,7 @@ body {
 
 /* So they line up with left of the 'Show' checkbox. */
 .key-no-data,
+.key-all-data,
 .key-title,
 .key-subtitle,
 .key-line ul,
@@ -455,7 +455,8 @@ body {
   padding-right: 3px;
 }
 
-.key-no-data {
+.key-no-data,
+.key-all-data {
   margin-top: 0.3em;
   display: none;
 }
