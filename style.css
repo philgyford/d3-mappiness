@@ -198,8 +198,9 @@ code {
   display: none;
 }
 #loader {
-  width: 5em;
-  height: 5em;
+  /* Needs to be big enough for #loader-slow to show. */
+  width: 25em;
+  height: 7em;
   overflow: hidden;
   margin: 5em auto;
   position: relative;
