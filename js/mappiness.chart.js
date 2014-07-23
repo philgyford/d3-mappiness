@@ -182,9 +182,11 @@ function(d3,     mappiness_templates) {
                 'translate(' + contextMargin.left +','+ contextMargin.top + ')');
 
       // Make the tooltip div, but hidden.
-      tooltip = d3.select('body').append('div')
-                    .attr('class', 'tooltip')
-                    .style('opacity', 0);
+      if ( ! tooltip) {
+        tooltip = d3.select('body').append('div')
+                      .attr('class', 'tooltip')
+                      .style('left', '-10000px');
+      };
     };
 
 
@@ -432,7 +434,7 @@ function(d3,     mappiness_templates) {
      * a point.
      */
     function tooltipOn(d) {
-      tooltip.style('opacity', 1).html(tooltipContent(d));
+      tooltip.html(tooltipContent(d));
 
       var tooltipWidth = parseInt(tooltip.style('width'), 10);
       var tooltipHeight = parseInt(tooltip.style('height'), 10);
@@ -463,7 +465,7 @@ function(d3,     mappiness_templates) {
      * Called when the user hovers out of one of the circles.
      */
     function tooltipOff(d) {
-      tooltip.style('opacity', 0);
+      tooltip.style('left', '-10000px');
     };
 
     /**

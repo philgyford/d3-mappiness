@@ -20,6 +20,11 @@ function($,        d3,     mappiness_templates) {
      * changeElementType jQuery plugin.
      * Changes the type of an element and retains all its attributes.
      * eg: $('b').changeElementType('i');
+     *
+     * But if changing from an 'a' to anything else, changes the 'href'
+     * attribute to 'data-link'. And if changing *to* an 'a' and 'data-link' is
+     * present, change that to an 'href'. So as not to add href attributes to
+     * non-anchors.
      */
     $.fn.changeElementType = function(newType) {
       var attrs = {};
@@ -27,6 +32,14 @@ function($,        d3,     mappiness_templates) {
       $.each(this[0].attributes, function(idx, attr) {
           attrs[attr.nodeName] = attr.nodeValue;
       });
+
+      if (newType == 'a' && 'data-link' in attrs) {
+        attrs['href'] = attrs['data-link'];
+        delete attrs['data-link'];
+      } else if ('href' in attrs) {
+        attrs['data-link'] = attrs['href'];
+        delete attrs['href'];
+      };
 
       this.replaceWith(function() {
           return $("<" + newType + "/>", attrs).append($(this).contents());
