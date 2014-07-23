@@ -652,7 +652,7 @@ function(d3) {
 
     /**
      * Returns a string representing a date/time in the format
-     * 2011-03-13 12:11:26 +0100 
+     * 2011/03/13 12:11:26 +0100 
      * d is a Date object.
      */
     function formatDate(d) {
@@ -668,8 +668,8 @@ function(d3) {
               '00'; 
       };
 
-      return d.getFullYear() + '-' + 
-             fixNum(d.getMonth() + 1) + '-' +
+      return d.getFullYear() + '/' + 
+             fixNum(d.getMonth() + 1) + '/' +
              fixNum(d.getDate()) + ' ' +
              fixNum(d.getHours()) + ':' +
              fixNum(d.getMinutes()) + ':' +
