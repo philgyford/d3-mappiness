@@ -4,10 +4,10 @@ require.config({
       deps: ['jquery'],
       exports: 'jQuery.fn.modal'
     }
-  },
+  }
 
   // For development only.
-  urlArgs: "bust=" + (new Date()).getTime()
+  //urlArgs: "bust=" + (new Date()).getTime()
 });
 
 
