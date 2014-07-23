@@ -32,6 +32,7 @@ function(_) {
           </p> \
           <h2 class="key-title" style="border-top-color: <%= line_color %>;"></h2> \
           <p class="key-no-data text-error">No data matches the constraints below</p> \
+          <p class="key-all-data">All responses shown.</p> \
           <div class="key-descriptions"> \
             <div class="key-descriptions-people"></div> \
             <div class="key-descriptions-place"></div> \

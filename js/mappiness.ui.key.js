@@ -168,9 +168,15 @@ function($,        d3,     mappiness_templates) {
       if (line.values.length > 0) {
         hideControl('.key-no-data', cssid);
         showControl('.key-show', cssid);
+        if (d3.keys(line.constraints).length == 1) {
+          showControl('.key-all-data', cssid);
+        } else {
+          hideControl('.key-all-data', cssid);
+        };
       } else {
         showControl('.key-no-data', cssid);
         hideControl('.key-show', cssid);
+        hideControl('.key-all-data', cssid);
       };
 
       /**
