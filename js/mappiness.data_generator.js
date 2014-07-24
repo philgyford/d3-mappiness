@@ -195,10 +195,10 @@ function(d3) {
           };
         
         } else if (place.home_work == 'home') {
-          if (Math.random() < 0.6) {
+          if (Math.random() < 0.4) {
             people.with_partner = 1;
           };
-          if (Math.random() < 0.6) {
+          if (Math.random() < 0.4) {
             people.with_children = 1;
           };
           if (Math.random() < 0.2) {
