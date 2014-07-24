@@ -3,6 +3,7 @@
 For charting data from the [Mappiness app](http://www.mappiness.org.uk/) (or
 using semi-randomly-generated example data).
 
+[I wrote more about the chart on my website](http://www.gyford.com/phil/writing/2014/07/24/mappiness-chart.php).
 
 ## Development
 
