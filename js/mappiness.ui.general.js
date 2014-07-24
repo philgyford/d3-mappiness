@@ -87,9 +87,7 @@ function($,        jquery_modal,   d3) {
     exports.loaderShow = function() { 
       $('#loader').show();
       // If this starts taking a while, we show an extra message:
-      console.log('a');
       loaderTimeout = setTimeout(function(){
-        console.log('show');
         $('#loader-slow').fadeIn(1000); 
       }, 3000);
     };
